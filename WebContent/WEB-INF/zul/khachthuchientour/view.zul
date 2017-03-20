@@ -1,0 +1,2 @@
+<?component name="add-dieutiet-pblct-view" inline="true" macroURI="add-dieutiet-pblct-view.zul"?>
+<add-dieutiet-pblct-view model="${arg.vm}" vmArgs="${arg.vmArgs}" save="Điều tiết phòng bán vé lẻ đến công ty" />

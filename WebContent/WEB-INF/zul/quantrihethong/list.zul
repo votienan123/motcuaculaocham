@@ -1,0 +1,61 @@
+<?page title="Quản lý thông báo" contentType="text/html;charset=UTF-8"?>
+<div xmlns:zk="zk" xmlns:n="native" xmlns:x="xhtml" apply="org.zkoss.bind.BindComposer"
+	viewModel="@id('vm') @init('vn.toancauxanh.cms.service.SettingService')"
+	validationMessages="@id('vmsgs')">
+	<zscript><![CDATA[
+		self.page.title= "Quản trị hệ thống";
+	]]></zscript>
+	<n:section class="content-header">
+		<n:h1 class="header-title">Quản trị hệ thống</n:h1>	
+	</n:section>
+	<n:section class="content">	
+		<n:div class="row">
+	    	<n:div class="col-md-12">
+    			<n:div class="box box-padding box-solid">
+	    			<n:div class="box-body">
+	    				<n:div class="row">
+	    					<div class="col-md-12">
+	    						<div class="form-group form-doi-tuong">
+									<x:label class="col-md-5" style="padding-top: 6px;">Thời gian loại ra khỏi quản lý của đối tượng sau cai</x:label>
+									<div class="col-md-7">	
+										<hlayout>
+											<vlayout>
+												<intbox class="form-control" maxlength="255" width="200px"
+													value="@bind(vm.setting.thangQuanLySauCai) @save(vm.setting.thangQuanLySauCai, before='saveSetting') 
+													@validator('vn.toancauxanh.vm.BaseValid', constraint='no empty')"/>
+												<label class="error" value="@load(vmsgs[self.previousSibling])" />
+											</vlayout>
+											<label style="display: block;padding-top: 7px;"> Tháng</label>
+										</hlayout>	
+									</div>
+								</div>
+	    					</div> 
+	    					<div class="col-md-12">
+	    						<div class="form-group form-doi-tuong">
+									<x:label class="col-md-5" style="padding-top: 6px;">Thời gian loại ra khỏi quản lý của đối tượng vi phạm hành chính</x:label>
+									<div class="col-md-7">	
+										<hlayout>
+											<vlayout>																						
+												<intbox class="form-control" maxlength="255" width="200px"
+													value="@bind(vm.setting.thangQuanLySauViPham) @save(vm.setting.thangQuanLySauViPham, before='saveSetting') 
+													@validator('vn.toancauxanh.vm.BaseValid', constraint='no empty')"/>
+												<label class="error" value="@load(vmsgs[self.previousSibling])" />
+											</vlayout>
+											<label style="display: block;padding-top: 7px;"> Tháng</label>
+										</hlayout>		
+									</div>
+								</div>
+	    					</div>
+	    				</n:div>
+	    			</n:div> 
+	    			<div class="box-footer">		    				
+						<x:button class="btn btn-success" 
+							onClick="@command('saveSetting')">
+							<n:i class="fa fa-save"></n:i>&#160;&#160;Lưu 
+						</x:button>
+					</div>
+	    		</n:div> 		
+	    	</n:div>
+	    </n:div>
+	</n:section>
+</div>

@@ -1,0 +1,150 @@
+<window xmlns:n="native" xmlns:x="xhtml" xmlns:zk="zk" xmlns:w="client"
+	apply="org.zkoss.bind.BindComposer" id="wdn" border="normal"
+	mode="modal" action="show: slideIn" contentStyle="overflow:auto;"
+	closable="true" title="${arg.save}"
+	onClose="@command('invokeGG', notify=vmArgs, detach=wdn, attr='targetQuery')"
+	whatever="@load(false, after='saveCongTyKinhDoanh') @converter('vn.toancauxanh.service.DetachConverter')"
+	viewModel="@id('vm') @init(arg.model)"
+	validationMessages="@id('vmsgs')"
+	form="@id('fx') @load(vm) @save(vm, before={'saveCongTyKinhDoanh'}) @validator(vm.validator)"
+	width="50%">
+	<zscript><![CDATA[
+	    import org.apache.commons.lang3.StringUtils;
+		vmArgs = arg.get("vmArgs");
+		isViewCongTyKinhDoanh = arg.get("isViewCongTyKinhDoanh");
+		boolean isView = false;
+		if (StringUtils.equals(isViewCongTyKinhDoanh.toString(),"1")) {
+			isView = true;
+		}
+	]]></zscript>
+	
+	<div class="row box-body">
+		<div class="col-md-6 col-sm-12">
+			<div class="form-group">
+				<x:label>Nhóm của hội<n:small class="required"> *</n:small></x:label>
+				<combobox width="100%" model="@load(vmArgs.nhomCuaHoiListAndNull)" readonly="true"
+					selectedItem="@bind(vm.nhomCuaHoi) @save(vm.nhomCuaHoi, before={'saveCongTyKinhDoanh'}) @validator('vn.toancauxanh.vm.BaseValid', constraint='no empty')"
+					placeholder="Tên nhóm của hội" >
+					<template name="model">
+						<comboitem label="@load(empty each ? '--- Chọn tên nhóm của hội ---' :  each.ten)" />
+					</template>
+				</combobox>
+				<label class="error" value="@load(vmsgs[self.previousSibling])" />
+			</div>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<div class="form-group">
+				<x:label>Phân loại công ty:</x:label>
+				<combobox width="100%" model="@load(vmArgs.phanLoaiCongTyListAndNull)"
+					readonly="true" 
+					selectedItem="@bind(vm.phanLoaiCongTy) @save(vm.phanLoaiCongTy, before='saveCongTyKinhDoanh')"
+					placeholder="Tên phân loại công ty" >
+					<template name="model">
+						<comboitem label="@load(empty each? '--- Chọn tên phân loại công ty ---' :  each.ten)" />
+					</template>
+				</combobox>
+			</div>
+		</div>
+		<div class="col-md-12">
+			<div class="form-group">
+				<x:label>Tên công ty kinh doanh<n:small class="required"> *</n:small></x:label>
+				<textbox class="form-control" width="100%" maxlength="255"
+					value="@bind(vm.ten) @save(vm.ten, before={'saveCongTyKinhDoanh'}) @validator('vn.toancauxanh.vm.BaseValid', constraint='no empty')" />
+				<label class="error" value="@load(vmsgs[self.previousSibling])" />
+				<label class="error" value="@load(vmsgs['lblErrTenCongTy'])" />
+			</div>
+		</div>
+		<div class="col-md-12">
+			<div class="form-group">
+				<x:label>Địa chỉ:</x:label>
+				<textbox class="form-control" width="100%" maxlength="255"
+					value="@load(vm.diaChi) @save(vm.diaChi, before={'saveCongTyKinhDoanh'})" />
+			</div>
+		</div>
+		<div class="col-md-12">
+			<div class="form-group">
+				<x:label>Số điện thoại:<n:small class="required"> *</n:small></x:label>
+				<textbox class="form-control" width="100%" maxlength="15"
+					value="@load(vm.soDienThoai) @save(vm.soDienThoai, before={'saveCongTyKinhDoanh'}) @validator('vn.toancauxanh.vm.BaseValid', constraint='no empty')">
+					<attribute w:name="doKeyPress_">
+						function(evt){ if
+						(!this._shallIgnore(evt,"0123456789.-()"))
+						this.$doKeyPress_(evt);
+						}
+					</attribute>
+				</textbox>
+				<label class="error" value="@load(vmsgs[self.previousSibling])" />
+			</div>
+		</div>
+		<div class="col-md-12">
+			<div class="form-group">
+				<x:label>Người đại diện:<n:small class="required"> *</n:small></x:label>
+				<textbox class="form-control" width="100%" maxlength="255"
+					value="@load(vm.nguoiDaiDien) @save(vm.nguoiDaiDien, before={'saveCongTyKinhDoanh'}) @validator('vn.toancauxanh.vm.BaseValid', constraint='no empty')" />
+				<label class="error" value="@load(vmsgs[self.previousSibling])" />
+			</div>
+		</div>
+	
+		<div zk:if="${isView}">
+			<div class="col-md-6 col-sm-12">
+				<div class="form-group">
+					<x:label>Số lượng tàu: </x:label>
+					<textbox class="form-control" width="100%" maxlength="15" readonly="true" value="@load(vm.soLuongTau)">
+					</textbox>
+				</div>
+			</div>
+			
+			<div class="col-md-6 col-sm-12">
+				<div class="form-group">
+					<x:label>Số khách tối đa: </x:label>
+					<textbox class="form-control" width="100%" maxlength="15" readonly="true" value="@load(vm.soKhachToiDa)">
+					</textbox>
+				</div>
+			</div>
+		</div>
+		
+<!-- Tong So Khach Toi Da Cua Cong Ty -->
+<!-- 		<div class="col-md-12"> -->
+<!-- 			<div class="form-group"> -->
+<!-- 				<x:label>Số khách tối đa<n:small class="required"> *</n:small></x:label> -->
+<!-- 				<spinner width="100%" maxlength="15" -->
+<!-- 				value="@bind(vm.soKhachToiDa) @save(vm.soKhachToiDa, before={'saveCongTyKinhDoanh'})  @validator('vn.toancauxanh.vm.BaseValid', constraint='no empty, no negative')"  -->
+<!-- 			 	step="1"> -->
+<!-- 				 	<attribute w:name="doKeyPress_"> -->
+<!-- 						function(evt){ if -->
+<!-- 						(!this._shallIgnore(evt,"0123456789")) -->
+<!-- 						this.$doKeyPress_(evt); -->
+<!-- 						} -->
+<!-- 					</attribute> -->
+<!-- 				</spinner> -->
+<!-- 				<label class="error" value="@load(vmsgs[self.previousSibling])" /> -->
+<!-- 				<label class="error" value="@load(vmsgs['lblErrSoKhachToiDa'])" /> -->
+<!-- 			</div> -->
+<!-- 		</div> -->
+<!-- Tong So Khach Toi Da Cua Cong Ty -->
+
+		<div class="col-md-12">
+			<div class="form-group">
+				<x:label>Mô tả</x:label>
+				<textbox  style="resize:vertical;" class="form-control" rows="5" value="@bind(vm.moTa)" />
+			</div>
+		</div>
+		
+		<div class="col-md-12">
+			<div class="form-group">
+				<checkbox label="Áp dụng" checked="@bind(vm.checkApDung)" />
+			</div>
+		</div>
+	</div>
+	
+	<div class="row box-footer">  
+		<x:button class="btn btn-default pull-right" onClick="@command('invokeGG', notify=vmArgs, detach=wdn, attr='targetQuery')">
+			Hủy
+		</x:button>
+		<x:button style="margin-right: 10px;" class="btn btn-primary pull-right" 
+		 	zk:if="${(vm.noId() and entry.quyen.congtykinhdoanh_them) or (!vm.noId() and entry.quyen.congtykinhdoanh_sua)}"
+			onClick="@command('saveCongTyKinhDoanh', list=vmArgs, attr='targetQuery', wdn=wdn)">
+			<n:i class="fa fa-save"></n:i>&#160;&#160;Lưu
+		</x:button>
+	</div>
+</window>

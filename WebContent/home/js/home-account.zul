@@ -1,0 +1,73 @@
+<div xmlns:zk="zk" xmlns:n="native" xmlns:x="xhtml"
+	apply="vn.toancauxanh.cms.service.OnlineOfflineAccountService">
+	<script type="text/javascript">
+		<![CDATA[ 
+
+			$(document).ready(function() {
+				
+				// define action
+				const LOAD = "load";
+				const UNLOAD = "unload";
+				const BEFOREUNLOAD = "beforeunload";
+			
+				//onChangeActive();
+				
+				//$(window).bind(LOAD, function(){
+					//onChangeActive();
+					//var number = actionTab(LOAD);
+					//});
+				
+				$(window).bind(BEFOREUNLOAD, function(){
+					alert("ok");
+					onChangeActive();
+					//var number = actionTab(BEFOREUNLOAD);
+					//console.log(number);
+					return 'Are you sure?';
+				});
+				
+				//$(window).bind(UNLOAD, function(e){
+					//var number = actionTab(UNLOAD);
+					
+					//console.log(number);
+				//});
+				
+				function actionTab(action){
+					var numberTab = 1;
+					// Check browser support LocalStorage
+					if(typeof(Storage) !== "undefined") {
+						
+						// Get total tab showing from LocalStorage
+						numberTab = localStorage.getItem('numberTabs');
+						
+						// If total tab is not null
+						if(numberTab !== null) {
+							
+							if(action == LOAD){
+								localStorage.setItem("numberTabs", ++numberTab);
+							} else if(action == BEFOREUNLOAD) {
+								if(numberTab == 1){
+									
+									localStorage.removeItem("numberTabs");
+										return 0 ;
+								} else {
+									localStorage.setItem("numberTabs", --numberTab);
+								}
+								
+							} else {
+								localStorage.removeItem("numberTabs");
+							}
+						} else {
+							localStorage.setItem("numberTabs", 1);
+							return 1;
+						}
+					}
+					return numberTab;
+				}
+				
+				function onChangeActive(){
+			    	zAu.send(new zk.Event(zk.Widget.$(this), 'onChange'));
+			    }
+			});
+		]]>
+	</script>
+</div>

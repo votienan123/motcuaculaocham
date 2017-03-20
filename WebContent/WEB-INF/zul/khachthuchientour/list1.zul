@@ -1,0 +1,161 @@
+<?page title="Quản lý khách thực hiện tour" contentType="text/html;charset=UTF-8"?>
+<div xmlns:zk="zk" xmlns:n="native" xmlns:x="xhtml" apply="org.zkoss.bind.BindComposer"
+	viewModel="@id('vm') @init('vn.toancauxanh.cms.service.ThucHienTourService')">
+	<zscript><![CDATA[
+		self.page.title= "Quản lý khách thực hiện tour";
+		vmTwo = new vn.toancauxanh.cms.service.ThucHienTourService();
+	]]></zscript>
+	<n:section class="content-header">
+		<n:h1>Quản lý khách thực hiện tour</n:h1>
+	</n:section>
+	<n:section class="content">
+	    <n:div class="row">
+	    	<n:div class="col-md-12">
+	    		<n:div class="box box-info">
+	    			<n:div class="box-header">
+	    				<n:h3 class="box-title">Tìm kiếm</n:h3>
+	    				<n:div class="box-tools pull-right">
+	    					<n:button type="button" class="btn btn-box-tool" data-widget="collapse"><n:i class="fa fa-minus"></n:i></n:button>
+	    				</n:div>
+	    			</n:div>
+	    			<n:div class="box-body">
+	    				<n:div class="row">
+<!-- 	    					<n:div class="col-md-3"> -->
+<!-- 	    						<n:div class="form-group"> -->
+<!-- 	    							<x:label class="control-label">Từ khóa</x:label> -->
+<!-- 	    							<textbox class="form-control" value="@bind(vm.arg.tukhoa)" placeholder="Nhập từ khoá" -->
+<!-- 	    								onOK="@command('search', notify=vm, attr='targetQuery|nhomCuaHois')" /> -->
+<!-- 	    						</n:div> -->
+<!-- 	    					</n:div> -->
+	    					
+	    					
+	    					<n:div class="col-md-2">
+	    						<n:div class="form-group">
+	    							<x:label class="control-label">Nhóm của hội</x:label>
+	    							<combobox readonly="true" style="display:block" width="100%" placeholder="Tất cả"
+	    								model="@load(vm.nhomCuaHoiListAndNull)"
+	    								selectedItem="@bind(vm.arg.nhomCuaHoi) @save(vmTwo.arg.nhomCuaHoi)">
+	    								<template name="model">
+	    									<comboitem label="@load(empty each ? 'Tất cả' :  each.ten)" />
+	    								</template>
+	    								<attribute name="onSelect"><![CDATA[
+											cbbCongTy.setRawValue(null);
+											vm.arg.remove("congTyKinhDoanh");
+	    								]]></attribute>
+	    							</combobox>
+	    						</n:div>
+	    					</n:div>
+	    					
+	    					<n:div class="col-md-3">
+	    						<n:div class="form-group">
+	    							<x:label class="control-label">Công ty kinh doanh</x:label>
+	    							<combobox readonly="true" style="display:block" width="100%" placeholder="Tất cả"
+	    								model="@load(vm.getCongTyKinhDoanhListAndNull(vm.arg.nhomCuaHoi))" id="cbbCongTy"
+	    								selectedItem="@bind(vm.arg.congTyKinhDoanh) @save(vm.arg.congTyKinhDoanhSearch, before='search')">
+	    								<template name="model">
+	    									<comboitem label="@load(empty each ? 'Tất cả' :  each.ten)" />
+	    								</template>
+	    							</combobox>
+	    						</n:div>
+	    					</n:div>
+	    					
+	    					<n:div class="col-md-2">
+	    						<n:div class="form-group">
+									<x:label class="control-label">Ngày thực hiện tour:</x:label>
+									<datebox width="100%" placeholder="dd/MM/yyyy" class="mis-datebox-inner"
+										format="dd/MM/yyyy" value="@bind(vm.tuNgay)" readonly="false" />
+								</n:div>
+	    					</n:div>
+	    					
+	    					<n:div class="col-md-2">
+	    						<x:label class="control-label">&#160;</x:label>
+	    						<n:div class="form-group">
+	    							<x:button class="btn btn-warning" type="button" onClick="@command('search', notify=vm, attr='nhomCuaHois')" >
+										<n:i class="fa fa-search"></n:i> Tìm kiếm
+									</x:button>
+	    						</n:div>
+	    					</n:div>
+	    				</n:div>
+	    			</n:div>
+	    		</n:div>
+	    	</n:div>
+	    	<n:div class="col-md-12">
+	    		<n:div class="box box-success">
+	    			<!-- <n:div class="box-header">
+	    				<n:h3 class="box-title"></n:h3>
+	    				<n:div class="box-tools pull-right">
+	    					<x:button class="btn btn-success"
+	    						onClick="@command('redirectPage', zul='khachdatve/add.zul', vmArgs=vm, vm=null)">
+	    						<n:i class="fa fa-plus"></n:i>
+	    						Đặt vé
+	    					</x:button>
+	    				</n:div>
+	    			</n:div> -->
+	    			
+	    			<!-- /.box-header -->
+	    			<n:div class="box-body">
+    					<n:div class="row">
+    						<n:div class="col-md-12">
+    							<tabbox width="100%" height="auto" mold="accordion" id="tabbox">
+									<tabs children="@load(vm.nhomCuaHois)">
+										<template name="children" var="nhom">
+									    	<tab label="@load(nhom.tenVaSoLuongVeTour)" onClick="@command('clickTabNhom', nhom=nhom, tab=tab0, tabpanels=tabpanels, index=nhomStatus.index)" />
+									    </template>
+									</tabs>
+								    <tabpanels children="@load(vm.nhomCuaHois)" id="tabpanels">
+								    	<template name="children" var="nhom">
+								    		<tabpanel>
+								    			<grid model="@load(vm.getCongTyKinhDoanhs(nhom))" width="100%" emptyMessage="Không có danh sách khách đặt vé">
+													<columns>
+														<column label="STT" hflex="min" style="text-align:center"/>
+														<column label="Tên công ty" width="20%" />
+														<column label="Ngày thực hiện tour" width="10%" style="text-align:center" />
+														<column label="Số lượng khách" width="10%" style="text-align:center" />
+														<column label="Điều tiết" hflex="min" style="text-align:center" />
+														<column label="Khách thực hiện tour thành công" hflex="min" style="text-align:center" />
+														<column label="Thao tác" style="text-align:center" width="110px" />
+													</columns>
+													<template name="model">
+														<row apply="org.zkoss.bind.BindComposer" viewModel="@id('item') @init(each)">
+															<label value="@bind(forEachStatus.index + 1 + vm.arg.page * vm.arg.pagesize)" style="text-align:center;display:block"/>
+															<a label="@load(each.ten)" onClick="@command('redirectThucHienTourPage', zul='khachthuchientour/add-nhapsobaoton.zul', vmArgs=vm, vm=item)" style="text-align:center"/>
+															<label value="@load(each.ngayThucHienTour) @converter('formatedDate',format='dd/MM/yyyy')" style="text-align:center;display:block" />
+															<label value="@load(each.tongSoLuongVe eq '' ? 0 : each.tongSoLuongVe)" style="display:block;text-align:center"/>
+															<label value="@load(String.format('%s %d', '+'	, each.tongSoLuongKhachDieuTiet))" style="text-align:center;display:block"/>
+	 														<label value="@load(each.soLuongKhachThucHienTourThanhCong)" style="text-align:center;display:block"/>
+															<div class="text-align-center">
+																<x:button title="Điều tiết vé" class="btn btn-warning btn-xs"
+																	zk:if="${entry.quyen.khachdatve_dieutietve}"
+																	onClick="@command('redirectThucHienTourPage', zul='khachthuchientour/view.zul', vmArgs=vm, vm=item)">
+																	<n:i class="fa fa-calendar"></n:i>
+																</x:button>
+																<x:button title="Nhập giấy bảo tồn" class="btn btn-primary btn-xs"
+																	zk:if="${entry.quyen.khachdatve_nhapgiaybaoton and nhanVien.congTyKinhDoanh eq each}"
+																	onClick="@command('redirectPage', zul='khachthuchientour/add-nhapsobaoton.zul', vmArgs=vm, vm=item)">
+																	<n:i class="fa fa-edit"></n:i>
+																</x:button>
+															</div>
+														</row>
+													</template>
+												</grid>
+											
+												<!-- <paging pageSize="@load(vm.arg.pagesize)" totalSize="@load(vm.targetQuery.fetchCount())" 
+													visible="@load(vm.targetQuery.fetchCount() > vm.arg.pagesize ? true : false)"
+													activePage="@bind(vm.arg.page)" onPaging="@command('cmd', notify=vm, atr='targetQuery')" /> -->
+								    		
+									    	</tabpanel>
+									    </template>
+								    </tabpanels>
+								</tabbox>
+                            </n:div>
+                        </n:div>
+	                </n:div>
+	                <!-- /.box-body -->
+	            </n:div>
+	            <!-- /.box -->
+	        </n:div>
+	        <!-- /.col -->
+	    </n:div>
+	    <!-- /.row -->
+	</n:section>
+</div>

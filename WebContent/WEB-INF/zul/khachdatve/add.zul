@@ -1,0 +1,2 @@
+<?component name="add-datve-view" inline="true" macroURI="add-datve-view.zul"?>
+<add-datve-view model="${entry.datVes.type().newInstance()}" vmArgs="${arg.vmArgs}" save="Tạo mới đặt vé" />

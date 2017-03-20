@@ -1,0 +1,116 @@
+<?page title="Quản lý thông báo" contentType="text/html;charset=UTF-8"?>
+<div xmlns:zk="zk" xmlns:n="native" xmlns:x="xhtml" apply="org.zkoss.bind.BindComposer"
+	viewModel="@id('vm') @init('vn.toancauxanh.gg.model.DoiTuong')"
+	validationMessages="@id('vmsgs')">
+	<zscript><![CDATA[
+		self.page.title= "Lịch sử điều trị";
+		import vn.toancauxanh.gg.model.DoiTuong;
+		String idStr = execution.getParameter("id");
+		Long id = Long.parseLong(idStr);
+		DoiTuong dt = new DoiTuong();
+		dt = vm.core().em().find(DoiTuong.class, id);
+		listThongTinViPham = dt.listThongTinViPham;
+		import java.awt.*;
+		import java.awt.image.*;
+		import java.awt.geom.*;
+		BufferedImage imagevar2 = new BufferedImage(80, 80, BufferedImage.TYPE_INT_ARGB);
+	]]></zscript>
+	<n:section class="content-header">
+		<div class="bread-div">			
+			<a href="/${resource}/xem/${dt.id}">&lt; Hồ sơ ${dt.hoVaTen}</a>
+		</div>
+		<n:span class="header-title">Lịch sử điều trị</n:span>
+	</n:section>
+	<n:section class="content">	
+		<n:div class="row">
+	    	<n:div class="col-md-12">
+	    		<div class="lich-su-type-item">
+	    			<div class="ls-heading open">
+	    				LỊCH SỬ ĐIỀU TRỊ TẠI TRUNG TÂM METHADONE
+	    			</div>
+	    			<div class="ls-content first">   
+	    				<div children="@load(dt.listThongTinDieuTriMethadoneAll)">
+	    					<template name="children" var="lichSu">
+	    						<div class="doi-tuong-item" style="margin-left:0px;margin-right:0px">
+									<div class="doi-tuong-index">
+										<label value="@load(lichSuStatus.index+1)"/>
+									</div>
+									<div class="doi-tuong-content">
+										<div class="row">
+											<div class="col-md-6 pd7">												
+												<n:span class="bold">Ngày khởi liều: </n:span> <label value="@load(lichSu.ngayKhoiLieu) @converter('formatedDate',format='dd/MM/yyyy')"/>
+											</div>
+											<div class="col-md-6 pd7">												
+												<n:span class="bold">Nhận xét quá trình điều trị: </n:span> ${lichSu.nhanXetQuaTrinhDieuTri}
+											</div>													
+											<div class="col-md-6 pd7">												
+												<n:span class="bold">Ngày ngừng điều trị: </n:span> <label value="@load(lichSu.ngayNgungDieuTri) @converter('formatedDate',format='dd/MM/yyyy')"/>
+											</div>
+											<div class="col-md-6 pd7">												
+												<n:span class="bold">Hành vi vi phạm pháp luật: </n:span> ${lichSu.hanhViViPham.ten}
+											</div>
+											<div class="col-md-6 pd7">												
+												<n:span class="bold">Ngày ra khỏi chương trình: </n:span> <label value="@load(lichSu.ngayRaKhoiChuongTrinh) @converter('formatedDate',format='dd/MM/yyyy')"/>
+											</div>
+											<div class="col-md-6 pd7">												
+												<n:span class="bold">Lý do ra khỏi chương trình: </n:span> ${lichSu.lyDoRaKhoiChuongTrinh}
+											</div>	
+										</div>
+										
+									</div>
+									<div class="doi-tuong-action">
+										<x:a zk:if="${entry.quyen.thongtindieutritaitrungtammethadone_sua}" 
+											 onClick="@command('redirectPageHanhVi', zul='thongtindieutrimethadone/view.zul', vmArgs=dt, vm=lichSu, doiTuong=dt, isNew=false)" 
+											style="margin-left:-26px" class="chi-tiet-dt-url">
+  											<n:i class="fa fa-pencil-square-o"></n:i> Sửa
+  										</x:a>
+									</div>
+								</div>
+	    					</template>
+	    				</div>
+	    			</div>
+	    		</div>	
+	    		
+	    		
+	    		<div class="lich-su-type-item">
+	    			<div class="ls-heading open">
+	    				LỊCH SỬ ĐIỀU TRỊ TẠI BỆNH VIỆN TÂM THẦN
+	    			</div>
+	    			<div class="ls-content first">   
+	    				<div children="@load(dt.listThongTinDieuTriTamThanAll)">
+	    					<template name="children" var="lichSu">
+	    						<div class="doi-tuong-item" style="margin-left:0px;margin-right:0px">
+									<div class="doi-tuong-index">
+										<label value="@load(lichSuStatus.index+1)"/>
+									</div>
+									<div class="doi-tuong-content">
+										<div class="row">
+											<div class="col-md-6 pd7">												
+												<n:span class="bold">Ngày bắt đầu: </n:span> <label value="@load(lichSu.ngayBatDauDieuTri) @converter('formatedDate',format='dd/MM/yyyy')"/>
+											</div>
+											<div class="col-md-6 pd7">												
+												<n:span class="bold">Nhận xét quá trình điều trị: </n:span> ${lichSu.nhanXetQuaTrinhDieuTri}
+											</div>													
+											<div class="col-md-6 pd7">												
+												<n:span class="bold">Ngày kết thúc: </n:span> <label value="@load(lichSu.ngayKetThucDieuTri) @converter('formatedDate',format='dd/MM/yyyy')"/>
+											</div>
+										</div>
+										
+									</div>
+									<div class="doi-tuong-action">
+										<x:a zk:if="${entry.quyen.thongtindieutritaibenhvientamthan_sua}"  
+											onClick="@command('redirectPageHanhVi', zul='thongtindieutritamthan/view.zul', vmArgs=dt, vm=lichSu, doiTuong=dt, isNew=false)" 
+											style="margin-left:-26px" class="chi-tiet-dt-url">
+  											<n:i class="fa fa-pencil-square-o"></n:i> Sửa
+  										</x:a>
+									</div>
+								</div>
+	    					</template>
+	    				</div>
+	    			</div>
+	    		</div>	
+	    			
+	    	</n:div>
+	    </n:div>
+	</n:section>
+</div>

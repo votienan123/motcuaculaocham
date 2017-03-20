@@ -1,0 +1,66 @@
+<?page title="Quản lý thông báo" contentType="text/html;charset=UTF-8"?>
+<div xmlns:zk="zk" xmlns:n="native" xmlns:x="xhtml" apply="org.zkoss.bind.BindComposer"
+	viewModel="@id('vm') @init('vn.toancauxanh.gg.model.DoiTuong')"
+	validationMessages="@id('vmsgs')">
+	<zscript><![CDATA[
+		self.page.title= "Lịch sử cập nhật hồ sơ";
+		import vn.toancauxanh.gg.model.DoiTuong;
+		String idStr = execution.getParameter("id");
+		Long id = Long.parseLong(idStr);
+		DoiTuong dt = new DoiTuong();
+		dt = vm.core().em().find(DoiTuong.class, id);
+	]]></zscript>
+	<n:section class="content-header">
+		<div class="bread-div">			
+			<a href="/${resource}/xem/${dt.id}">&lt; Hồ sơ ${dt.hoVaTen}</a>
+		</div>
+		<n:span class="header-title">Lịch sử cập nhật hồ sơ</n:span>
+	</n:section>
+	<n:section class="content">	
+		<n:div class="row">
+	    	<n:div class="col-md-12">
+	    		<div class="lich-su-type-item">
+	    			<div class="ls-heading open">
+	    				LỊCH SỬ CẬP NHẬT HỒ SƠ ĐỐI TƯỢNG
+	    			</div>
+	    			<div class="ls-content first">   
+	    				<div children="@load(dt.listLichSuThayDoi)">
+	    					<template name="children" var="thongTin">
+	    						<div class="doi-tuong-item">
+									<div class="doi-tuong-index">
+										<label value="@load(thongTinStatus.index + 1)"/>
+									</div>
+									<div class="doi-tuong-content">
+										<div class="row">
+											<div class="col-md-6">												
+												<n:span class="bold">Nội dung cập nhật: </n:span> ${thongTin.noiDung}
+											</div>
+											<div class="col-md-5">												
+												<n:span class="bold">Ngày giờ cập nhật: </n:span> <label value="@load(thongTin.ngaySua) @converter('formatedDate',format='dd/MM/yyyy hh:mm')" /> 
+											</div>		
+											<div class="col-md-6" style="clear:both">												
+												<n:span class="bold">Cán bộ cập nhật: </n:span> ${thongTin.nguoiTao.hoVaTen}
+											</div>													
+											<div class="col-md-5">												
+												<n:span class="bold">Đơn vị: </n:span> ${thongTin.nguoiTao.donVi ne null ? thongTin.nguoiTao.donVi.ten : ''}
+											</div>
+											<div class="col-md-1">
+												<div class="hanh-vi-action">
+													<x:a 
+														href="${ctxPath}/${resource}/chitietlichsucapnhat/${dt.id}/${thongTin.id}">
+														<n:i class="fa fa-eye"></n:i>
+													</x:a>
+												</div>												
+												
+											</div>
+										</div>
+									</div>
+								</div>
+	    					</template>
+	    				</div>
+	    			</div>
+	    		</div>		    			
+	    	</n:div>
+	    </n:div>
+	</n:section>
+</div>

@@ -1,0 +1,87 @@
+<window xmlns:n="native" xmlns:x="xhtml" xmlns:w="client" xmlns:zk="zk" apply="org.zkoss.bind.BindComposer"
+	id="wdn" border="normal" mode="modal" action="show: slideIn"
+	contentStyle="overflow:auto;" closable="true" title="${arg.save}"
+	onClose="@command('invokeGG', notify=vmArgs, detach=wdn, attr='targetQuery')"
+	whatever="@load(false, after='saveGiaVeDiTourRieng') @converter('vn.toancauxanh.service.DetachConverter')"
+	viewModel="@id('vm') @init(arg.model)" validationMessages="@id('vmsgs')" 
+	form="@id('fx') @load(vm) @save(vm, before={'saveGiaVeDiTourRieng'}) @validator(vm.validator)" width="50%">
+	<zscript>
+		vmArgs = arg.get("vmArgs");
+	</zscript>
+		
+	<div class="row box-body">
+		<div class="col-md-12">
+			<div class="form-group">
+				<x:label>Số lượng khách<n:small class="required"> *</n:small></x:label>
+				<textbox class="form-control" width="100%" maxlength="255"
+					value="@bind(vm.ten) @save(vm.ten, before={'saveGiaVeDiTourRieng'}) 
+					@validator('vn.toancauxanh.vm.BaseValid', constraint='no empty', field='ten', id=vm, cmsg='Danh mục này đã tồn tại.')" />
+				<label class="error" value="@load(vmsgs[self.previousSibling])" />
+			</div>
+		</div>
+		
+		<div class="col-md-6">
+			<div class="form-group">
+				<x:label>Số lượng từ<n:small class="required"> *</n:small></x:label>
+				<doublebox class="form-control" width="100%" format="#,##0" locale="it" 
+					value="@bind(vm.soNguoiTu) @save(vm.soNguoiTu, before={'saveGiaVeDiTourRieng'}) 
+						@validator('vn.toancauxanh.vm.BaseValid', constraint='no negative, no zero, no empty')">
+					<attribute w:name="doKeyPress_">
+						<![CDATA[
+							function(evt) {if (!this._shallIgnore(evt, "0123456789")) this.$doKeyPress_(evt);}
+						]]>
+					</attribute>
+				</doublebox>
+				<label class="error" value="@load(vmsgs[self.previousSibling])" />
+			</div>
+		</div>
+		
+		<div class="col-md-6">
+			<div class="form-group">
+				<x:label>Số lượng đến<n:small class="required"> *</n:small></x:label>
+				<doublebox class="form-control" width="100%" format="#,##0" locale="it" 
+					value="@bind(vm.soNguoiDen) @save(vm.soNguoiDen, before={'saveGiaVeDiTourRieng'}) 
+						@validator('vn.toancauxanh.vm.BaseValid', constraint='no negative, no zero, no empty')">
+					<attribute w:name="doKeyPress_">
+						<![CDATA[
+							function(evt) {if (!this._shallIgnore(evt, "0123456789")) this.$doKeyPress_(evt);}
+						]]>
+					</attribute>
+				</doublebox>
+				<label class="error" value="@load(vmsgs['lblErrSoNguoi'])" />
+			</div>
+		</div>
+		
+		<div class="col-md-12">
+			<div class="form-group">
+				<x:label>Giá vé (VNĐ)<n:small class="required"> *</n:small></x:label>
+				<doublebox class="form-control" width="100%" format="#,##0" locale="it" value="@bind(vm.giaVe) @save(vm.giaVe, before={'saveGiaVeDiTourRieng'}) 
+					@validator('vn.toancauxanh.vm.BaseValid', constraint='no negative, no zero, no empty')">
+					<attribute w:name="doKeyPress_">
+						<![CDATA[
+							function(evt) {if (!this._shallIgnore(evt, "0123456789")) this.$doKeyPress_(evt);}
+						]]>
+					</attribute>
+				</doublebox>
+				<label class="error" value="@load(vmsgs[self.previousSibling])" />
+			</div>
+		</div>
+		<div class="col-md-12">
+			<div class="form-group">
+				<checkbox label="Áp dụng" checked="@bind(vm.checkApDung)" />
+			</div>
+		</div>
+	</div>
+	
+	<div class="row box-footer">  
+		<x:button class="btn btn-default pull-right" onClick="@command('invokeGG', notify=vmArgs, detach=wdn, attr='targetQuery')">
+			Hủy
+		</x:button>
+		<x:button style="margin-right: 10px;" class="btn btn-primary pull-right" 
+		 	zk:if="${(vm.noId() and entry.quyen.cauhinhgiaveditourrieng_them) or (!vm.noId() and entry.quyen.cauhinhgiaveditourrieng_sua)}"
+			onClick="@command('saveGiaVeDiTourRieng', list=vmArgs, attr='targetQuery', wdn=wdn)">
+			<n:i class="fa fa-save"></n:i>&#160;&#160;Lưu
+		</x:button>
+	</div>
+</window>
+

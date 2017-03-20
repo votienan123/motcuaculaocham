@@ -1,0 +1,46 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<window xmlns:n="native" xmlns:x="xhtml" xmlns:zk="zk" xmlns:w="client" apply="org.zkoss.bind.BindComposer"
+	id="wdn" border="normal" mode="modal" action="show: slideIn"
+	contentStyle="overflow:auto;" closable="true" title="Bạn muốn hủy vé?"
+	onClose="@command('invokeGG', notify=vmArgs, detach=wdn, attr='targetQuery')"
+	whatever="@load(false, after='saveTinhTrangVe') @converter('vn.toancauxanh.service.DetachConverter')"
+	viewModel="@id('vm') @init(arg.vm)" validationMessages="@id('vmsgs')" 
+	form="@id('fx') @load(vm) @save(vm, before={'saveTinhTrangVe'}) @validator(vm.validator)" width="30%">
+	<zscript><![CDATA[
+		vmArgs = arg.get("vmArgs");
+		String str = "";
+		boolean isHuyVe = true;
+		vm.lyDoTinhTrangVe = "";
+		if (vn.toancauxanh.gg.model.enums.TinhTrangVeEnum.DAT_VE.equals(vm.tinhTrangVe)
+			|| vn.toancauxanh.gg.model.enums.TinhTrangVeEnum.PHUC_HOI_VE.equals(vm.tinhTrangVe)) {
+			str = "Lý do huỷ vé";
+			isHuyVe = true;
+			wdn.setTitle("Bạn muốn hủy vé?");
+		} else {
+			str = "Lý do phục hồi vé";
+			isHuyVe = false;
+			wdn.setTitle("Bạn muốn phục hồi vé");
+		}
+	]]></zscript>
+	
+	<div class="row box-body">
+		<div class="col-md-12">
+			<div class="form-group">
+				<x:label>${str}</x:label>
+				<textbox value="@bind(vm.lyDoTinhTrangVe) @save(vm.lyDoTinhTrangVe, before={'saveTinhTrangVe'}) @validator('vn.toancauxanh.vm.BaseValid', constraint='no empty')"
+					class="form-control" rows="5" />
+				<label class="error" value="@load(vmsgs[self.previousSibling])" />
+			</div>
+		</div>
+	</div>
+	
+	<div class="row box-footer">
+		<x:button style="margin-right: 10px;" class="btn btn-primary pull-right"
+			onClick="@command('saveTinhTrangVe', list=vmArgs, attr='targetQuery', wdn=wdn, isHuyVe=isHuyVe)">
+			Có
+		</x:button>
+		<x:button class="btn btn-default pull-right" onClick="@command('invokeGG', notify=vmArgs, detach=wdn, attr='targetQuery')">
+			Không
+		</x:button>
+	</div>
+</window>

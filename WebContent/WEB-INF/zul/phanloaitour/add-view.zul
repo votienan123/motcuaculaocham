@@ -1,0 +1,100 @@
+<window xmlns:n="native" xmlns:x="xhtml" xmlns:zk="zk" xmlns:w="client" apply="org.zkoss.bind.BindComposer"
+	id="wdn" border="normal" mode="modal" action="show: slideIn"
+	contentStyle="overflow:auto;" closable="true" title="${arg.save}"
+	onClose="@command('invokeGG', notify=vmArgs, detach=wdn, attr='targetTourQuery')"
+	whatever="@load(false, after='savePhanLoaiTour') @converter('vn.toancauxanh.service.DetachConverter')"
+	viewModel="@id('vm') @init(arg.model)" validationMessages="@id('vmsgs')" 
+	form="@id('fx') @load(vm) @save(vm, before={'savePhanLoaiTour'}) @validator(vm.validator)" width="50%">
+	<zscript>
+		vmArgs = arg.get("vmArgs");
+	</zscript>
+	<n:script><![CDATA[
+			function validateRemoveClass(className) {
+			    $('.' +className).hide();
+			}
+			
+			function validateAddClass(className, text) {
+			    $('.' +className).text(text).show();
+			}
+	]]></n:script>
+	<div class="row box-body">
+		<div class="col-md-12">
+			<div class="form-group">
+				<x:label>Tên loại tour<n:small class="required"> *</n:small></x:label>
+				<textbox class="form-control" width="100%" maxlength="255"
+					value="@bind(vm.ten) @save(vm.ten, before={'savePhanLoaiTour'}) @validator('vn.toancauxanh.vm.BaseValid', constraint='no empty')" />
+				<label class="error" value="@load(vmsgs[self.previousSibling])" />
+				<label class="error" value="@load(vmsgs['lblErrTenLoaiTour'])" />
+			</div>
+		</div>
+		<div class="col-md-12">
+			<div class="form-group">
+				<x:label>Lớn<n:small class="required"> *</n:small></x:label>				
+				<doublebox class="form-control" width="100%" format="#,##0" locale="it" 
+					value="@bind(vm.giaNguoiLon) @save(vm.giaNguoiLon, before={'savePhanLoaiTour'}) 
+						@validator('vn.toancauxanh.vm.BaseValid', constraint='no negative, no zero, no empty')">
+					<attribute w:name="doKeyPress_">
+						<![CDATA[
+							function(evt) {if (!this._shallIgnore(evt, "0123456789")) this.$doKeyPress_(evt);}
+						]]>
+					</attribute>
+				</doublebox>
+				<label class="error" value="@load(vmsgs[self.previousSibling])" />
+			</div>
+		</div>
+		<div class="col-md-12">
+			<div class="form-group">
+				<x:label>Nhỏ (5 - 9)</x:label>				
+				<doublebox class="form-control" width="100%" format="#,##0" locale="it" 
+					value="@bind(vm.giaTreEm4Den9) @save(vm.giaTreEm4Den9, before={'savePhanLoaiTour'})">
+					<attribute w:name="doKeyPress_">
+						<![CDATA[
+							function(evt) {if (!this._shallIgnore(evt, "0123456789")) this.$doKeyPress_(evt);}
+						]]>
+					</attribute>
+				</doublebox>
+			</div>
+		</div>
+		<div class="col-md-12">
+			<div class="form-group">
+				<x:label>Bé (1 - 4)</x:label>				
+				<doublebox class="form-control" width="100%" format="#,##0" locale="it" 
+					value="@bind(vm.giaTreEm1Den3) @save(vm.giaTreEm1Den3, before={'savePhanLoaiTour'})">
+					<attribute w:name="doKeyPress_">
+						<![CDATA[
+							function(evt) {if (!this._shallIgnore(evt, "0123456789")) this.$doKeyPress_(evt);}
+						]]>
+					</attribute>
+				</doublebox>
+			</div>
+		</div>
+		<div class="col-md-12">
+			<div class="form-group">
+				<x:label>Mô tả</x:label>
+				<textbox class="form-control" rows="5" value="@bind(vm.moTa)" />
+			</div>
+		</div>
+		<div class="col-md-12">
+			<div class="form-group">
+				<checkbox label="Là tour buổi chiều" checked="@bind(vm.tourBuoiChieu)" />
+			</div>
+		</div>
+		<div class="col-md-12">
+			<div class="form-group">
+				<checkbox label="Áp dụng" checked="@bind(vm.checkApDung)" />
+			</div>
+		</div>
+	</div>
+	
+	<div class="row box-footer">  
+		<x:button class="btn btn-default pull-right" onClick="@command('invokeGG', notify=vmArgs, detach=wdn, attr='targetTourQuery')">
+			Hủy
+		</x:button>
+		<x:button style="margin-right: 10px;" class="btn btn-primary pull-right" 
+		 	zk:if="${(vm.noId() and entry.quyen.phanloaitour_them) or (!vm.noId() and entry.quyen.phanloaitour_sua)}"
+			onClick="@command('savePhanLoaiTour', list=vmArgs, attr='targetTourQuery', wdn=wdn)">
+			<n:i class="fa fa-save"></n:i>&#160;&#160;Lưu
+		</x:button>
+	</div>
+</window>
+

@@ -1,0 +1,97 @@
+<?page title="Quản lý thông báo" contentType="text/html;charset=UTF-8"?>
+<div xmlns:zk="zk" xmlns:n="native" xmlns:x="xhtml" apply="org.zkoss.bind.BindComposer"
+	viewModel="@id('vm') @init('vn.toancauxanh.cms.service.DoiTuongService')">
+	<zscript><![CDATA[
+		self.page.title= "Quản lý hồ sơ";
+	]]></zscript>
+	<n:section class="content-header">
+		<n:span class="header-title">Quản lý hồ sơ</n:span>
+		<n:div class="box-tools pull-right">
+			<div class="box-search box-search-hs" style="display:inline;">
+				<textbox class="form-control" value="@bind(vm.arg.tukhoa)" style="width:200px;display:inline;" placeholder="Nhập tên, CMND để tìm kiếm"
+					onOK="@command('cmd', notify=vm, attr='*')" />
+				<x:button class="btn btn-warning" type="button"
+	    			onClick="@command('cmd', notify=vm, attr='targetQuery')" >
+					<n:i class="fa fa-search"></n:i>
+				</x:button>
+			</div>
+			<x:a class="btn btn-success" zk:if="${vm.quyen.doituong_them}"
+				href="${ctxPath}/${resource}/them">
+				<n:i class="fa fa-plus"></n:i>&#160;&#160;Thêm hồ sơ
+			</x:a>
+		</n:div>
+	</n:section>
+	<n:section class="content">
+	    <n:div class="row">
+	    	<n:div class="col-md-12">
+	    		<n:div class="box box-solid">
+	    			<n:div class="box-header box-header-ds">
+	    				<n:h3 class="box-title">DANH SÁCH HỒ SƠ</n:h3>	    				
+	    			</n:div>
+	    			<!-- /.box-header -->
+	    			<n:div class="box-body box-body-ds pd0">
+    					<n:div class="row">
+    						<n:div class="col-md-12 ds-ho-so">
+    							<div children="@load(vm.page(vm.targetQuery).fetch())">
+    								<template name="children" var="doiTuong">
+    									<div class="doi-tuong-item ${doiTuongStatus.index % 2 == 0 ? '' : 'even'} ${doiTuongStatus.last ? 'last' : ''}">
+    										<div class="doi-tuong-index">
+	    										<div class="visible-xs">
+    												<n:span class="bold">Số thứ tự: </n:span>
+	    											<label value="@load(doiTuongStatus.index+1)"/>
+    											</div>
+    											<div class="hidden-xs">
+    												<label value="@load(doiTuongStatus.index+1)"/>
+    											</div>
+	    									</div>
+	    									<div class="doi-tuong-content">
+	    										<div class="row">
+	    											<div class="col-md-3 col-sm-6">
+	    												<n:span class="bold">Họ và tên: </n:span>
+	    												<label value="@load(doiTuong.hoVaTen)" />
+	    											</div>
+	    											<div class="col-md-3 col-sm-6" visible="@load(doiTuong.ngaySinh ne null)">
+	    												<n:span class="bold">Ngày sinh: </n:span>
+	    												<label value="@load(doiTuong.ngaySinh) @converter('formatedDate',format='dd/MM/yyyy')" />
+	    											</div>
+	    											<div class="col-md-3 col-sm-6" visible="@load(doiTuong.ngaySinh eq null)">
+	    												<n:span class="bold">Năm sinh: </n:span>
+	    												<label value="@load(doiTuong.namSinh)" />
+	    											</div>
+	    											<div class="col-md-6 col-sm-6">
+	    												<n:span class="bold">Biệt danh: </n:span>
+	    												<label value="@load(doiTuong.tenKhac)" />
+	    											</div>
+	    											<div class="col-md-3 col-sm-6 line-2">
+	    												<n:span class="bold">Số CMND: </n:span>
+	    												<label value="@load(doiTuong.soCMND)" />
+	    											</div>
+	    											<div class="col-md-3 col-sm-6 line-2">
+	    												<n:span class="bold">Giới tính: </n:span>
+	    												<label value="@load(doiTuong.gioiTinh.ten)" />
+	    											</div>
+	    											<div class="col-md-6 col-sm-6 line-2">
+	    												<n:span class="bold">Tình trạng hiện hành: </n:span>
+	    												<label value="@load(doiTuong.thongTinViPhamHienHanhStr)" />
+	    											</div>
+	    										</div>
+	    									</div>	    									
+    										<div class="doi-tuong-action">
+	    										<a zk:if="${entry.quyen.doituong_xem}" href="/${resource}/xem/${doiTuong.id}" class="chi-tiet-dt-url">
+	    											Chi tiết >
+	    										</a>
+	    									</div>
+    									</div>    									
+    								</template>
+    							</div>    							
+								<paging pageSize="@load(vm.arg.pagesize)" totalSize="@load(vm.targetQuery.fetchCount())"
+									visible="@load(vm.targetQuery.fetchCount() > vm.arg.pagesize ? true : false)"
+									activePage="@bind(vm.arg.page)" onPaging="@command('cmd', notify=vm, atr='targetQuery')" />
+    						</n:div>
+    					</n:div>
+    				</n:div>
+    			</n:div>
+    		</n:div>
+	    </n:div>
+	</n:section>
+</div>

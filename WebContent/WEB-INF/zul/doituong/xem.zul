@@ -1,0 +1,519 @@
+<?page title="Quản lý thông báo" contentType="text/html;charset=UTF-8"?>
+<div xmlns:zk="zk" xmlns:n="native" xmlns:x="xhtml" apply="org.zkoss.bind.BindComposer"
+	viewModel="@id('vm') @init('vn.toancauxanh.gg.model.DoiTuong')"
+	validationMessages="@id('vmsgs')">
+	<zscript><![CDATA[
+		self.page.title= "Xem thông tin đối tượng";
+		import vn.toancauxanh.gg.model.DoiTuong;
+		String idStr = execution.getParameter("id");
+		Long id = Long.parseLong(idStr);
+		DoiTuong dt = new DoiTuong();
+		dt = vm.core().em().find(DoiTuong.class, id);
+		listThongTinViPham = dt.listThongTinViPham;
+		import java.awt.*;
+		import java.awt.image.*;
+		import java.awt.geom.*;
+		BufferedImage imagevar2 = new BufferedImage(80, 80, BufferedImage.TYPE_INT_ARGB);
+	]]></zscript>
+	<n:section class="content-header">
+		<div class="bread-div">			
+			<a href="/${resource}">&lt; Quản lý hồ sơ</a>
+		</div>
+		<n:span class="header-title">Hồ sơ ${dt.hoVaTen }</n:span>
+		<n:div class="box-tools pull-right">
+			<x:a class="delete-hoso" zk:if="${entry.quyen.doituong_xoa}"
+				zk:onClick="dt.deleteDoiTuong(resource);">
+				<n:i class="fa fa-trash"></n:i>
+				Xóa hồ sơ
+			</x:a>
+			<x:button class="btn btn-success" style="margin-left:10px"
+				onClick="@command('xuatLyLichDoiTuong', doiTuong=dt)">
+				<n:i class="fa fa-print"></n:i>
+				In ấn hồ sơ
+			</x:button>
+			<x:a class="btn btn-success" style="margin-left:10px" zk:if="${entry.quyen.doituong_lichsu}"
+				href="${ctxPath}/${resource}/lichsucapnhat/${idStr}">
+				<n:i class="fa fa-history"></n:i>
+				Lịch sử cập nhật
+			</x:a>
+			<x:a class="btn btn-success" style="margin-left:10px"
+				zk:if="${entry.quyen.doituong_sua}"
+				href="${ctxPath}/${resource}/sua/${idStr}">
+				<n:i class="fa fa-pencil-square-o"></n:i>
+				Cập nhật hồ sơ
+			</x:a>
+		</n:div>
+	</n:section>
+	<n:section class="content">	
+		<n:div class="row">
+	    	<n:div class="col-md-12">
+	    		<n:div class="box box-solid">
+	    			<n:div class="box-header">
+	    				<n:h3 class="box-title">THÔNG TIN CHUNG</n:h3>
+	    			</n:div>
+	    			<n:div class="box-body">
+	    				<n:div class="row">
+	    					<div class="col-md-2" style="text-align:center;">
+	    						<div class="form-group">
+									<image id="imageCmp" style="width: 120px; height: 160px; border: 1px solid #DDD; margin-bottom:15px;object-fit:cover;"
+										content="@load(dt.imageContent eq null ? imagevar2 : dt.imageContent) @save(dt.imageContent, before='saveDoiTuong')">
+									</image>
+								</div>
+	    					</div>
+	    					<div class="col-md-10">
+	    						<div class="row">
+	    							<div class="col-md-4 col-sm-6">
+			    						<div class="infor-item">
+			    							<n:span class="bold">Họ và tên: </n:span>
+			    							<label value="@load(dt.hoVaTen)" />
+			    						</div>
+			    						<div class="infor-item">
+			    							<n:span class="bold">Biệt danh: </n:span>
+			    							<label value="@load(dt.tenKhac)" />
+			    						</div>
+			    						<div class="infor-item" visible="@load(dt.ngaySinh ne null)">
+			    							<n:span class="bold">Ngày sinh: </n:span>
+			    							<label value="@load(dt.ngaySinh) @converter('formatedDate',format='dd/MM/yyyy')" />
+			    						</div>
+			    						<div class="infor-item" visible="@load(dt.ngaySinh eq null)">
+			    							<n:span class="bold">Nam sinh: </n:span>
+			    							<label value="@load(dt.namSinh)" />
+			    						</div>
+			    						<div class="infor-item">
+			    							<n:span class="bold">Giới tính: </n:span>
+			    							<label value="@load(dt.gioiTinh.ten)" />
+			    						</div>
+			    						<div class="infor-item">
+			    							<n:span class="bold">Đặc điểm: </n:span>
+			    							<label value="@load(dt.dacDiemNhanDang)" />
+			    						</div>
+			    						<div class="infor-item">
+			    							<n:span class="bold">Trình độ học vấn: </n:span>
+			    							<label value="@load(dt.trinhDoVanHoa.ten)" />
+			    						</div>
+			    						<div class="infor-item">
+			    							<n:span class="bold">Tình trạng việc làm: </n:span>
+			    							<label value="@load(dt.tinhTrangViecLam ne null ? dt.tinhTrangViecLam.text : '')" />
+			    						</div>	
+			    						<div class="infor-item">
+			    							<n:span class="bold">Nghề nghiệp: </n:span>
+			    							<label value="@load(dt.ngheNghiep.ten)" />
+			    						</div>			    						
+			    					</div>
+			    					<div class="col-md-4 col-sm-6">
+			    						<div class="infor-item">
+			    							<n:span class="bold">Số thẻ căn cước: </n:span>
+			    							<label value="@load(dt.soDinhDanh)" />
+			    						</div>
+			    						<div class="infor-item">
+			    							<n:span class="bold">Số CMND: </n:span>
+			    							<label value="@load(dt.soCMND)" />
+			    						</div>
+			    						<div class="infor-item">
+			    							<n:span class="bold">Ngày cấp CMND: </n:span>
+			    							<label value="@load(dt.ngayCapCMND) @converter('formatedDate',format='dd/MM/yyyy')" />
+			    						</div>
+			    						<div class="infor-item">
+			    							<n:span class="bold">Nơi cấp CMND: </n:span>
+			    							<label value="@load(dt.noiCapCMND.text)" />
+			    						</div>
+			    						<div class="infor-item">
+			    							<n:span class="bold">Nơi ĐKNKTT: </n:span>
+			    							<label value="@load(dt.diaChiThuongTruFull)" />
+			    						</div>
+			    						<div class="infor-item">
+			    							<n:span class="bold">Nơi ở hiện tại: </n:span>
+			    							<label value="@load(dt.diaChiHienNayFull)" />
+			    						</div>
+			    						<div class="infor-item">
+			    							<n:span class="bold">Thành phần gia đình: </n:span>
+			    							<label value="@load(dt.thanhPhanDoiTuong.ten)" />
+			    						</div>
+			    					</div>
+			    					<div class="col-md-4 col-sm-6">
+			    						<n:span class="bold semi-title">THÂN NHÂN</n:span>
+			    						<div children="@load(dt.listThongTinThanNhanDetail)">
+			    							<template name="children" var="thanNhan">
+			    								<div class="than-nhan-view-item">
+			    									<n:span class="bold">${thanNhan.quanHeGiaDinh.ten}:</n:span> ${thanNhan.hoVaTen}
+			    									<n:p style="margin-bottom:2px;">${thanNhan.namSinh} ${thanNhan.ngheNghiep ne null ? thanNhan.ngheNghiep.ten : '' }</n:p>
+			    									<n:p>${thanNhan.diaChiThuongTru}</n:p>
+			    								</div>
+			    							</template>
+			    						</div>
+		<!-- 	    						<div children="@load(dt.listDoiTuongLienQuanDetail)"> -->
+		<!-- 	    							<template name="children" var="lienQuan"> -->
+		<!-- 	    								<div class="than-nhan-view-item"> -->
+		<!-- 	    									<n:span class="bold">Đối tượng liên quan:</n:span> ${lienQuan.hoVaTen} -->
+		<!-- 	    									<n:p style="margin-bottom:2px;">${lienQuan.namSinh} ${lienQuan.ngheNghiep ne null ? lienQuan.ngheNghiep.ten : '' }</n:p> -->
+		<!-- 	    									<n:p>${lienQuan.diaChiThuongTru}</n:p> -->
+		<!-- 	    								</div> -->
+		<!-- 	    							</template> -->
+		<!-- 	    						</div> -->
+			    					</div>
+	    						</div>
+	    						
+	    						<div style="border-bottom:1px solid #f4f4f4;margin-bottom:6px;"></div>
+	    						
+	    						
+	    						<div class="row">
+	    							<div class="col-md-4 col-sm-6">
+			    						<div class="infor-item">
+			    							<n:span class="bold">Đối tượng nghiện: </n:span>
+			    							<label value="@load(dt.doiTuongNghien.text)" />
+			    						</div>
+			    						<div class="infor-item">
+			    							<n:span class="bold">Quyết định truy nã: </n:span>
+			    							<label value="@load(dt.coQuyetDinhTruyNa ? 'Có' : 'Không')" />
+			    						</div>
+			    						<div class="infor-item" if="${dt.coQuyetDinhTruyNa}">
+			    							<n:span class="bold">Tội phạm: </n:span>
+			    							<label value="@load(dt.toiPhamTruyNa)" />
+			    						</div>
+			    						<div class="infor-item" if="${dt.coQuyetDinhTruyNa}">
+			    							<n:span class="bold">Đơn vị ra quyết định: </n:span>
+			    							<label value="@load(dt.donViTruyNa)" />
+			    						</div>
+			    					</div>
+			    					<div class="col-md-4 col-sm-6">
+			    						<div class="infor-item">
+			    							<n:span class="bold">Quyết định truy tìm: </n:span>
+			    							<label value="@load(dt.coQuyetDinhTruyTim ? 'Có' : 'Không')" />
+			    						</div>
+			    						<div class="infor-item">
+			    							<n:span class="bold">Dấu hiệu nghi phạm pháp luật: </n:span>
+			    							<label value="@load(dt.dauHieuNghiVanVPPL)" />
+			    						</div>
+			    						<div class="infor-item">
+			    							<n:span class="bold">Biểu hiện loạn thần hiện hành: </n:span>
+			    							<label value="@load(dt.bieuHienLoanThanKinh)" />
+			    						</div>
+			    					</div>
+			    					<div class="col-md-4 col-sm-6">
+			    						<div class="infor-item">
+			    							<n:span class="bold">Cán bộ quản lý: </n:span>
+			    							<label value="@load(dt.canBoQuanLy)" />
+			    						</div>
+			    						<div class="infor-item">
+			    							<label value="@load(dt.donViCanBoQuanLy.ten)" />
+			    						</div>
+			    						<div class="infor-item">
+			    							<label value="@load(dt.soDTCanBoQuanLy)" />
+			    						</div>
+			    					</div>
+	    						</div>
+	    					</div>
+	    				</n:div>
+	    			</n:div>
+	    			
+	    			<n:div class="box-header box-top2" zk:if="${entry.quyen.hinhthucxulydangapdung_lietke}">
+	    				<n:span class="box-title">HÌNH THỨC XỬ LÝ, QUẢN LÝ ĐANG ÁP DỤNG</n:span>
+	    				<x:a class="btn-history" href="${ctxPath}/${resource}/lichsu/${dt.id}" zk:if="${entry.quyen.hinhthucxulydangapdung_lichsu}">
+   							<n:i class="fa fa-history"></n:i>&#160;&#160;Xem lịch sử vi phạm
+   						</x:a>
+   						<n:div class="box-tools pull-right" zk:if="${entry.quyen.hinhthucxulydangapdung_them}">
+   							<x:a class="btn btn-success" 
+								onClick="@command('redirectPageHanhVi', zul='thongtinvipham/add.zul', vmArgs=dt, vm=null, doiTuong=dt, isNew=true)">
+								<n:i class="fa fa-plus"></n:i>
+								Thêm mới hình thức
+							</x:a>
+   						</n:div>   						
+	    			</n:div>
+	    			
+	    			<n:div class="box-body box-body-ds pdlr20" zk:if="${entry.quyen.hinhthucxulydangapdung_lietke}">
+	    				<n:div class="row">
+	    					<div class="col-md-12">						
+								<div children="@load(dt.listThongTinViPham)">
+									<template name="children" var="thongTin">
+										
+										<div class="doi-tuong-item ${thongTinStatus.last ? 'last' : ''}">
+    										<div class="doi-tuong-index">
+	    										<label value="@load(thongTinStatus.index + 1)"/>
+	    									</div>
+	    									<div class="doi-tuong-content">
+	    										<div class="row">
+	    											<div class="col-md-4 col-sm-6 pd7">												
+														<n:span class="bold">Thời điểm phát hiện: </n:span> <label value="@load(thongTin.ngayViPham) @converter('formatedDate',format='dd/MM/yyyy')"/>
+													</div>
+													<div class="col-md-4 col-sm-6  pd7">												
+														<n:span class="bold">Hành vi vi phạm: </n:span> ${thongTin.hanhViViPham.ten}
+													</div>													
+													<div class="col-md-4 col-sm-6 pd7">												
+														<n:span class="bold">Hình thức xử lý: </n:span> ${thongTin.hinhThucXuLy.ten}
+													</div>
+													<div class="col-md-4 col-sm-6 pd7">												
+														<n:span class="bold">Thời điểm kết thúc: </n:span> <label value="@load(thongTin.ngayKetThuc) @converter('formatedDate',format='dd/MM/yyyy')"/>
+													</div>
+													<div class="col-md-4 col-sm-6 pd7">												
+														<n:span class="bold">Đơn vị xử lý: </n:span> ${thongTin.donVi.ten}
+													</div>
+													<div class="col-md-4 col-sm-6 pd7">												
+														<n:span class="bold">Mô tả hình thức xử lý: </n:span> ${thongTin.moTaHinhThucXuLy}
+													</div>
+	    										</div>
+	    									</div>
+	    									<div class="doi-tuong-action">
+	    										<div class="hanh-vi-action">
+													<x:a class="edit-action" zk:if="${entry.quyen.hinhthucxulydangapdung_sua}"
+														onClick="@command('redirectPageHanhVi', zul='thongtinvipham/view.zul', vmArgs=dt, vm=thongTin, doiTuong=dt, isNew=false)">
+														<n:i class="fa fa-pencil-square-o"></n:i>Sửa
+													</x:a>
+													<x:a class="edit-action" zk:if="${entry.quyen.hinhthucxulydangapdung_xem and !entry.quyen.hinhthucxulydangapdung_sua}"
+														onClick="@command('redirectPageHanhVi', zul='thongtinvipham/view.zul', vmArgs=dt, vm=thongTin, doiTuong=dt, isNew=false)">
+														<n:i class="fa fa-eye"></n:i>Xem
+													</x:a>
+												</div>	
+	    									</div>
+	    								</div>
+									</template>
+								</div>
+							</div>	
+	    				</n:div>
+	    			</n:div>
+	    			
+	    			
+	    			<n:div class="box-header box-top2" zk:if="${entry.quyen.thongtindieutritaitrungtammethadone_lietke}">
+	    				<n:span class="box-title">THÔNG TIN ĐIỀU TRỊ TẠI CƠ SỞ METHADONE</n:span>
+	    				<x:a class="btn-history" href="${ctxPath}/${resource}/lichsudieutri/${dt.id}"  zk:if="${entry.quyen.thongtindieutritaitrungtammethadone_lichsu}">
+   							<n:i class="fa fa-history"></n:i>&#160;&#160;Xem lịch sử quá trình điều trị
+   						</x:a>
+   						<n:div class="box-tools pull-right"  zk:if="${entry.quyen.thongtindieutritaitrungtammethadone_them}">
+   							<x:a class="btn btn-success" 
+								onClick="@command('redirectPageHanhVi', zul='thongtindieutrimethadone/add.zul', vmArgs=dt, vm=null, doiTuong=dt, isNew=true)">
+								<n:i class="fa fa-plus"></n:i>
+								Thêm thông tin điều trị
+							</x:a>
+   						</n:div>   						
+	    			</n:div>
+	    			
+	    			<n:div class="box-body box-body-ds box-body-noindex pdlr20"  zk:if="${entry.quyen.thongtindieutritaitrungtammethadone_lietke}">
+	    				<n:div class="row">
+	    					<div class="col-md-12">						
+								<div children="@load(dt.listThongTinDieuTriMethadone)">
+									<template name="children" var="thongTin">
+										
+										<div class="doi-tuong-item  ${thongTinStatus.last ? 'last' : ''}" >
+    										
+	    									<div class="doi-tuong-content">
+	    										<div class="row">
+	    											<div class="col-md-6 col-sm-6 pd7">												
+														<n:span class="bold">Ngày khởi liều: </n:span> <label value="@load(thongTin.ngayKhoiLieu) @converter('formatedDate',format='dd/MM/yyyy')"/>
+													</div>
+													<div class="col-md-6 col-sm-6 pd7">												
+														<n:span class="bold">Nhận xét quá trình điều trị: </n:span> ${thongTin.nhanXetQuaTrinhDieuTri}
+													</div>													
+													<div class="col-md-6 col-sm-6 pd7">												
+														<n:span class="bold">Ngày ngừng điều trị: </n:span> <label value="@load(thongTin.ngayNgungDieuTri) @converter('formatedDate',format='dd/MM/yyyy')"/>
+													</div>
+													<div class="col-md-6 col-sm-6 pd7">												
+														<n:span class="bold">Hành vi vi phạm pháp luật: </n:span> ${thongTin.hanhViViPham.ten}
+													</div>
+													<div class="col-md-6 col-sm-6 pd7">												
+														<n:span class="bold">Ngày ra khỏi chương trình: </n:span> <label value="@load(thongTin.ngayRaKhoiChuongTrinh) @converter('formatedDate',format='dd/MM/yyyy')"/>
+													</div>
+													<div class="col-md-6 col-sm-6 pd7">												
+														<n:span class="bold">Lý do ra khỏi chương trình: </n:span> ${thongTin.lyDoRaKhoiChuongTrinh}
+													</div>
+	    										</div>
+	    									</div>
+	    									<div class="doi-tuong-action">
+	    										<div class="hanh-vi-action">
+													<x:a class="edit-action"  zk:if="${entry.quyen.thongtindieutritaitrungtammethadone_sua}"
+														onClick="@command('redirectPageHanhVi', zul='thongtindieutrimethadone/view.zul', vmArgs=dt, vm=thongTin, doiTuong=dt, isNew=false)">
+														<n:i class="fa fa-pencil-square-o"></n:i>Sửa
+													</x:a>
+													<x:a class="edit-action"  zk:if="${entry.quyen.thongtindieutritaitrungtammethadone_xem and !entry.quyen.thongtindieutritaitrungtammethadone_sua}"
+														onClick="@command('redirectPageHanhVi', zul='thongtindieutrimethadone/view.zul', vmArgs=dt, vm=thongTin, doiTuong=dt, isNew=false)">
+														<n:i class="fa fa-eye"></n:i>Xem
+													</x:a>
+												</div>	
+	    									</div>
+	    								</div>
+									</template>
+								</div>
+							</div>	
+	    				</n:div>
+	    			</n:div>
+	    			
+	    			<n:div class="box-header box-top2" zk:if="${entry.quyen.thongtindieutritaibenhvientamthan_lietke}">
+	    				<n:span class="box-title">THÔNG TIN ĐIỀU TRỊ TẠI BỆNH VIỆN TÂM THẦN</n:span>
+	    				<x:a class="btn-history" zk:if="${entry.quyen.thongtindieutritaibenhvientamthan_lichsu}" href="${ctxPath}/${resource}/lichsudieutri/${dt.id}">
+   							<n:i class="fa fa-history"></n:i>&#160;&#160;Xem lịch sử quá trình điều trị
+   						</x:a>
+   						<n:div class="box-tools pull-right" zk:if="${entry.quyen.thongtindieutritaibenhvientamthan_them}">
+   							<x:a class="btn btn-success" 
+								onClick="@command('redirectPageHanhVi', zul='thongtindieutritamthan/add.zul', vmArgs=dt, vm=null, doiTuong=dt, isNew=true)">
+								<n:i class="fa fa-plus"></n:i>
+								Thêm thông tin điều trị
+							</x:a>
+   						</n:div>   						
+	    			</n:div>
+	    			
+	    			<n:div class="box-body box-body-ds box-body-noindex pdlr20" zk:if="${entry.quyen.thongtindieutritaibenhvientamthan_lietke}">
+	    				<n:div class="row">
+	    					<div class="col-md-12">						
+								<div children="@load(dt.listThongTinDieuTriTamThan)">
+									<template name="children" var="thongTin">
+										
+										<div class="doi-tuong-item  ${thongTinStatus.last ? 'last' : ''}">
+	    									<div class="doi-tuong-content">
+	    										<div class="row">
+	    											<div class="col-md-6 col-sm-6 pd7">												
+														<n:span class="bold">Ngày bắt đầu: </n:span> <label value="@load(thongTin.ngayBatDauDieuTri) @converter('formatedDate',format='dd/MM/yyyy')"/>
+													</div>
+													<div class="col-md-6 col-sm-6 pd7">												
+														<n:span class="bold">Nhận xét quá trình điều trị: </n:span> ${thongTin.nhanXetQuaTrinhDieuTri}
+													</div>													
+													<div class="col-md-6 col-sm-6 pd7">												
+														<n:span class="bold">Ngày kết thúc: </n:span> <label value="@load(thongTin.ngayKetThucDieuTri) @converter('formatedDate',format='dd/MM/yyyy')"/>
+													</div>
+													<div class="col-md-6 col-sm-6 pd7">												
+														
+													</div>
+	    										</div>
+	    									</div>
+	    									<div class="doi-tuong-action">
+	    										<div class="hanh-vi-action">
+													<x:a class="edit-action" zk:if="${entry.quyen.thongtindieutritaibenhvientamthan_sua}"
+														onClick="@command('redirectPageHanhVi', zul='thongtindieutritamthan/view.zul', vmArgs=dt, vm=thongTin, doiTuong=dt, isNew=false)">
+														<n:i class="fa fa-pencil-square-o"></n:i>Sửa
+													</x:a>
+													<x:a class="edit-action" zk:if="${entry.quyen.thongtindieutritaibenhvientamthan_xem and !entry.quyen.thongtindieutritaibenhvientamthan_sua}"
+														onClick="@command('redirectPageHanhVi', zul='thongtindieutritamthan/view.zul', vmArgs=dt, vm=thongTin, doiTuong=dt, isNew=false)">
+														<n:i class="fa fa-eye"></n:i>Xem
+													</x:a>
+												</div>	
+	    									</div>
+	    								</div>
+									</template>
+								</div>
+							</div>	
+	    				</n:div>
+	    			</n:div>
+	    			
+	    			<n:div class="box-header box-top2" zk:if="${entry.quyen.thongtincainghien_lietke}">
+	    				<n:span class="box-title">THÔNG TIN CAI NGHIỆN TẠI TRUNG TÂM GIÁO DỤC VÀ DẠY NGHỀ</n:span>
+	    				<x:a class="btn-history" zk:if="${entry.quyen.thongtincainghien_lichsu}" href="${ctxPath}/${resource}/lichsucainghien/${dt.id}">
+   							<n:i class="fa fa-history"></n:i>&#160;&#160;Xem lịch sử quá trình cai nghiện
+   						</x:a>
+   						<n:div class="box-tools pull-right" zk:if="${entry.quyen.thongtincainghien_them}">
+   							<x:a class="btn btn-success" 
+								onClick="@command('redirectPageHanhVi', zul='thongtincainghien/add.zul', vmArgs=dt, vm=null, doiTuong=dt, isNew=true)">
+								<n:i class="fa fa-plus"></n:i>
+								Thêm thông tin cai nghiện
+							</x:a>
+   						</n:div>   						
+	    			</n:div>
+	    			
+	    			<n:div class="box-body box-body-ds box-body-noindex pdlr20" zk:if="${entry.quyen.thongtincainghien_lietke}">
+	    				<n:div class="row">
+	    					<div class="col-md-12">						
+								<div children="@load(dt.listThongTinCaiNghien)">
+									<template name="children" var="thongTin">
+										
+										<div class="doi-tuong-item  ${thongTinStatus.last ? 'last' : ''}">
+    										
+	    									<div class="doi-tuong-content">
+	    										<div class="row">
+	    											<div class="col-md-3 col-sm-6 pd7">												
+														<n:span class="bold">Ngày vào trung tâm: </n:span> <label value="@load(thongTin.ngayVaoTrungTam) @converter('formatedDate',format='dd/MM/yyyy')"/>
+													</div>
+													<div class="col-md-3 col-sm-6 pd7">												
+														<n:span class="bold">Lần thứ: </n:span> ${thongTin.soLanVao}
+													</div>		
+													<div class="col-md-6 col-sm-6 pd7">												
+														<n:span class="bold">Xếp loại rèn luyện: </n:span> ${thongTin.xepLoaiRenLuyen}
+													</div>													
+													<div class="col-md-3 col-sm-6 pd7">												
+														<n:span class="bold">Ngày cho về: </n:span> <label value="@load(thongTin.ngayChoVe) @converter('formatedDate',format='dd/MM/yyyy')"/>
+													</div>
+													<div class="col-md-3 col-sm-6 pd7">												
+														<n:span class="bold">Thời hạn cai nghiện: </n:span> ${thongTin.thoiHanCaiNghien}
+													</div>	
+													<div class="col-md-6 col-sm-6 pd7">
+														<div if="${thongTin.nhanXetThangCuoiCung != null}">
+															<n:span class="bold">Nhận xét tháng ${thongTin.nhanXetThangCuoiCung.thangNam}: </n:span> ${thongTin.nhanXetThangCuoiCung.nhanXet}
+														</div>	
+													</div>	
+	    										</div>
+	    									</div>
+	    									<div class="doi-tuong-action">
+	    										<div class="hanh-vi-action">
+													<x:a class="edit-action" zk:if="${entry.quyen.thongtincainghien_sua}"
+														onClick="@command('redirectPageHanhVi', zul='thongtincainghien/view.zul', vmArgs=dt, vm=thongTin, doiTuong=dt, isNew=false)">
+														<n:i class="fa fa-pencil-square-o"></n:i>Sửa
+													</x:a>
+													<x:a class="edit-action" zk:if="${entry.quyen.thongtincainghien_xem and !entry.quyen.thongtincainghien_sua}"
+														onClick="@command('redirectPageHanhVi', zul='thongtincainghien/view.zul', vmArgs=dt, vm=thongTin, doiTuong=dt, isNew=false)">
+														<n:i class="fa fa-eye"></n:i>Xem
+													</x:a>
+												</div>	
+	    									</div>
+	    								</div>
+									</template>
+								</div>
+							</div>	
+	    				</n:div>
+	    			</n:div>
+	    			
+	    			<n:div class="box-header box-top2" zk:if="${entry.quyen.thongtinthuhuong_lietke}">
+	    				<n:span class="box-title">THÔNG TIN CHÍNH SÁCH THỤ HƯỞNG</n:span>
+	    				<x:a class="btn-history" zk:if="${entry.quyen.thongtinthuhuong_lichsu}" href="${ctxPath}/${resource}/lichsuthuhuong/${dt.id}">
+   							<n:i class="fa fa-history"></n:i>&#160;&#160;Xem lịch sử thụ hưởng chính sách
+   						</x:a>
+   						<n:div class="box-tools pull-right" zk:if="${entry.quyen.thongtinthuhuong_them}">
+   							<x:a class="btn btn-success" 
+								onClick="@command('redirectPageHanhVi', zul='thongtinthuhuong/add.zul', vmArgs=dt, vm=null, doiTuong=dt, isNew=true)">
+								<n:i class="fa fa-plus"></n:i>
+								Thêm chính sách
+							</x:a>
+   						</n:div>   						
+	    			</n:div>
+	    			
+	    			<n:div class="box-body box-body-ds box-body-noindex pdlr20" zk:if="${entry.quyen.thongtinthuhuong_lietke}">
+	    				<n:div class="row">
+	    					<div class="col-md-12">						
+								<div children="@load(dt.listThongTinThuHuong)">
+									<template name="children" var="thongTin">
+										
+										<div class="doi-tuong-item  ${thongTinStatus.last ? 'last' : ''}">
+	    									<div class="doi-tuong-content">
+	    										<div class="row">
+	    											<div class="col-md-6 col-sm-6 pd7">												
+														<n:span class="bold">Nội dung chính sách: </n:span> <label value="@load(thongTin.noiDungChinhSach)"/>
+													</div>
+													<div class="col-md-6 col-sm-6 pd7">												
+														<n:span class="bold">Hiệu quả: </n:span> ${thongTin.hieuQuaTuViecThuHuong}
+													</div>													
+													<div class="col-md-6 col-sm-6 pd7">												
+														<n:span class="bold">Hành vi vi phạm: </n:span> <label value="@load(thongTin.hanhViViPham ne null ? thongTin.hanhViViPham.ten : '')"/>
+													</div>
+													<div class="col-md-6 col-sm-6 pd7">												
+														
+													</div>
+	    										</div>
+	    									</div>
+	    									<div class="doi-tuong-action">
+	    										<div class="hanh-vi-action">
+													<x:a class="edit-action" zk:if="${entry.quyen.thongtinthuhuong_sua}"
+														onClick="@command('redirectPageHanhVi', zul='thongtinthuhuong/view.zul', vmArgs=dt, vm=thongTin, doiTuong=dt, isNew=false)">
+														<n:i class="fa fa-pencil-square-o"></n:i>Sửa
+													</x:a>
+													<x:a class="edit-action" zk:if="${entry.quyen.thongtinthuhuong_xem and !entry.quyen.thongtinthuhuong_sua}"
+														onClick="@command('redirectPageHanhVi', zul='thongtinthuhuong/view.zul', vmArgs=dt, vm=thongTin, doiTuong=dt, isNew=false)">
+														<n:i class="fa fa-eye"></n:i>Xem
+													</x:a>
+												</div>	
+	    									</div>
+	    								</div>
+									</template>
+								</div>
+							</div>	
+	    				</n:div>
+	    			</n:div>
+	    			
+	    		</n:div>
+	    	</n:div>
+	    </n:div>
+	</n:section>
+</div>

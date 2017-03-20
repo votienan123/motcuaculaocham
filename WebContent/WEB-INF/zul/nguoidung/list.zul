@@ -1,0 +1,149 @@
+<zk xmlns:n="native" xmlns:x="xhtml" xmlns:zk="zk">
+	<div apply="org.zkoss.bind.BindComposer" 
+		viewModel="@id('vm') @init('vn.toancauxanh.service.NhanVienService')" validationMessages="@id('vmsgs')">
+		<zscript><![CDATA[
+			self.page.title= "Quản lý người dùng";
+		]]></zscript>
+		<n:section class="content-header">
+			<n:h1>Quản lý người dùng</n:h1>
+		</n:section>
+		<n:section class="content">
+		    <n:div class="row">
+		    	<n:div class="col-md-12">
+		    		<n:div class="box box-info">
+		    			<n:div class="box-header">
+		    				<n:h3 class="box-title">Tìm kiếm</n:h3>
+		    				<n:div class="box-tools pull-right">
+		    					<n:button type="button" class="btn btn-box-tool" data-widget="collapse"><n:i class="fa fa-minus"></n:i></n:button>
+		    				</n:div>
+		    			</n:div>
+		    			<n:div class="box-body">
+		    				<n:div class="row">
+		    					<n:div class="col-md-4">
+		    						<n:div class="form-group">
+		    							<x:label class="control-label">Từ khóa</x:label>
+		    							<textbox class="form-control" value="@bind(vm.arg.tukhoa)" placeholder="Nhập họ tên người dùng"
+		    								onOK="@command('cmd', notify=vm, attr='*')" />
+		    						</n:div>
+		    					</n:div>
+		    					<n:div class="col-md-2">
+		    						<n:div class="form-group">
+		    							<x:label class="control-label">Trạng thái</x:label>
+		    							<combobox readonly="true" style="display:block" width="100%" placeholder="Tất cả"
+		    								model="@load(entry.trangThaiListAndNull)" selectedItem="@bind(vm.arg.trangthai)" >
+		    								<template name="model">
+		    									<comboitem value="@load(each.key)" label="@load(each.value eq '' ? 'Tất cả' : each.value)" />
+		    								</template>
+		    							</combobox>
+		    						</n:div>
+		    					</n:div>
+		    					<n:div class="col-md-6">
+		    						<x:label class="control-label">&#160;</x:label>
+		    						<n:div class="form-group">
+		    							<x:button class="btn btn-warning" type="button" onClick="@command('cmd', notify=vm, attr='*')" >
+											<n:i class="fa fa-search"></n:i> Tìm kiếm
+										</x:button>
+		    						</n:div>
+		    					</n:div>
+		    				</n:div>
+		    			</n:div>
+		    		</n:div>
+		    	</n:div>
+		    	<n:div class="col-md-12">
+		    		<n:div class="box box-success">
+		    			<n:div class="box-header">
+		    				<n:h3 class="box-title"></n:h3>
+		    				<n:div class="box-tools pull-right">
+		    					<x:button class="btn btn-success" zk:if="${entry.quyen.nguoidung_them}"
+		    						onClick="@command('redirectPage', zul='nguoidung/add.zul', vmArgs=vm, vm=null)">
+		    						<n:i class="fa fa-plus"></n:i>
+		    						Thêm mới
+		    					</x:button>
+		    				</n:div>
+		    			</n:div>
+		    			<!-- /.box-header -->
+		    			<n:div class="box-body">
+		    				<n:div class="dataTables_wrapper form-inline dt-bootstrap">
+		    					<n:div class="row">
+		    						<n:div class="col-md-12">
+		    							<grid width="100%" id="grid"
+											model="@load(vm.page(vm.targetQueryNhanVien).fetch())"
+											emptyMessage="Không có danh sách người dùng">
+											<columns>
+												<column hflex="min" label="STT" sclass="text-align-center" />
+												<column width="20%" label="Họ và tên" />
+												<column hflex="min" label="Tên đăng nhập" />
+												<column width="25%" label="Vai trò" />
+												<!-- <column zk:if="${vm.quyen._sua}" hflex="min" label="Kích hoạt" /> -->
+												<column hflex="min" label="Trạng thái" zk:if="${vm.quyen._sua}"/>
+												<column hflex="min" label="Online/Offline" />
+												<column width="110px" label="Thao tác"/>
+											</columns>
+											<template name="model">
+												<row apply="org.zkoss.bind.BindComposer"
+													viewModel="@id('vmchild') @init(each)">
+													<label
+														value="@bind(forEachStatus.index + 1 + vm.arg.page * vm.arg.pagesize)"
+														style="text-align:center;display:block" />
+													<a label="@load(vmchild.hoVaTen)"
+														onClick='Executions.createComponents("nguoidung/view.zul", null, Collections.singletonMap("vm", vmchild));'>
+													</a>
+													<label value="@load(vmchild.tenDangNhap)" />
+													<label value="@load(vmchild.vaiTroText)" />
+													<div zk:if="${vm.quyen._sua}" sclass="text-align-center">
+														<toolbarbutton visible="@load(vmchild.checkKichHoat)" onClick="@command('toggleLock', list=vm)"
+															image="/img/unpublish.png" />
+														<toolbarbutton visible="@load(!vmchild.checkKichHoat)" onClick="@command('toggleLock', list=vm)"
+															image="/img/publish.png" tooltip="Mở khóa" />
+													</div>
+ 													<!-- <label style="text-align:center;display:block" value="@load(vmchild.checkApDung ? 'Áp dụng' : 'Đã khóa')"/> -->
+													<label style="text-align:center;display:block" value="@load(vmchild.active eq 1 ? 'online' : 'offline')"/>
+													<div class="text-align-center">
+														<x:button zk:if="${entry.quyen.nguoidung_xem and !entry.quyen.nguoidung_sua}"
+															class="btn btn-primary btn-xs" title="Xem"
+															zk:onClick='Executions.createComponents("nguoidung/view.zul", null, Collections.singletonMap("vm", vmchild));'>
+															<n:i class="fa fa-eye"></n:i>
+														</x:button>
+														<x:button zk:if="${entry.quyen.nguoidung_sua}" class="btn btn-info btn-xs" title="Sửa"
+															zk:onClick='Executions.createComponents("nguoidung/edit.zul", null, Collections.singletonMap("vm", vmchild));'>
+															<n:i class="fa fa-edit"></n:i>
+														</x:button>
+														<x:button zk:if="${entry.quyen.nguoidung_them and vmchild.checkApDung and vmchild.id ne 1}"
+															class="btn btn-warning btn-xs" onClick="@command('khoaThanhVien', vm=vm)" title="Khóa">
+															<n:i class="fa fa-lock"></n:i>
+														</x:button>
+														<x:button zk:if="${entry.quyen.nguoidung_them and !vmchild.checkApDung and vmchild.id ne 1}"
+															class="btn btn-warning btn-xs" onClick="@command('moKhoaThanhVien', vm=vm)" title="Mở khóa">
+															<n:i class="fa fa-unlock"></n:i>
+														</x:button>
+														<x:button zk:if="${entry.quyen.nguoidung_xoa and vmchild.id ne 1}" title="Xóa"
+															class="btn btn-danger btn-xs" apply="org.zkoss.bind.BindComposer" viewModel="@id('vmeach') @init(each)"
+															onClick="@command('deleteTrangThaiConfirmAndNotify', notify=vm, attr='targetQueryNhanVien')">
+															<n:i class="fa fa-trash"></n:i>
+														</x:button>
+													</div>
+												</row>
+											</template>
+										</grid>
+		                            </n:div>
+		                        </n:div>
+		                    </n:div>
+		                    <paging pageSize="@load(vm.arg.pagesize)"
+								totalSize="@load(vm.targetQueryNhanVien.fetchCount())"
+								visible="@load(vm.targetQueryNhanVien.fetchCount() > vm.arg.pagesize ? true : false)"
+								activePage="@bind(vm.arg.page)"
+								onPaging="@command('cmd', notify=vm, attr='targetQueryNhanVien')" />
+		                </n:div>
+		                <!-- /.box-body -->
+	                    <div class="overlay" visible="false">
+	                        <n:i class="fa fa-refresh fa-spin"></n:i>
+	                    </div>
+		            </n:div>
+		            <!-- /.box -->
+		        </n:div>
+		        <!-- /.col -->
+		    </n:div>
+		    <!-- /.row -->
+		</n:section>
+	</div>
+</zk>

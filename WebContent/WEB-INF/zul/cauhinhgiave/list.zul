@@ -1,0 +1,56 @@
+<?page title="Cấu hình giá vé" contentType="text/html;charset=UTF-8"?>
+<div xmlns:zk="zk" xmlns:n="native" xmlns:x="xhtml" apply="org.zkoss.bind.BindComposer"
+	viewModel="@id('vm') @init('vn.toancauxanh.cms.service.SettingService')">
+	<zscript><![CDATA[
+		self.page.title= "Cấu hình giá vé";
+	]]></zscript>
+	<n:section class="content-header">
+		<n:h1>Cấu hình giá vé</n:h1>
+	</n:section>
+	<n:section class="content">
+	    <n:div class="row">
+	    	<n:div class="col-md-12">
+	    		<n:div class="box box-success">
+	    			<n:div class="box-header">
+	    				<n:h3 class="box-title"></n:h3>
+	    				<n:div class="box-tools pull-right">
+	    					<x:button class="btn btn-success" zk:if="${vm.quyen._them}"
+	    						onClick="@command('redirectPage', zul='cauhinhgiave/add.zul', vmArgs=vm, vm=null)">
+	    						<n:i class="fa fa-plus"></n:i>
+	    						Cấu hình
+	    					</x:button>
+	    				</n:div>
+	    			</n:div>
+	    			<!-- /.box-header -->
+	    			<n:div class="box-body">
+    					<n:div class="row">
+    						<n:div class="col-md-12">
+    							<grid model="@load(vm.settings)" width="100%" id="grid" emptyMessage="Không có danh sách cấu hình giá vé">
+									<columns>
+										<column label="STT" hflex="min" />
+										<column label="Lớn" />
+										<column label="Nhỏ (5 - 9)" />
+										<column label="Bé (1 - 4)"  />
+									</columns>
+									<template name="model">
+										<row apply="org.zkoss.bind.BindComposer" viewModel="@id('item') @init(each)">
+											<label value="@bind(forEachStatus.index + 1 + vm.arg.page * vm.arg.pagesize)" />
+											<label value="@load(each.giaVeNguoiLon)" style="text-align:center"/>
+											<label value="@load(each.giaVeTreEmDuoi10Tuoi)"/>
+											<label value="@load(each.giaVeTreEmDuoi5Tuoi)" />
+										</row>
+									</template>
+								</grid>
+							
+                            </n:div>
+                        </n:div>
+	                </n:div>
+	                <!-- /.box-body -->
+	            </n:div>
+	            <!-- /.box -->
+	        </n:div>
+	        <!-- /.col -->
+	    </n:div>
+	    <!-- /.row -->
+	</n:section>
+</div>

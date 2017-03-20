@@ -1,0 +1,75 @@
+<zk xmlns:n="native" xmlns:x="xhtml" xmlns:zk="zk">
+	<n:section class="content-header">
+		<n:h1>Demo notification<n:small>Version 1.0</n:small></n:h1>
+		<n:ol class="breadcrumb">
+			<n:li><n:a href="javascript:void(0)"><n:i class="fa fa-dashboard"></n:i>Home</n:a></n:li>
+			<n:li class="active">Demo Notification</n:li>
+		</n:ol>
+	</n:section>
+	<n:section class="content">
+	    <n:div class="row">
+	        <n:div class="col-md-12">
+	            <n:div class="box box-info">
+	                <n:div class="box-header">
+	                    <n:h3 class="box-title">Test notification by toastr</n:h3>
+	                    <n:h3>Chỉ cần gọi dòng này trong file *.java là chạy được.</n:h3>
+	                    <n:h3>showNotification("Noi dung", "Tieu de", "{success, info, warning, error}");</n:h3>
+	                </n:div>
+	                <!-- /.box-header -->
+	                <n:div class="box-body">
+	                    <div class="row">
+	                    	<div class="col-md-12">
+		                    	<button type="submit" zclass="btn btn-success">Toastr success
+		                    		<attribute name="onClick"><![CDATA[
+										Clients.evalJavaScript("toastrSuccess('Test notification success', '');");
+		                    		]]></attribute>
+		                    	</button>
+		                    	<button type="submit" zclass="btn btn-info">Toastr info
+		                    		<attribute name="onClick"><![CDATA[
+										Clients.evalJavaScript("toastrInfo('Test notification info', '');");
+		                    		]]></attribute>
+		                    	</button>
+		                    	<button type="submit" zclass="btn btn-warning">Toastr warning
+		                    		<attribute name="onClick"><![CDATA[
+										Clients.evalJavaScript("toastrWarning('Test notification warning', '');");
+		                    		]]></attribute>
+		                    	</button>
+		                    	<button type="submit" zclass="btn btn-danger">Toastr error
+		                    		<attribute name="onClick"><![CDATA[
+										Clients.evalJavaScript("toastrError('Test notification error', '');");
+		                    		]]></attribute>
+		                    	</button>
+		                    </div>
+		                    <div class="col-md-12" style="padding-top:10px;">
+	                    		<button type="submit" zclass="btn btn-success">Toastr success with a title
+		                    		<attribute name="onClick"><![CDATA[
+										Clients.evalJavaScript("toastrSuccess('Test notification success', 'Title success');");
+		                    		]]></attribute>
+		                    	</button>
+		                    	<button type="submit" zclass="btn btn-info">Toastr info with a title
+		                    		<attribute name="onClick"><![CDATA[
+										Clients.evalJavaScript("toastrInfo('Test notification info', 'Title info');");
+		                    		]]></attribute>
+		                    	</button>
+		                    	<button type="submit" zclass="btn btn-warning">Toastr warning with a title
+		                    		<attribute name="onClick"><![CDATA[
+										Clients.evalJavaScript("toastrWarning('Test notification warning', 'Title warning');");
+		                    		]]></attribute>
+		                    	</button>
+		                    	<button type="submit" zclass="btn btn-danger">Toastr error with a title
+		                    		<attribute name="onClick"><![CDATA[
+										Clients.evalJavaScript("toastrError('Test notification error', 'Title error');");
+		                    		]]></attribute>
+		                    	</button>
+	                    	</div>
+	                    </div>
+	                </n:div>
+	                <!-- /.box-body -->
+	            </n:div>
+	            <!-- /.box -->
+	        </n:div>
+	        <!-- /.col -->
+	    </n:div>
+	    <!-- /.row -->
+	</n:section>
+</zk>

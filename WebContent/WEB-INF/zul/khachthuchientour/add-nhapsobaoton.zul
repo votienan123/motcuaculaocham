@@ -1,0 +1,2 @@
+<?component name="add-nhapsobaoton-view" inline="true" macroURI="add-nhapsobaoton-view.zul"?>
+<add-nhapsobaoton-view model="${arg.vm}" vmArgs="${arg.vmArgs}" save="Nhập số bảo tồn" />

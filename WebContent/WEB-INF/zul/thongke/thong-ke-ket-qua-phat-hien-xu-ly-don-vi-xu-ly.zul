@@ -1,0 +1,96 @@
+<?page title="Quản lý thông báo" contentType="text/html;charset=UTF-8"?>
+<div xmlns:zk="zk" xmlns:n="native" xmlns:x="xhtml" apply="org.zkoss.bind.BindComposer"
+	viewModel="@id('vm') @init('vn.toancauxanh.cms.service.ThongKeKetQuaPhatHienXuLyDonVi')"
+	validationMessages="@id('vmsgs')"
+	form="@id('fx') @bind(vm) @save(vm, before='thongKeKetQua') @validator(vm.validator)">
+	<zscript><![CDATA[
+		self.page.title= "Báo cáo thống kê";
+		donVis = entry.donVis;
+	]]></zscript>
+	<n:section class="content-header">
+	<div class="bread-div  bread-tk">			
+		<a href="/thongke">&lt; Thống kê</a>
+	</div>	
+	</n:section>
+	<n:section class="content">	
+		<n:div class="row">
+	    	<n:div class="col-md-12">
+	    		<div class="thong-ke-detail">
+	    			<div class="thong-ke-detail-header">	    				
+	    				Kết quả phát hiện, xử lý người nghiện, người sử dụng trái phép chất ma túy theo đơn vị
+	    			</div>
+	    			<div class="thong-ke-detail-content">
+	    				<div class="row">
+	    					<div class="col-lg-10">
+	    						<div class="row">
+			    					<div class="col-lg-4">
+			    						<div class="form-group form-group-tk" >
+											<x:label class="col-md-4">Đơn vị:</x:label>
+											<div class="col-md-8">													
+												<combobox width="100%" model="@load(donVis.listDonViChaAndNull)"
+													readonly="true" id="cbbQuanHuyen"
+													value="@load(vm.selectedQuanHuyenTK eq null ? 'Tất cả' : vm.selectedQuanHuyenTK.ten)"
+													selectedItem="@bind(vm.selectedDonVi)"
+													placeholder="Tất cả" >
+													<template name="model">
+														<comboitem label="@load(each eq null ? 'Tất cả' : each.ten)" />
+													</template>
+												</combobox>
+											</div>
+										</div>
+			    					</div>
+			    					<div class="col-lg-4">
+			    						<div class="form-group form-group-tk">
+											<x:label class="col-md-4">Từ ngày:</x:label>
+											<div class="col-md-8">													
+												<datebox width="100%" placeholder="dd/MM/yyyy"
+														format="dd/MM/yyyy" value="@bind(vm.tuNgayTK)" readonly="false"
+														class="mis-datebox-inner" />
+											</div>
+										</div>
+			    					</div>
+			    					<div class="col-lg-4">
+			    						<div class="form-group form-group-tk">
+											<x:label class="col-md-4">Đến ngày:</x:label>
+											<div class="col-md-8">													
+												<datebox width="100%" placeholder="dd/MM/yyyy"
+														format="dd/MM/yyyy" value="@bind(vm.denNgayTK)" readonly="false"
+														class="mis-datebox-inner" />
+												<label class="error" value="@load(vmsgs['lblErrDenNgayTK'])" />
+											</div>
+										</div>
+			    					</div>
+	    						</div>
+	    					</div>
+	    					<div class="col-lg-2">
+	    						<x:a class="btn btn-success" style="margin-top:16px"
+									onClick="@command('thongKeKetQua')">
+									<n:i class="fa fa-search"></n:i>
+									Thống kê
+								</x:a>
+	    					</div>	    					
+	    				</div>
+	    				<div visible="@load(vm.thongKe)">
+		    				<grid model="@load(vm.argsGrid.modelGrid)" width="100%" id="gridTk"
+								emptyMessage="Không có danh sách">
+								<columns children="@load(vm.argsGrid.cols)">
+									<template name="children" var="colItem">
+										<column label="@load(colItem)" align="center" />
+									</template>
+								</columns>
+								<template name="model">
+									<row children="@load(vm.argsGrid.cols)">
+										<template name="children" var="colItem">
+											<label style="${colItemStatus.last or forEachStatus.last ? 'font-weight:bold' : ''}"
+												value="@load(vm.getValueTk(each, colItemStatus.index))" width="100%"/>
+										</template>
+									</row>
+								</template>
+							</grid>	
+	    				</div>
+	    			</div>
+	    		</div>	    		   		
+	    	</n:div>
+	    </n:div>
+	</n:section>
+</div>

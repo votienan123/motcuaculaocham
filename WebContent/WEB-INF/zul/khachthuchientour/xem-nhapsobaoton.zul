@@ -1,0 +1,2 @@
+<?component name="xem-nhapsobaoton-view" inline="true" macroURI="xem-nhapsobaoton-view.zul"?>
+<xem-nhapsobaoton-view model="${arg.vm}" vmArgs="${arg.vmArgs}" save="Xem số bảo tồn" />

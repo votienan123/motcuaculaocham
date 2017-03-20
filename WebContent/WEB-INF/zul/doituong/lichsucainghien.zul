@@ -1,0 +1,76 @@
+<?page title="Quản lý thông báo" contentType="text/html;charset=UTF-8"?>
+<div xmlns:zk="zk" xmlns:n="native" xmlns:x="xhtml" apply="org.zkoss.bind.BindComposer"
+	viewModel="@id('vm') @init('vn.toancauxanh.gg.model.DoiTuong')"
+	validationMessages="@id('vmsgs')">
+	<zscript><![CDATA[
+		self.page.title= "Lịch sử cai nghiện";
+		import vn.toancauxanh.gg.model.DoiTuong;
+		String idStr = execution.getParameter("id");
+		Long id = Long.parseLong(idStr);
+		DoiTuong dt = new DoiTuong();
+		dt = vm.core().em().find(DoiTuong.class, id);
+		listThongTinViPham = dt.listThongTinViPham;
+		import java.awt.*;
+		import java.awt.image.*;
+		import java.awt.geom.*;
+		BufferedImage imagevar2 = new BufferedImage(80, 80, BufferedImage.TYPE_INT_ARGB);
+	]]></zscript>
+	<n:section class="content-header">
+		<div class="bread-div">			
+			<a href="/${resource}/xem/${dt.id}">&lt; Hồ sơ ${dt.hoVaTen}</a>
+		</div>
+	</n:section>
+	<n:section class="content">	
+		<n:div class="row">
+	    	<n:div class="col-md-12">
+	    		<div class="lich-su-type-item">
+	    			<div class="ls-heading open">
+	    				LỊCH SỬ CAI NGHIỆN TẠI TRUNG TÂM GIÁO DỤC VÀ DẠY NGHỀ
+	    			</div>
+	    			<div class="ls-content first">   
+	    				<div children="@load(dt.listThongTinCaiNghienAll)">
+	    					<template name="children" var="thongTin">
+	    						<div class="doi-tuong-item">
+									<div class="doi-tuong-index">
+										<label value="@load(thongTinStatus.index + 1)"/>
+									</div>
+									<div class="doi-tuong-content">
+										<div class="row">
+											<div class="col-md-3 pd7">												
+												<n:span class="bold">Ngày vào trung tâm: </n:span> <label value="@load(thongTin.ngayVaoTrungTam) @converter('formatedDate',format='dd/MM/yyyy')"/>
+											</div>
+											<div class="col-md-4 pd7">												
+												<n:span class="bold">Lần thứ: </n:span> ${thongTin.soLanVao}
+											</div>		
+											<div class="col-md-5 pd7">												
+												<n:span class="bold">Xếp loại rèn luyện: </n:span> ${thongTin.xepLoaiRenLuyen}
+											</div>													
+											<div class="col-md-3 pd7">												
+												<n:span class="bold">Ngày cho về: </n:span> <label value="@load(thongTin.ngayChoVe) @converter('formatedDate',format='dd/MM/yyyy')"/>
+											</div>
+											<div class="col-md-4 pd7">												
+												<n:span class="bold">Thời hạn cai nghiện: </n:span> ${thongTin.thoiHanCaiNghien}
+											</div>	
+											<div class="col-md-5 pd7">
+												<div if="${thongTin.nhanXetThangCuoiCung != null}">
+													<n:span class="bold">Nhận xét tháng ${thongTin.nhanXetThangCuoiCung.thangNam}: </n:span> ${thongTin.nhanXetThangCuoiCung.nhanXet}
+												</div>										
+									
+											</div>	
+										</div>
+									</div>
+									<div class="doi-tuong-action">
+										<x:a class="chi-tiet-dt-url" zk:if="${entry.quyen.thongtincainghien_sua}"
+											onClick="@command('redirectPageHanhVi', zul='thongtincainghien/view.zul', vmArgs=dt, vm=thongTin, doiTuong=dt, isNew=false)">
+											<n:i class="fa fa-pencil-square-o"></n:i> Sửa
+										</x:a>
+									</div>
+								</div>
+	    					</template>
+	    				</div>
+	    			</div>
+	    		</div>		    			
+	    	</n:div>
+	    </n:div>
+	</n:section>
+</div>

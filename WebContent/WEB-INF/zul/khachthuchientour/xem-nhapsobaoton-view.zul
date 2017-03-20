@@ -1,0 +1,67 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<window xmlns:n="native" xmlns:x="xhtml" xmlns:zk="zk" xmlns:w="client" apply="org.zkoss.bind.BindComposer"
+	id="wdn" border="normal" mode="modal" action="show: slideIn"
+	contentStyle="overflow:auto;" closable="true" title="${arg.save}"
+	onClose="@command('invokeGG', notify=vmArgs, detach=wdn, attr='targetQuery')"
+	whatever="@load(false, after='xacNhanMaBaoTon') @converter('vn.toancauxanh.service.DetachConverter')"
+	viewModel="@id('vm') @init(arg.model)" validationMessages="@id('vmsgs')" 
+	form="@id('fx') @load(vm) @save(vm, before={'xacNhanMaBaoTon'}) @validator(vm.validatorMBT)" width="80%">
+	<zscript>
+		vmArgs = arg.get("vmArgs");
+		vm = arg.get("vm");
+		System.out.println("vmArgs " +vmArgs);
+		System.out.println("vm " +vm);
+		vm.napFormMacDinh();
+		vm.setCoTau(true);
+		vm.filterTours();
+	</zscript>
+	
+	<n:script><![CDATA[
+		function validateRemoveClass(className) {
+		    $('.' +className).hide();
+		}
+		
+		function validateAddClass(className, text) {
+		    $('.' +className).text(text).show();
+		}
+	]]></n:script>
+	
+	<div class="row box-body">		
+		<div class="col-md-12" style="padding: 0px !important;">
+			<div>
+				<div class="col-md-12">
+					<div class="form-group">
+						<grid model="@load(vm.tours)" width="100%" emptyMessage="Không có danh sách thực hiện tour">
+							<columns>
+								<column label="STT" hflex="min" style="text-align:center"/>
+								<column label="Mã bảo tồn" width="10%" />
+								<column label="Số hiệu tàu" width="15%" />
+								<column label="Số lượng khách người lớn" width="20%" />
+								<column label="Số lượng khách trẻ em 1 - 4" width="20%" />
+								<column label="Số lượng khách trẻ em 5 - 9" width="20%" />
+							</columns>
+							<template name="model">
+								<row apply="org.zkoss.bind.BindComposer" viewModel="@id('item') @init(each)">
+									<label value="@bind(forEachStatus.index + 1 + vm.arg.page * vm.arg.pagesize)" style="text-align:center;display:block"/>
+									<a label="@load(each.maBaoTon)" style="text-align:center"/>
+									<label value="@load(each.tau.ten)" />
+									<label value="@load(each.soLuongNguoiLon)" style="display:block"/>
+									<label value="@load(each.soLuongTreEm1Den3)" style="display:block"/>
+									<label value="@load(each.soLuongTrEm4Den9)" style="display:block"/>
+								</row>
+							</template>
+						</grid>
+					</div>
+					<label class="error" value="@load(vmsgs['lblErrSoLuongMBT'])" />
+					<label class="error" value="@load(vmsgs['lblErrTau'])" />
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="row box-footer">  
+		<x:button class="btn btn-default pull-right" onClick="@command('invokeGG', notify=vmArgs, detach=wdn, attr='targetQuery')">
+			Hủy
+		</x:button>
+	</div>
+</window>

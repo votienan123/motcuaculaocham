@@ -1,0 +1,260 @@
+<?page title="Quản lý thông báo" contentType="text/html;charset=UTF-8"?>
+<div xmlns:zk="zk" xmlns:n="native" xmlns:x="xhtml" apply="org.zkoss.bind.BindComposer"
+	viewModel="@id('vm') @init('vn.toancauxanh.gg.model.DoiTuong')"
+	validationMessages="@id('vmsgs')">
+	<zscript><![CDATA[
+		self.page.title= "Lịch sử vi phạm";
+		import vn.toancauxanh.gg.model.DoiTuong;
+		String idStr = execution.getParameter("id");
+		Long id = Long.parseLong(idStr);
+		DoiTuong dt = new DoiTuong();
+		dt = vm.core().em().find(DoiTuong.class, id);
+		listThongTinViPham = dt.listThongTinViPham;
+		import java.awt.*;
+		import java.awt.image.*;
+		import java.awt.geom.*;
+		BufferedImage imagevar2 = new BufferedImage(80, 80, BufferedImage.TYPE_INT_ARGB);
+	]]></zscript>
+	<n:section class="content-header">
+		<div class="bread-div">			
+			<a href="/${resource}/xem/${dt.id}">&lt; Hồ sơ ${dt.hoVaTen}</a>
+		</div>
+		<n:span class="header-title">Lịch sử vi phạm</n:span>
+		<n:div class="box-tools pull-right">
+			<x:a class="btn btn-success" style="margin-left:10px"
+				onClick="@command('redirectPageHanhVi', zul='lichsuvipham/add.zul', vmArgs=dt, vm=null, doiTuong=dt, isNew=true)">
+				<n:i class="fa fa-add"></n:i>
+				Thêm mới lịch sử vi phạm
+			</x:a>
+		</n:div>
+	</n:section>
+	<n:section class="content">	
+		<n:div class="row">
+	    	<n:div class="col-md-12">
+	    		<div class="lich-su-type-item">
+	    			<div class="ls-heading open">
+	    				TIỀN ÁN
+	    				<n:i class="icon-arrow"></n:i>
+	    			</div>
+	    			<div class="ls-content first">   
+	    				<div children="@load(dt.listTienAn)">
+	    					<template name="children" var="lichSu">
+	    						<div class="doi-tuong-item" style="margin-left:0px;margin-right:0px">
+									<div class="doi-tuong-index">
+										<label value="@load(lichSuStatus.index+1)"/>
+									</div>
+									<div class="doi-tuong-content">
+										<div class="row">
+											<div class="col-md-3 col-sm-6 pd7">
+												<n:span class="bold">Thời điểm bắt đầu: </n:span>
+												<label value="@load(lichSu.ngayViPham) @converter('formatedDate',format='dd/MM/yyyy')" />
+											</div>
+											<div class="col-md-4  pd7">
+												<n:span class="bold">Hành vi vi phạm: </n:span>
+												<label value="@load(lichSu.hanhViViPham.ten)" />
+											</div>
+											<div class="col-md-5 pd7">
+												<n:span class="bold">Hình thức xử lý: </n:span>
+												<label value="@load(lichSu.hinhThucXuLy.ten)" />
+											</div>
+											<div class="col-md-3 pd7" style="clear:both">
+												<n:span class="bold">Thời điểm kết thúc: </n:span>
+												<label value="@load(lichSu.ngayKetThuc) @converter('formatedDate',format='dd/MM/yyyy')" />
+											</div>
+											<div class="col-md-4 pd7">
+												<n:span class="bold">Đơn vị xử lý: </n:span>
+												<label value="@load(lichSu.donVi.ten)" />
+											</div>
+											<div class="col-md-5 pd7">
+												<n:span class="bold">Mô tả hình thức xử lý: </n:span>
+												<label value="@load(lichSu.moTaHinhThucXuLy)" />
+											</div>	 
+										</div>
+										
+									</div>
+									<div class="doi-tuong-action">
+										<x:a onClick="@command('redirectPageHanhVi', zul='lichsuvipham/view.zul', vmArgs=dt, vm=lichSu, doiTuong=dt, isNew=false)" 
+											class="chi-tiet-dt-url">
+  											<n:i class="fa fa-pencil-square-o"></n:i> Sửa
+  										</x:a>
+									</div>
+								</div>
+	    					</template>
+	    				</div>
+	    			</div>
+	    		</div>	
+	    		<div class="lich-su-type-item">
+	    			<div class="ls-heading">
+	    				TIỀN SỰ
+	    				<n:i class="icon-arrow"></n:i>
+	    			</div>
+	    			<div class="ls-content">
+	    			<div children="@load(dt.listTienSu)">
+	    					<template name="children" var="lichSu">
+	    						<div class="doi-tuong-item" style="margin-left:0px;margin-right:0px">
+									<div class="doi-tuong-index">
+										<label value="@load(lichSuStatus.index+1)"/>
+									</div>
+									<div class="doi-tuong-content">
+										<div class="row">
+											<div class="col-md-3 pd7">
+												<n:span class="bold">Thời điểm bắt đầu: </n:span>
+												<label value="@load(lichSu.ngayViPham) @converter('formatedDate',format='dd/MM/yyyy')" />
+											</div>
+											<div class="col-md-4 pd7">
+												<n:span class="bold">Hành vi vi phạm: </n:span>
+												<label value="@load(lichSu.hanhViViPham.ten)" />
+											</div>
+											<div class="col-md-5 pd7">
+												<n:span class="bold">Hình thức xử lý: </n:span>
+												<label value="@load(lichSu.hinhThucXuLy.ten)" />
+											</div>
+											<div class="col-md-3 pd7" style="clear:both">
+												<n:span class="bold">Thời điểm kết thúc: </n:span>
+												<label value="@load(lichSu.ngayKetThuc) @converter('formatedDate',format='dd/MM/yyyy')" />
+											</div>
+											<div class="col-md-4 pd7">
+												<n:span class="bold">Đơn vị xử lý: </n:span>
+												<label value="@load(lichSu.donVi.ten)" />
+											</div>
+											<div class="col-md-5 pd7">
+												<n:span class="bold">Mô tả hình thức xử lý: </n:span>
+												<label value="@load(lichSu.moTaHinhThucXuLy)" />
+											</div>	  
+										</div>
+										
+									</div>
+									<div class="doi-tuong-action">
+										<x:a onClick="@command('redirectPageHanhVi', zul='lichsuvipham/view.zul', vmArgs=dt, vm=lichSu, doiTuong=dt, isNew=false)" 
+											class="chi-tiet-dt-url">
+  											<n:i class="fa fa-pencil-square-o"></n:i> Sửa
+  										</x:a>
+									</div>
+								</div>
+	    					</template>
+	    				</div>
+	    			</div>
+	    		</div>
+	    		<div class="lich-su-type-item">
+	    			<div class="ls-heading">XỬ LÝ VI PHẠM HÀNH CHÍNH
+	    				<n:i class="icon-arrow"></n:i>
+	    			</div>
+	    			<div class="ls-content">
+	    				<div children="@load(dt.listViPhamHanhChinh)">
+	    					<template name="children" var="lichSu">
+	    						<div class="doi-tuong-item" style="margin-left:0px;margin-right:0px">
+									<div class="doi-tuong-index">
+										<label value="@load(lichSuStatus.index+1)"/>
+									</div>
+									<div class="doi-tuong-content">
+										<div class="row">
+											<div class="col-md-3 pd7">
+												<n:span class="bold">Thời điểm bắt đầu: </n:span>
+												<label value="@load(lichSu.ngayViPham) @converter('formatedDate',format='dd/MM/yyyy')" />
+											</div>
+											<div class="col-md-4 pd7">
+												<n:span class="bold">Hành vi vi phạm: </n:span>
+												<label value="@load(lichSu.hanhViViPham.ten)" />
+											</div>
+											<div class="col-md-5 pd7">
+												<n:span class="bold">Hình thức xử lý: </n:span>
+												<label value="@load(lichSu.hinhThucXuLy.ten)" />
+											</div>
+											<div class="col-md-3 pd7" style="clear:both">
+												<n:span class="bold">Thời điểm kết thúc: </n:span>
+												<label value="@load(lichSu.ngayKetThuc) @converter('formatedDate',format='dd/MM/yyyy')" />
+											</div>
+											<div class="col-md-4 pd7">
+												<n:span class="bold">Đơn vị xử lý: </n:span>
+												<label value="@load(lichSu.donVi.ten)" />
+											</div>
+											<div class="col-md-5 pd7">
+												<n:span class="bold">Mô tả hình thức xử lý: </n:span>
+												<label value="@load(lichSu.moTaHinhThucXuLy)" />
+											</div>	
+										</div>
+										
+									</div>
+									<div class="doi-tuong-action">
+										<x:a onClick="@command('redirectPageHanhVi', zul='lichsuvipham/view.zul', vmArgs=dt, vm=lichSu, doiTuong=dt, isNew=false)" 
+											class="chi-tiet-dt-url">
+  											<n:i class="fa fa-pencil-square-o"></n:i> Sửa
+  										</x:a>
+									</div>
+								</div>
+	    					</template>
+	    				</div>
+	    			</div>
+	    		</div>
+	    		<div class="lich-su-type-item">
+	    			<div class="ls-heading">LỊCH SỬ KHÁC
+	    				<n:i class="icon-arrow"></n:i>
+	    			</div>
+	    			<div class="ls-content">
+	    				<div children="@load(dt.listLichSuKhac)">
+	    					<template name="children" var="lichSu">
+	    						<div class="doi-tuong-item" style="margin-left:0px;margin-right:0px">
+									<div class="doi-tuong-index">
+										<label value="@load(lichSuStatus.index+1)"/>
+									</div>
+									<div class="doi-tuong-content">
+										<div class="row">
+											<div class="col-md-3 pd7">
+												<n:span class="bold">Thời điểm bắt đầu: </n:span>
+												<label value="@load(lichSu.ngayViPham) @converter('formatedDate',format='dd/MM/yyyy')" />
+											</div>
+											<div class="col-md-4 pd7">
+												<n:span class="bold">Hành vi vi phạm: </n:span>
+												<label value="@load(lichSu.hanhViViPham.ten)" />
+											</div>
+											<div class="col-md-5 pd7">
+												<n:span class="bold">Hình thức xử lý: </n:span>
+												<label value="@load(lichSu.hinhThucXuLy.ten)" />
+											</div>
+											<div class="col-md-3 pd7" style="clear:both">
+												<n:span class="bold">Thời điểm kết thúc: </n:span>
+												<label value="@load(lichSu.ngayKetThuc) @converter('formatedDate',format='dd/MM/yyyy')" />
+											</div>
+											<div class="col-md-4 pd7">
+												<n:span class="bold">Đơn vị xử lý: </n:span>
+												<label value="@load(lichSu.donVi.ten)" />
+											</div>
+											<div class="col-md-5 pd7">
+												<n:span class="bold">Mô tả hình thức xử lý: </n:span>
+												<label value="@load(lichSu.moTaHinhThucXuLy)" />
+											</div>	
+										</div>
+										
+									</div>
+									<div class="doi-tuong-action">
+										<x:a onClick="@command('redirectPageHanhVi', zul='lichsuvipham/view.zul', vmArgs=dt, vm=lichSu, doiTuong=dt, isNew=false)" 
+											class="chi-tiet-dt-url">
+  											<n:i class="fa fa-pencil-square-o"></n:i> Sửa
+  										</x:a>
+									</div>
+								</div>
+	    					</template>
+	    				</div>
+	    			</div>
+	    		</div>	     		
+	    	</n:div>
+	    </n:div>
+	</n:section>
+	<n:script type="text/javascript">
+		$(document).ready(function () {
+		
+			
+           $(".ls-content").hide();
+		   $(".ls-content.first").show();
+           $(".ls-heading").click(function () {
+			   if ($(this).hasClass('open')){
+				   $(this).removeClass('open');
+				} else {
+				   $(this).addClass('open');
+				}
+               $(this).next(".ls-content").slideToggle(100);
+           });
+
+       });
+	</n:script>
+</div>

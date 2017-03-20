@@ -1,0 +1,191 @@
+<?page title="Quản lý thông báo" contentType="text/html;charset=UTF-8"?>
+<div xmlns:zk="zk" xmlns:n="native" xmlns:x="xhtml" apply="org.zkoss.bind.BindComposer"
+	viewModel="@id('vm') @init('vn.toancauxanh.cms.service.ThongKeNguoiDangBiGiamGiuService')"
+	validationMessages="@id('vmsgs')"
+	form="@id('fx') @bind(vm) @save(vm, before='thongKeKetQua') @validator(vm.validator)">
+	<zscript><![CDATA[
+		self.page.title= "Báo cáo thống kê";
+		donViHanhChinhs1 = entry.donViHanhChinhs;
+		sizeListGioiTinh = entry.gioiTinhs.listGioiTinh.size();
+		sizeListNgheNghiep = entry.nganhNghes.getListNganhNghe().size();
+		sizeListThanhPhanGiaDinh = entry.getThanhPhanDoiTuongs().getListThanhPhanDoiTuong().size();
+		sizeListMaTuySuDung = entry.getMaTuySuDungs().getListMaTuySuDung().size();
+		sizeHinhThucXuLy = entry.getHinhThucXuLys().getListHinhThucXuLyGiamGiu().size();
+	]]></zscript>
+	<n:section class="content-header">
+	<div class="bread-div  bread-tk">			
+		<a href="/thongke">&lt; Thống kê</a>
+	</div>	
+	</n:section>
+	<n:section class="content">	
+		<n:div class="row">
+	    	<n:div class="col-md-12">
+	    		<div class="thong-ke-detail">
+	    			<div class="thong-ke-detail-header">	    				
+	    				Người nghiện, người sử dụng trái phép ma túy ở trong Trại tạm giam, Nhà tạm giữ
+	    				thời điểm hiện tại và theo khoảng thời gian bất kỳ
+	    			</div>
+	    			<div class="thong-ke-detail-content">
+	    				<div class="row">
+	    					<div class="col-lg-10">
+	    						<div class="row">			    					
+			    					<div class="col-lg-4">
+			    						<div class="form-group form-group-tk">
+											<x:label class="col-md-4">Từ ngày:</x:label>
+											<div class="col-md-8">													
+												<datebox width="100%" placeholder="dd/MM/yyyy"
+														format="dd/MM/yyyy" value="@bind(vm.tuNgayTK)" readonly="false"
+														class="mis-datebox-inner" />
+											</div>
+										</div>
+			    					</div>
+			    					<div class="col-lg-4">
+			    						<div class="form-group form-group-tk">
+											<x:label class="col-md-4">Đến ngày:</x:label>
+											<div class="col-md-8">													
+												<datebox width="100%" placeholder="dd/MM/yyyy"
+														format="dd/MM/yyyy" value="@bind(vm.denNgayTK)" readonly="false"
+														class="mis-datebox-inner" />
+												<label class="error" value="@load(vmsgs['lblErrDenNgayTK'])" />
+											</div>
+										</div>
+			    					</div>
+			    					<div class="col-lg-2">
+			    						<x:a class="btn btn-success"
+											onClick="@command('thongKeKetQua')">
+											<n:i class="fa fa-search"></n:i>
+											Thống kê
+										</x:a>
+			    					</div>
+	    						</div>
+	    					</div>    					
+	    				</div>
+	    				<div visible="@load(vm.thongKe)">
+		    				
+	    				</div>
+	    			</div>
+	    			<div class="thong-ke-table" visible="@load(vm.thongKe)">
+	    				<n:table>
+	    					<n:tr>
+	    						<n:td class="center bold" style="width:50px;">TT</n:td>
+	    						<n:td class="center bold" colspan="2">CÁC TIÊU CHÍ THỐNG KÊ</n:td>
+	    						<n:td class="center bold" style="width:80px;">SỐ LIỆU</n:td>
+	    					</n:tr>	    	
+	    					<n:tr>
+	    						<n:td class="center" rowspan="4">1</n:td>
+	    						<n:td class="center bold" rowspan="4">Người sử dụng trái phép ma túy</n:td>
+	    						<n:td>Có nơi cư trú ổn định</n:td>
+	    						<n:td class="center"><label value="@load(vm.soLieu.soLieuNguoiDaNangCoDinh)"/></n:td>
+	    					</n:tr>
+	    					<n:tr>
+	    						<n:td>Không có nơi cư trú ổn định</n:td>
+	    						<n:td class="center"><label value="@load(vm.soLieu.soLieuNguoiDaNangKhongCoDinh)"/></n:td>
+	    					</n:tr>
+	    					<n:tr>
+	    						<n:td>Ngoại tỉnh</n:td>
+	    						<n:td class="center"><label value="@load(vm.soLieu.soLieuNguoiNgoaiTinh)"/></n:td>
+	    					</n:tr>
+	    					<n:tr>
+	    						<n:td>Tổng cộng</n:td>
+	    						<n:td class="center"><label value="@load(vm.soLieu.soLieuTatCaNguoi)"/></n:td>
+	    					</n:tr>
+	    					<x:tbody children="@load(vm.soLieu.listGioiTinhModel)" >
+	    						<zk:template name="children">
+	    							<n:tr>
+		    							<n:td zk:if="${forEachStatus.index eq 0}" class="center" rowspan="${sizeListGioiTinh}">2</n:td>
+			    						<n:td zk:if="${forEachStatus.index eq 0}" class="center bold" style="width: 30%" rowspan="${sizeListGioiTinh}">Giới tính</n:td>
+			    						<n:td><label value="@load(each.ten)"/></n:td>
+			    						<n:td class="center"><label value="@load(each.soLieu)"/></n:td>
+			    					</n:tr>
+	    						</zk:template>	    						
+	    					</x:tbody>
+	    					
+	    					<n:tr>
+	    						<n:td class="center" rowspan="4">3</n:td>
+	    						<n:td class="center bold" rowspan="4">Độ tuổi</n:td>
+	    						<n:td>Dưới 16 tuổi</n:td>
+	    						<n:td class="center"><label value="@load(vm.soLieu.soLieuDoTuoiDuoi16)"/></n:td>
+	    					</n:tr>
+	    					<n:tr>
+	    						<n:td>Từ đủ 16 tuổi đến dưới 18 tuổi</n:td>
+	    						<n:td class="center"><label value="@load(vm.soLieu.soLieuDoTuoiTren16Duoi18)"/></n:td>
+	    					</n:tr>
+	    					<n:tr>
+	    						<n:td>Từ đủ 18 tuổi đến dưới 30 tuổi</n:td>
+	    						<n:td class="center"><label value="@load(vm.soLieu.soLieuDoTuoiTren18Duoi30)"/></n:td>
+	    					</n:tr>
+	    					<n:tr>
+	    						<n:td>Từ đủ 30 tuổi trở lên</n:td>
+	    						<n:td class="center"><label value="@load(vm.soLieu.soLieuDoTuoiTren30)"/></n:td>
+	    					</n:tr>
+	    					<n:tr>
+	    						<n:td class="center" rowspan="3">4</n:td>
+	    						<n:td class="center bold" rowspan="3">Việc làm của người sử dụng trái phép chất ma túy</n:td>
+	    						<n:td>Có việc làm ổn định</n:td>
+	    						<n:td class="center"><label value="@load(vm.soLieu.soLieuCoViecLamOnDinh)"/></n:td>
+	    					</n:tr>
+	    					<n:tr>
+	    						<n:td>Có việc làm nhưng không ổn định</n:td>
+	    						<n:td class="center"><label value="@load(vm.soLieu.soLieuCoViecLamKhongOnDinh)"/></n:td>
+	    					</n:tr>
+	    					<n:tr>
+	    						<n:td>Không có việc làm</n:td>
+	    						<n:td class="center"><label value="@load(vm.soLieu.soLieuKhongViecLam)"/></n:td>
+	    					</n:tr>
+	    					<x:tbody children="@load(vm.soLieu.listNgheNghiepModel)" >
+	    						<zk:template name="children">
+	    							<n:tr>
+		    							<n:td zk:if="${forEachStatus.index eq 0}" class="center" rowspan="${sizeListNgheNghiep}">5</n:td>
+			    						<n:td zk:if="${forEachStatus.index eq 0}" class="center bold" style="width: 30%" rowspan="${sizeListNgheNghiep}">Nghề nghiệp</n:td>
+			    						<n:td><label value="@load(each.ten)"/></n:td>
+			    						<n:td class="center"><label value="@load(each.soLieu)"/></n:td>
+			    					</n:tr>
+	    						</zk:template>	    						
+	    					</x:tbody>
+	    					<x:tbody children="@load(vm.soLieu.listThanhPhanGiaDinhModel)" >
+	    						<zk:template name="children">
+	    							<n:tr>
+		    							<n:td zk:if="${forEachStatus.index eq 0}" class="center" rowspan="${sizeListThanhPhanGiaDinh}">6</n:td>
+			    						<n:td zk:if="${forEachStatus.index eq 0}" class="center bold" style="width: 30%" rowspan="${sizeListThanhPhanGiaDinh}">Thành phần gia đình</n:td>
+			    						<n:td><label value="@load(each.ten)"/></n:td>
+			    						<n:td class="center"><label value="@load(each.soLieu)"/></n:td>
+			    					</n:tr>
+	    						</zk:template>	    						
+	    					</x:tbody>
+	    					<n:tr>
+	    						<n:td class="center" rowspan="2">7</n:td>
+	    						<n:td class="center bold" rowspan="2">Đối tượng nghiện</n:td>
+	    						<n:td>Nghiện mới</n:td>
+	    						<n:td class="center"><label value="@load(vm.soLieu.soLieuNghienMoi)"/></n:td>
+	    					</n:tr>
+	    					<n:tr>
+	    						<n:td>Tái nghiện</n:td>
+	    						<n:td class="center"><label value="@load(vm.soLieu.soLieuTaiNghien)"/></n:td>
+	    					</n:tr>
+	    					<x:tbody children="@load(vm.soLieu.listMaTuySuDungModel)" >
+	    						<zk:template name="children">
+	    							<n:tr>
+		    							<n:td zk:if="${forEachStatus.index eq 0}" class="center" rowspan="${sizeListMaTuySuDung}">8</n:td>
+			    						<n:td zk:if="${forEachStatus.index eq 0}" class="center bold" style="width: 30%" rowspan="${sizeListMaTuySuDung}">Ma túy sử dụng</n:td>
+			    						<n:td><label value="@load(each.ten)"/></n:td>
+			    						<n:td class="center"><label value="@load(each.soLieu)"/></n:td>
+			    					</n:tr>
+	    						</zk:template>	    						
+	    					</x:tbody>	  
+	    					<x:tbody children="@load(vm.soLieu.listHinhThucXuLyModel)" >
+	    						<zk:template name="children">
+	    							<n:tr>
+		    							<n:td zk:if="${forEachStatus.index eq 0}" class="center" rowspan="${sizeHinhThucXuLy}">9</n:td>
+			    						<n:td zk:if="${forEachStatus.index eq 0}" class="center bold" style="width: 30%" rowspan="${sizeHinhThucXuLy}">Hình thức xử lý, quản lý đang áp dụng</n:td>
+			    						<n:td><label value="@load(each.ten)"/></n:td>
+			    						<n:td class="center"><label value="@load(each.soLieu)"/></n:td>
+			    					</n:tr>
+	    						</zk:template>	    						
+	    					</x:tbody>  					
+	    				</n:table>
+	    			</div>
+	    		</div>	    		   		
+	    	</n:div>
+	    </n:div>
+	</n:section>
+</div>

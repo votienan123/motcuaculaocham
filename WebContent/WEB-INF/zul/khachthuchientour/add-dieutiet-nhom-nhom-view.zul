@@ -1,0 +1,133 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<window xmlns:n="native" xmlns:x="xhtml" xmlns:zk="zk" xmlns:w="client" apply="org.zkoss.bind.BindComposer"
+	id="wdn" border="normal" mode="modal" action="show: slideIn"
+	contentStyle="overflow:auto;" closable="true" title="${arg.save}"
+	onClose="@command('invokeGG', notify=vmArgs, detach=wdn, attr='targetQuery')"
+	whatever="@load(false, after='xacNhanNhomSangNhom') @converter('vn.toancauxanh.service.DetachConverter')"
+	viewModel="@id('vm') @init(arg.model)" validationMessages="@id('vmsgs')" 
+	form="@id('fx') @load(vm) @save(vm, before={'xacNhanNhomSangNhom'}) @validator(vm.validatorDieuTietNhom)" width="80%">
+	<zscript>
+		vmArgs = arg.get("vmArgs");
+		vm = arg.get("vm");
+		vm.setTuNgayThucHienTour(vmArgs.tuNgay);
+		System.out.println("vm " +vm);
+		vm.napDanhSachDieuTietNhom();
+		vm.changeNhom();
+		vm.napSoLuongDieuTietTuNhom();
+		
+	</zscript>
+	
+	<div class="row box-body">
+		<div class="col-md-12" style="padding: 0px !important;">
+			<div>
+				<div class="col-md-12">
+					<div class="form-group">
+						<x:label>Số lượng khách tối đa để điều tiết:</x:label>
+						<textbox class="form-control" width="100%" maxlength="3" disabled="true"
+							value="@bind(vm.soLuongDieuTietTuNhom) @save(vm.soLuongDieuTietTuNhom)">
+							<attribute w:name="doKeyPress_">
+								function(evt) { 
+									if (!this._shallIgnore(evt,"0123456789"))
+										this.$doKeyPress_(evt);
+								}
+							</attribute>
+						</textbox>
+					</div>
+					
+					<div class="form-group">
+						<x:label>Ngày thực hiện tour:</x:label>
+						<datebox placeholder="dd/MM/yyyy" width="100%" disabled="true"
+							format="dd/MM/yyyy" value="@bind(vm.ngayThucHienTour) @save(vm.ngayThucHienTour, before={'xacNhanNhomSangNhom'}) @validator('vn.toancauxanh.vm.BaseValid', constraint='no empty')" 
+							readonly="false" class="mis-datebox-inner" />
+						<label class="error" value="@load(vmsgs[self.previousSibling])" />
+					</div>
+					
+					<div class="form-group">
+						<x:label>Tên nhóm:<n:small class="required"> *</n:small></x:label>
+						<combobox width="100%" model="@load(vm.nhomCuaHoiList)" id="cbbNhom"
+							readonly="true" placeholder="Tên nhóm" onSelect="@command('changeNhom')"
+							selectedItem="@bind(vm.nhomDieuTiet) @save(vm.nhomDieuTiet, before={'xacNhanNhomSangNhom'})
+								@validator('vn.toancauxanh.vm.BaseValid', constraint='no empty')" >
+							<template name="model">
+								<comboitem label="@load(empty each? '--- Chọn tên nhóm ---' :  each.ten)" />
+							</template>
+						</combobox>
+						<label class="error" value="@load(vmsgs[self.previousSibling])" />
+					</div>
+					
+					<div class="form-group">
+						<x:label>Số lượng khách điều tiết:<n:small class="required"> *</n:small></x:label>
+						<textbox class="form-control" width="100%" maxlength="3"
+							value="@bind(vm.soLuongKhachDieuTiet) @save(vm.soLuongKhachDieuTiet)">
+							<attribute w:name="doKeyPress_">
+								function(evt) { 
+									if (!this._shallIgnore(evt,"0123456789"))
+										this.$doKeyPress_(evt);
+								}
+							</attribute>
+						</textbox>
+						<label class="error" value="@load(vmsgs['lblErrSoLuongKhach'])" />
+						<label value="@bind(vm.soLuongKhachToiDaDieuTietDuocText)" />
+						<!-- <label value="@bind(vm.soLuongGioiHan)" />
+						<label value="@bind(vm.soLuongVeDaDat)" />
+						<label value="@bind(vm.soLuongKhachDieuTiet)" />
+						<label value="@bind(vm.soLuongKhachGioiHanDieuTiet)" /> -->
+					</div>	
+					
+					<div class="form-group">
+						<n:div class="box-tools">
+		   					<x:button class="btn btn-info"
+		   						onClick="@command('xacNhanNhomSangNhom')">
+		   						<n:i class="fa fa-check"></n:i>
+		   						Xác nhận
+		   					</x:button>
+		   				</n:div>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="col-md-12" style="padding: 0px !important;">
+			<div>
+				<div class="col-md-12">
+					<div class="form-group">
+						<grid model="@load(vm.nhomSangNhoms)" width="100%" emptyMessage="Không có danh sách nhóm điều tiết">
+							<columns>
+								<column label="STT" hflex="min" style="text-align:center"/>
+								<column label="Tên nhóm công ty" width="20%" />
+								<column label="Ngày thực hiện tour" width="10%" />
+								<column label="Số khách điều tiết" width="10%" />
+								<column label="Thao tác" style="text-align:center" width="110px" />
+							</columns>
+							<template name="model">
+								<row apply="org.zkoss.bind.BindComposer" viewModel="@id('item') @init(each)">
+									<label value="@bind(forEachStatus.index + 1 + vm.arg.page * vm.arg.pagesize)" style="text-align:center;display:block"/>
+									<a label="@load(each.nhomDieuTiet.ten)" style="text-align:center"/>
+									<label value="@load(each.ngayThucHienTour) @converter('formatedDate',format='dd/MM/yyyy')" />
+									<label value="@load(each.soLuongKhachDieuTietCong)" style="display:block"/>
+									
+									<div class="text-align-center">
+										<x:button class="btn btn-danger btn-xs" title="Xóa"
+											onClick="@command(vm.xoaDieuTietNhomSangNhom(each))">
+											<n:i class="fa fa-trash"></n:i> 
+										</x:button>
+									</div>
+								</row>
+							</template>
+						</grid>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="row box-footer">  
+		<x:button class="btn btn-default pull-right" onClick="@command('invokeGG', notify=vmArgs, detach=wdn, attr='targetQuery')">
+			Hủy
+		</x:button>
+		<x:button style="margin-right: 10px;" class="btn btn-primary pull-right"
+			onClick="@command('saveDieuTietNhomSangNhom', list=vmArgs, attr='targetQuery', wdn=wdn)">
+			<n:i class="fa fa-save"></n:i>&#160;&#160;Lưu
+		</x:button>
+	</div>
+</window>

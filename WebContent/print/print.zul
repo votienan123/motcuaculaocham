@@ -1,0 +1,146 @@
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<zk  xmlns:n="native">
+<div apply="org.zkoss.bind.BindComposer"
+	viewModel="@id('vm') @init('vn.toancauxanh.cms.service.DatVeService')">
+	<zscript>		
+		import vn.toancauxanh.gg.model.DatVe;
+		String idStr = execution.getParameter("id");
+		Long id = Long.parseLong(idStr);
+		String idStr = "";
+		
+		if (id.toString().length() == 1) {
+			idStr = "00000" + id;
+		} else if (id.toString().length() == 2) {
+			idStr = "0000" + id;
+		} else if (id.toString().length() == 3) {
+			idStr = "000" + id;
+		} else if (id.toString().length() == 4) {
+			idStr = "00" + id;
+		} else if (id.toString().length() == 5) {
+			idStr = "0" + id;
+		} else {
+			idStr = id.toString();
+		}
+
+		DatVe datVe = new DatVe();
+		datVe = vm.core().em().find(DatVe.class, id);
+
+		self.page.title= "InVe" + id;
+	</zscript>
+	<style>
+		.print-body {
+			padding: 0px;
+		}
+		.first-title {
+			font-size: 11px;
+			text-align:center;
+			margin-top: 1px;
+		}
+		.second-title {
+			font-size: 23px;
+			text-align:center;
+			margin-top: 8px;
+		}
+		
+		.header-line {
+			width: 80px;
+		    border-bottom: 1px solid;
+		    margin: 0px auto;
+		}
+		
+		.third-title {
+			text-align: center;
+			font-size: 11px;
+		}
+		
+		.bold {
+			font-weight: bold;
+		}
+		
+		.header-line2 {
+			width: 100%;
+   			border-bottom: 1px dashed #000; 
+		}
+		
+		.print-field {
+			font-size: 12px;
+		    margin-top: 5px;
+		    margin-bottom: 8px;
+		}
+		
+		@media print 
+		{
+		   @page
+		   {
+		    size: 4.1in 5.8in;
+		    size: portrair;
+		  }
+		}
+	</style>
+	<div class="print-body">
+		<n:img src="../img/icon-ve.jpg" style="width: 20%;position:absolute; z-index: -100;"></n:img>
+		<n:p class="first-title">Hội Du Lịch Cù Lao Chàm</n:p>
+		<div class="header-line"></div>
+		<n:p class="third-title" style="font-size: 12px;"><n:span class="bold">Phiếu Bán Hàng - RECEIPT</n:span></n:p>
+		<n:p class="third-title" style="margin-top: -10px;">(Hỗ trợ doanh nghiệp)</n:p>
+		<n:p class="third-title" style="margin-top: 7px;"><n:span class="bold">Code:</n:span> ${idStr}</n:p>
+		<n:p class="third-title" style="margin-bottom: 15px"><n:span class="bold">Ngày đặt vé / Created date:</n:span> <label zclass="dd" value="@load(datVe.ngayKhachDat) @converter('formatedDate',format='dd/MM/yyyy')"></label></n:p>
+		<div class="header-line2"></div>
+		<n:p class="print-field" style="margin-top: 17px;">
+			<n:span class="bold">Họ và tên / Full name:</n:span> ${datVe.hoVaTen}
+		</n:p>
+		<!-- <n:p class="print-field">
+			<n:span class="bold">Ngày sinh / Date Birth:</n:span> <label zclass="dd" value="@load(datVe.ngaySinh) @converter('formatedDate',format='dd/MM/yyyy')"></label>
+		</n:p> -->
+		<n:p class="print-field">
+			<n:span class="bold">Số điện thoại / Phone number:</n:span> ${datVe.soDienThoai}
+		</n:p>
+		<n:p class="print-field">
+			<n:span class="bold">Địa chỉ / Address:</n:span> ${datVe.diaChi}
+		</n:p>
+		<n:p class="print-field">
+			<n:span class="bold">Quốc tịch / Nationality:</n:span> ${datVe.quocTich ne null ? datVe.quocTich.text : ""}
+		</n:p>
+		<n:p class="print-field">
+			<n:span class="bold">Số CMND/Passport (Nếu có):</n:span> ${datVe.soCMND ne '' ? datVe.soCMND : datVe.passport}
+		</n:p>
+		<n:p class="print-field">
+			<n:span class="bold">Số lượng khách / Quantity:</n:span>
+		</n:p>
+		<n:p class="print-field">
+			Lớn / Adults: ${datVe.soLuongNguoiLon} &#160;&#160;&#160;&#160;Nhỏ / CHD: ${datVe.soLuongTreEmDuoi10Tuoi} &#160;&#160;&#160;&#160;Bé / INF: ${datVe.soLuongTreEmDuoi5Tuoi}
+		</n:p>
+		<n:p class="print-field">
+			<n:span class="bold">Loại tour:</n:span> ${datVe.phanLoaiTour eq null ? 
+			(datVe.phanLoaiKhachDiTour eq 'TOUR_DI_RIENG' ? 
+			'Tour đi riêng' : (datVe.phanLoaiKhachDiTour eq 'THUE_TAU_DI_RIENG' ?
+			'Thuê tàu đi riêng' : 'Hai ngày một đêm')) : datVe.phanLoaiTour.ten}
+		</n:p>
+		<n:p class="print-field">
+			<n:span class="bold">Giá dịch vụ (VNĐ) / Price:</n:span> <label zclass="dd" value="@load(datVe.giaDichVu) @converter('formatedNumber',format='#,##0')"/>
+		</n:p>
+		<n:p class="print-field">
+			<n:span class="bold">Ngày thực hiện / Date:</n:span> <label zclass="dd" value="@load(datVe.ngayThucHienTour) @converter('formatedDate',format='dd/MM/yyyy')"></label>
+		</n:p>
+		<n:p class="print-field">
+			<n:span class="bold">Người lập phiếu / By:</n:span> <label zclass="dd" value="@load(datVe.nguoiTao.hoVaTen)"></label>
+		</n:p>
+		<n:p class="print-field">
+			<n:span class="bold">Ghi chú / Note:</n:span> ${datVe.ghiChu}
+		</n:p>
+		<div style="width:100%">
+			<div style="width:40%;float:left;text-align:center;">
+				<n:p class="print-field">
+					<n:span class="bold">Người lập phiếu<n:br/> <n:i style="font-weight:normal;font-size:9px;">(Ký tên ghi rõ họ và tên) </n:i> </n:span>
+				</n:p>
+			</div>
+			<div style="width:20%;"></div>
+			<div style="width:40%;float:right;text-align:center;">
+				<n:p class="print-field">
+					<n:span class="bold">Khách hàng<n:br/> <n:i style="font-weight:normal;font-size:9px;">(Ký tên ghi rõ họ và tên) </n:i> </n:span>
+				</n:p>
+			</div>
+		</div>
+	</div>
+</div>
+</zk>

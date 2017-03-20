@@ -1,0 +1,156 @@
+<?page title="Thống kê khách thực hiện tour" contentType="text/html;charset=UTF-8"?>
+<div xmlns:zk="zk" xmlns:n="native" xmlns:x="xhtml" apply="org.zkoss.bind.BindComposer"
+	viewModel="@id('vm') @init('vn.toancauxanh.cms.service.ThongKeCLCKhachThucHienTourService')"
+	validationMessages="@id('vmsgs')"
+	form="@id('fx') @bind(vm) @save(vm, before='thongKe') @validator(vm.validator)">
+	<zscript><![CDATA[
+		self.page.title= "Thống kê khách thực hiện tour";
+	]]></zscript>
+	<n:section class="content-header">
+		<n:h1>Thống kê khách thực hiện tour</n:h1>
+	</n:section>
+	<n:section class="content">
+	    <n:div class="row">
+			<n:div class="col-md-12">
+	    		<n:div class="box box-info">
+	    			<n:div class="box-header">
+	    				<n:h3 class="box-title">Tìm kiếm</n:h3>
+	    				<n:div class="box-tools pull-right">
+	    					<n:button type="button" class="btn btn-box-tool" data-widget="collapse"><n:i class="fa fa-minus"></n:i></n:button>
+	    				</n:div>
+	    			</n:div>
+	    			<n:div class="box-body">
+	    				<n:div class="row">
+<!-- 	    					<n:div class="col-md-3"> -->
+<!-- 	    						<n:div class="form-group"> -->
+<!-- 									<x:label class="control-label">Ngày đặt vé:</x:label> -->
+<!-- 									<datebox width="100%" placeholder="dd/MM/yyyy" class="mis-datebox-inner" -->
+<!-- 										format="dd/MM/yyyy" value="@bind(vm.ngayDatVe)" readonly="false" /> -->
+<!-- 								</n:div> -->
+<!-- 	    					</n:div> -->
+	    					<n:div class="col-md-3">
+	    						<n:div class="form-group">
+									<x:label class="control-label">Từ ngày thực hiện tour:</x:label>
+									<datebox width="100%" placeholder="dd/MM/yyyy" class="mis-datebox-inner"
+										format="dd/MM/yyyy" value="@bind(vm.ngayThucHienTour)" readonly="true" />
+								</n:div>
+	    					</n:div>
+	    					<n:div class="col-md-3">
+	    						<n:div class="form-group">
+									<x:label class="control-label">Đến ngày thực hiện tour:</x:label>
+									<datebox width="100%" placeholder="dd/MM/yyyy" class="mis-datebox-inner"
+										format="dd/MM/yyyy" value="@bind(vm.denNgayThucHienTour)" readonly="false" />
+									<label class="error" value="@load(vmsgs['lblErrDenNgayTK'])" />
+								</n:div>
+	    					</n:div>
+	    					<n:div class="col-md-2">
+	    						<x:label class="control-label">&#160;</x:label>
+	    						<n:div class="form-group">
+	    							<button zclass="btn btn-warning" onClick="@command('thongKe')" type="button" iconSclass="fa fa-search" label="Tìm kiếm">
+										
+									</button>
+	    						</n:div>
+	    					</n:div>
+	    				</n:div>
+	    			</n:div>
+	    		</n:div>
+	    	</n:div>
+	    	<n:div class="col-md-12">
+	    		<n:div class="box box-success">
+	    			<n:div class="box-body">
+    					<n:div class="row">
+    						<n:div class="col-md-12">
+	    						<n:h3 style="margin: 5px 0;display: inline-block;">Tổng số lượng khách thực hiện tour: <label style="font-family:'Source Sans Pro', sans-serif;font-size:24px;" value="@load(vm.tongSoKhachThucHienThanhCong)"/></n:h3>
+	    						<n:div class="box-tools pull-right">
+			    					<x:button class="btn btn-success"
+			    						onClick="@command('xuatExcel')">
+			    						<n:i class="fa fa-file-excel-o"></n:i>
+			    						Xuất excel
+			    					</x:button>
+			    				</n:div>
+	    					</n:div>
+    						<n:div class="col-md-12">
+    							<tabbox width="100%" height="auto" mold="accordion" class="tab-phongbanvele">
+									<tabs>
+								    	<tab label="Thống kê khách thực hiện tour của hiệp hội" />
+									</tabs>
+								    <tabpanels>
+								    	<tabpanel>
+								    		<grid model="@load(vm.nhomCuaHoiThucHienTour)" width="100%" emptyMessage="Không có danh sách">
+												<columns>
+													<column label="STT" hflex="min" style="text-align:center"/>
+													<column label="Tên nhóm" width="20%" />
+													<column label="Số lượng khách" hflex="min" style="text-align:center" />
+													<column label="Điều tiết" hflex="min" style="text-align:center" />
+													<column label="Điều tiết từ nhóm" hflex="min" style="text-align:center" />
+													<column label="Khách thực hiện tour thành công" hflex="min" style="text-align:center" />
+												</columns>
+												<template name="model">
+													<row apply="org.zkoss.bind.BindComposer" viewModel="@id('item') @init(each)"
+													class="@load(each.soLuongKhach eq 0 ? each.dieuTiet eq 0 ? each.dieuTietTuNhom eq 0 ? '' : 
+													((each.soLuongKhach + each.dieuTiet + each.dieuTietTuNhom eq each.khachThucHienTourThanhCong) ? 'baocao-highlight' : '')
+													: ((each.soLuongKhach + each.dieuTiet + each.dieuTietTuNhom eq each.khachThucHienTourThanhCong) ? 'baocao-highlight' : '')
+													: ((each.soLuongKhach + each.dieuTiet + each.dieuTietTuNhom eq each.khachThucHienTourThanhCong) ? 'baocao-highlight' : ''))">
+														<label value="@bind(forEachStatus.index + 1)" style="text-align:center;display:block"/>
+														<label value="@load(item.nhom.ten)" style="text-align:center"/>
+														<label value="@load(item.soLuongKhach)" style="text-align:center;display:block"/>
+														<label value="@load(item.dieuTiet)" style="text-align:center;display:block"/>
+														<label value="@load(item.soLuongDieuTietTuNhomText)" style="text-align:center;display:block"/>
+														<label value="@load(item.khachThucHienTourThanhCong)" style="text-align:center;display:block;"/>
+													</row>
+												</template>
+											</grid>
+								    	</tabpanel>
+								    </tabpanels>
+								</tabbox>
+                            </n:div>
+    						<n:div class="col-md-12">
+    							<tabbox width="100%" height="auto" mold="accordion">
+									<tabs children="@load(vm.nhomCuaHoiThucHienTour)">
+										<template name="children" var="nhomCuaHoi">
+									    	<tab label="@load(nhomCuaHoi.nhom.ten)" />
+									    </template>
+									</tabs>
+									    <tabpanels children="@load(vm.nhomCuaHoiThucHienTour)">
+								    	<template name="children" var="nhomCuaHoi">
+									    	<tabpanel>
+									    		<grid model="@load(vm.getCongTyKinhDoanhCuaNhomThongKe(nhomCuaHoi.nhom))" width="100%" emptyMessage="Không có danh sách">
+									    			<columns>
+									    				<column label="STT" hflex="min" style="text-align:center"/>
+														<column label="Tên công ty" width="20%" />
+														<column label="Số lượng khách" hflex="min" style="text-align:center" />
+														<column label="Điều tiết" hflex="min" style="text-align:center" />
+														<column label="Điều tiết từ công ty" hflex="min" style="text-align:center" />
+														<column label="Khách thực hiện tour thành công" hflex="min" style="text-align:center" />
+									    			</columns>
+									    			<template name="model">
+									    				<row apply="org.zkoss.bind.BindComposer" viewModel="@id('item') @init(each)"
+									    				class="@load(each.soLuongKhach eq 0 ? each.dieuTiet eq 0 ? each.dieuDietTuCongTySangCongTy eq 0 ? '' : 
+													((each.soLuongKhach + each.dieuTiet + each.dieuDietTuCongTySangCongTy eq each.khachThucHienTourThanhCong) ? 'baocao-highlight' : '')
+													: ((each.soLuongKhach + each.dieuTiet + each.dieuDietTuCongTySangCongTy eq each.khachThucHienTourThanhCong) ? 'baocao-highlight' : '')
+													: ((each.soLuongKhach + each.dieuTiet + each.dieuDietTuCongTySangCongTy eq each.khachThucHienTourThanhCong) ? 'baocao-highlight' : ''))">
+									    					<label value="@bind(forEachStatus.index + 1)" style="text-align:center;display:block"/>
+									    					<label value="@load(item.congty.ten)"/>
+									    					<label value="@load(item.soLuongKhach)" style="text-align:center;display:block"/>
+									    					<label value="@load(item.dieuTiet)" style="text-align:center;display:block"/>
+									    					<label value="@load(item.dieuDietTuCongTySangCongTyText)" style="text-align:center;display:block"/>
+									    					<label value="@load(item.khachThucHienTourThanhCong)" style="text-align:center;display:block;"/>
+									    				</row>
+									    			</template>
+									    		</grid>
+									    	</tabpanel>
+									    </template>
+								    </tabpanels>
+								</tabbox>
+                            </n:div>
+                        </n:div>
+	                </n:div>
+	                <!-- /.box-body -->
+	            </n:div>
+	            <!-- /.box -->
+	        </n:div>
+	        <!-- /.col -->
+	    </n:div>
+	    <!-- /.row -->
+	</n:section>
+</div>

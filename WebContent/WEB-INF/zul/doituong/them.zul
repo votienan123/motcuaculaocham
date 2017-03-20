@@ -1,0 +1,943 @@
+<?page title="Quản lý thông báo" contentType="text/html;charset=UTF-8"?>
+<div xmlns:zk="zk" xmlns:n="native" xmlns:x="xhtml" xmlns:w="client" apply="org.zkoss.bind.BindComposer"
+	viewModel="@id('vm') @init('vn.toancauxanh.gg.model.DoiTuong')"
+	form="@id('fx') @bind(vm) @save(vm, before='saveDoiTuongMoi') @validator(vm.validator)" 
+	validationMessages="@id('vmsgs')">
+	<zscript><![CDATA[
+		self.page.title= "Thêm mới đối tượng";
+		donViHanhChinhs1 = entry.donViHanhChinhs;
+		donViHanhChinhs2 = entry.donViHanhChinhs;
+		donVis = entry.donVis;
+		import java.awt.*;
+		import java.awt.image.*;
+		import java.awt.geom.*;
+		BufferedImage imagevar2 = new BufferedImage(80, 80, BufferedImage.TYPE_INT_ARGB);
+		vm.setFlagChange(true);
+		tienAnTienSu = vn.toancauxanh.gg.model.enums.LoaiHinhThucXuLy.TIEN_AN_TIEN_SU;
+		vm.newThongTinViPham.setFlagChange(true);
+	]]></zscript>
+	<n:section class="content-header">
+	<div class="bread-div">			
+		<a href="/doituong">&lt; Quản lý hồ sơ</a>
+	</div>
+		<n:h1 class="header-title">Thêm hồ sơ mới</n:h1>
+	</n:section>
+	<n:section class="content">
+	    <n:div class="row">
+	    	<n:div class="col-md-12">
+	    		<n:div class="box box-padding box-solid">
+	    			<n:div class="box-header">
+	    				<n:h3 class="box-title">THÔNG TIN CHUNG</n:h3>
+	    			</n:div>
+	    			<n:div class="box-body">
+	    				<n:div class="row">	    					
+	    					<div class="col-md-2 col-sm-3" style="text-align:center;">
+		    						<div class="form-group">
+		    							<div class="div-image">
+		    								<image id="imageCmp" style="width: 120px; height: 160px; border: 1px solid #DDD; object-fit:cover;"
+												content="@load(vm.imageContent eq null ? imagevar2 : vm.imageContent) @save(vm.imageContent, before='saveDoiTuongMoi')">
+											</image>
+											<div class="div-image-btn">
+												<button class="btn btn-info" upload="true,maxsize=50000"
+													onUpload="@command('attachImages',media=event.media,vmsgs=vmsgs)"/>												
+											</div>
+		    							</div>										
+									</div>
+									<n:span style="margin-top: 25px;display: block;" class="semi-title">HÌNH ĐẠI DIỆN</n:span>
+		    					</div>
+	    					<div class="col-md-10 col-sm-9">
+	    						<div class="row">
+	    							<div class="col-md-6">
+										<div class="form-group form-doi-tuong">
+											<x:label class="col-md-4 col-sm-4">Họ và tên<n:small class="required"> *</n:small></x:label>
+											<div class="col-md-8 col-sm-8">													
+												<textbox class="form-control" maxlength="255" width="99%"
+													value="@load(vm.hoVaTen) @save(vm.hoVaTen, before='saveDoiTuongMoi') 
+													@validator('vn.toancauxanh.vm.BaseValid', constraint='no empty')"/>
+												<label class="error" value="@load(vmsgs[self.previousSibling])" />
+											</div>
+										</div>
+										<div class="form-group form-doi-tuong">
+											<x:label class="col-md-4 col-sm-4">Biệt danh</x:label>
+											<div class="col-md-8 col-sm-8">													
+												<textbox class="form-control" maxlength="255" width="99%"
+													value="@load(vm.tenKhac) @save(vm.tenKhac, before='saveDoiTuongMoi')"/>
+											</div>
+										</div>
+										<div class="form-group form-doi-tuong">
+											<x:label class="col-md-4 col-sm-4">Ngày sinh<n:small class="required"> *</n:small></x:label>
+											<div class="col-md-8 col-sm-8">
+												<checkbox checked="false" label="Chỉ có năm">
+													<attribute name="onCheck"><![CDATA[
+														if (self.isChecked()) {
+															ngaySinh.setVisible(false);
+															namSinh.setVisible(true);
+															ngaySinh.setValue(null);
+															vm.setNgaySinh(null);															
+														} else {
+															ngaySinh.setVisible(true);
+															namSinh.setVisible(false);
+															namSinh.setValue(null);
+															vm.setNamSinh(0);
+														}
+													]]></attribute>
+												</checkbox>													
+												<datebox width="99%" placeholder="dd/MM/yyyy" id="ngaySinh"
+													format="dd/MM/yyyy" value="@bind(vm.ngaySinh) @save(vm.ngaySinh, before='saveDoiTuongMoi') 
+														@validator('vn.toancauxanh.vm.BaseValid', constraint='no future')" readonly="false"
+													class="mis-datebox-inner" />
+												<intbox width="99%" class="form-control" id="namSinh" visible="false"
+													value="@bind(vm.namSinh) @save(vm.namSinh, before='saveDoiTuongMoi')
+														@validator('vn.toancauxanh.vm.BaseValid',  flagBirth=true, ngaySinhConstraint=ngaySinh.value,namSinhConstraint=self.value)">
+													<attribute w:name="doKeyPress_">
+														<![CDATA[
+															function(evt) {if (!this._shallIgnore(evt, "0123456789")) this.$doKeyPress_(evt);}
+														]]>
+													</attribute>
+												</intbox>
+												<label class="error" value="@load(vmsgs[self.previousSibling])" />
+											</div>
+										</div>
+										<div class="form-group form-doi-tuong">
+											<x:label class="col-md-4 col-sm-4">Giới tính<n:small class="required"> *</n:small></x:label>
+											<div class="col-md-8 col-sm-8">													
+												<combobox width="99%" model="@load(entry.gioiTinhs.listGioiTinh)"
+													readonly="true" 
+													value="@load(vm.gioiTinh.ten)"
+													selectedItem="@load(vm.gioiTinh) @save(vm.gioiTinh, before='saveDoiTuongMoi') 
+														@validator('vn.toancauxanh.vm.BaseValid', constraint='no empty')"
+													placeholder="Chọn giới tính" >
+													<template name="model">
+														<comboitem label="@load(each.ten)" />
+													</template>
+												</combobox>
+												<label class="error" value="@load(vmsgs[self.previousSibling])" />
+											</div>
+										</div>
+										<div class="form-group form-doi-tuong">
+											<x:label class="col-md-4 col-sm-4">Đặc điểm</x:label>
+											<div class="col-md-8 col-sm-8">													
+												<textbox class="form-control" maxlength="255" width="99%"
+													value="@load(vm.dacDiemNhanDang) @save(vm.dacDiemNhanDang, before='saveDoiTuongMoi')"/>
+											</div>
+										</div>
+										<div class="form-group form-doi-tuong">
+											<x:label class="col-md-4 col-sm-4">Trình độ học vấn</x:label>
+											<div class="col-md-8 col-sm-8">													
+												<combobox width="99%" model="@load(entry.trinhDoHocVans.listTrinhDoHocVan)"
+													readonly="true" 
+													value="@load(vm.trinhDoVanHoa eq null ? '' : vm.trinhDoVanHoa.ten)"
+													selectedItem="@load(vm.trinhDoVanHoa) @save(vm.trinhDoVanHoa, before='saveDoiTuongMoi')"
+													placeholder="Chọn trình độ học vấn" >
+													<template name="model">
+														<comboitem label="@load(each.ten)" />
+													</template>
+												</combobox>
+											</div>
+										</div>
+										<div class="form-group form-doi-tuong">
+											<x:label class="col-md-4 col-sm-4">Tình trạng việc làm</x:label>
+											<div class="col-md-8 col-sm-8">													
+												<combobox width="99%" model="@load(entry.listTinhTrangViecLam)"
+													readonly="true" 
+													value="@load(vm.tinhTrangViecLam ne null ? vm.tinhTrangViecLam.text : '')"
+													selectedItem="@load(vm.tinhTrangViecLam) @save(vm.tinhTrangViecLam, before='saveDoiTuongMoi')"
+													placeholder="Chọn tình trạng việc làm" >
+													<template name="model">
+														<comboitem label="@load(each.text)" />
+													</template>
+												</combobox>
+											</div>
+										</div>										
+									</div>
+									
+									<div class="col-md-6">
+										<div class="form-group form-doi-tuong">
+											<x:label class="col-md-4 col-sm-4">Nghề nghiệp</x:label>
+											<div class="col-md-8 col-sm-8">													
+												<combobox width="99%" model="@load(entry.nganhNghes.listNganhNghe)"
+													readonly="true" 
+													value="@load(vm.ngheNghiep eq null ? '' : vm.ngheNghiep.ten)"
+													selectedItem="@load(vm.ngheNghiep) @save(vm.ngheNghiep, before='saveDoiTuongMoi')"
+													placeholder="Chọn nghề nghiệp" >
+													<template name="model">
+														<comboitem label="@load(each.ten)" />
+													</template>
+												</combobox>
+											</div>
+										</div>
+										<div class="form-group form-doi-tuong">
+											<x:label class="col-md-4 col-sm-4">Số thẻ căn cước</x:label>
+											<div class="col-md-8 col-sm-8">													
+												<textbox class="form-control" maxlength="15" width="99%"
+													value="@load(vm.soDinhDanh) @save(vm.soDinhDanh, before='saveDoiTuongMoi')">
+													<attribute w:name="doKeyPress_">
+														<![CDATA[
+															function(evt) {if (!this._shallIgnore(evt, "0123456789")) this.$doKeyPress_(evt);}
+														]]>
+													</attribute>
+												</textbox>
+											</div>
+										</div>
+										<div class="form-group form-doi-tuong">
+											<x:label class="col-md-4 col-sm-4">Số CMND</x:label>
+											<div class="col-md-8 col-sm-8">													
+												<textbox class="form-control" maxlength="15" width="99%"
+													value="@load(vm.soCMND) @save(vm.soCMND, before='saveDoiTuongMoi')">
+													<attribute w:name="doKeyPress_">
+														<![CDATA[
+															function(evt) {if (!this._shallIgnore(evt, "0123456789")) this.$doKeyPress_(evt);}
+														]]>
+													</attribute>
+												</textbox>
+											</div>
+										</div>
+										<div class="form-group form-doi-tuong">
+											<x:label class="col-md-4 col-sm-4">Ngày cấp CMND</x:label>
+											<div class="col-md-8 col-sm-8">													
+												<datebox width="99%" placeholder="dd/MM/yyyy"
+													format="dd/MM/yyyy" value="@bind(vm.ngayCapCMND) @save(vm.ngayCapCMND, before='saveDoiTuongMoi') 
+														@validator('vn.toancauxanh.vm.BaseValid', constraint='no future')" 
+													readonly="false"
+													class="mis-datebox-inner" />
+												<label class="error" value="@load(vmsgs[self.previousSibling])" />
+											</div>
+										</div>
+										<div class="form-group form-doi-tuong">
+											<x:label class="col-md-4 col-sm-4">Nơi cấp CMND</x:label>
+											<div class="col-md-8 col-sm-8">													
+												<combobox width="99%" model="@load(entry.listNoiCapCMND)"
+													readonly="true" 
+													value="@load(vm.noiCapCMND ne null ? vm.noiCapCMND.text : '')"
+													selectedItem="@load(vm.noiCapCMND) @save(vm.noiCapCMND, before='saveDoiTuongMoi')"
+													placeholder="Chọn nơi cấp CMND" >
+													<template name="model">
+														<comboitem label="@load(each.text)" />
+													</template>
+												</combobox>
+											</div>
+										</div>
+										<div class="form-group form-doi-tuong">
+											<x:label class="col-md-4 col-sm-4">Thành phần gia đình</x:label>
+											<div class="col-md-8 col-sm-8">													
+												<combobox width="99%" model="@load(entry.thanhPhanDoiTuongs.listThanhPhanDoiTuong)"
+													readonly="true" 
+													value="@load(vm.thanhPhanDoiTuong eq null ? '' : vm.thanhPhanDoiTuong.ten)"
+													selectedItem="@load(vm.thanhPhanDoiTuong) @save(vm.thanhPhanDoiTuong, before='saveDoiTuongMoi')"
+													placeholder="Chọn thành phần gia đình" >
+													<template name="model">
+														<comboitem label="@load(each.ten)" />
+													</template>
+												</combobox>
+											</div>
+										</div>										
+									</div>																		
+	    						</div>						
+	    					</div>			
+	    				</n:div>
+	    			</n:div>
+	    			
+	    			<n:div class="box-body2 box-body">
+	    				<n:div class="row">
+	    					<div class="col-md-2 col-sm-3" style="text-align:center;">
+	    						<n:span class="semi-title">NƠI ĐKNKTT</n:span>
+	    					</div>
+	    					<div class="col-md-10 col-sm-9">
+	    						<div class="row">
+	    							<div class="col-md-6">
+	    								<div class="form-group form-doi-tuong">
+											<x:label class="col-md-4 col-sm-4">Thành phố/Tỉnh</x:label>
+											<div class="col-md-8 col-sm-8">													
+												<combobox width="99%" model="@load(donViHanhChinhs1.listTinhThanh)"
+													readonly="true" 
+													value="@load(vm.diaChiThuongTruTinh eq null ? '' : vm.diaChiThuongTruTinh.ten)"
+													selectedItem="@load(vm.diaChiThuongTruTinh) @save(vm.diaChiThuongTruTinh, before='saveDoiTuongMoi')
+														@bind(donViHanhChinhs1.selectedDVHCTinhThanh)"
+													placeholder="Chọn thành phố/tỉnh" >
+													<template name="model">
+														<comboitem label="@load(each.ten)" />
+													</template>
+													<attribute name="onCreate">
+														if (vm.diaChiThuongTruTinh != null) {
+															donViHanhChinhs1.setSelectedDVHCTinhThanh(vm.diaChiThuongTruTinh);
+														}
+													</attribute>
+													<attribute name="onSelect">
+														cbbQuanHuyen.setRawValue(null);
+														cbbPhuongXa.setRawValue(null);
+														cbbToDanPho.setRawValue(null);
+													</attribute>
+												</combobox>
+											</div>
+										</div>
+	    							</div>
+	    							<div class="col-md-6">
+	    								<div class="form-group form-doi-tuong">
+											<x:label class="col-md-4 col-sm-4">Quận/Huyện</x:label>
+											<div class="col-md-8 col-sm-8">													
+												<combobox width="99%" model="@load(donViHanhChinhs1.listQuanHuyen)"
+													readonly="true" id="cbbQuanHuyen"
+													value="@load(vm.diaChiThuongTruHuyen eq null ? '' : vm.diaChiThuongTruHuyen.ten)"
+													selectedItem="@load(vm.diaChiThuongTruHuyen) @save(vm.diaChiThuongTruHuyen, before='saveDoiTuongMoi')
+														@bind(donViHanhChinhs1.selectedDVHCQuanHuyen)"
+													placeholder="Chọn quận/huyện" >
+													<template name="model">
+														<comboitem label="@load(each.ten)" />
+													</template>
+													<attribute name="onCreate">
+														if (vm.diaChiThuongTruHuyen != null) {
+															donViHanhChinhs1.setSelectedDVHCQuanHuyen(vm.diaChiThuongTruHuyen);
+														}
+													</attribute>
+													<attribute name="onSelect">
+														cbbPhuongXa.setRawValue(null);
+														cbbToDanPho.setRawValue(null);
+													</attribute>
+												</combobox>
+											</div>
+										</div>
+	    							</div>
+	    							<div class="col-md-6">
+	    								<div class="form-group form-doi-tuong">
+											<x:label class="col-md-4 col-sm-4">Phường/Xã</x:label>
+											<div class="col-md-8 col-sm-8">													
+												<combobox width="99%" model="@load(donViHanhChinhs1.listPhuongXaDaNang)"
+													readonly="true" id="cbbPhuongXa"
+													value="@load(vm.diaChiThuongTruXa eq null ? '' : vm.diaChiThuongTruXa.ten)"
+													selectedItem="@load(vm.diaChiThuongTruXa) @save(vm.diaChiThuongTruXa, before='saveDoiTuongMoi')
+														@bind(donViHanhChinhs1.selectedDVHCPhuongXa)"
+													placeholder="Chọn phường/xã" >
+													<template name="model">
+														<comboitem label="@load(each.ten)" />
+													</template>
+													<attribute name="onCreate">
+														if (vm.diaChiThuongTruXa != null) {
+															donViHanhChinhs1.setSelectedDVHCPhuongXa(vm.diaChiThuongTruXa);
+														}
+													</attribute>
+													<attribute name="onSelect">
+														cbbToDanPho.setRawValue(null);
+													</attribute>
+												</combobox>
+											</div>
+										</div>
+	    							</div>
+	    							<div class="col-md-6">
+	    								<div class="form-group form-doi-tuong">
+											<x:label class="col-md-4 col-sm-4">Tổ/Thôn</x:label>
+											<div class="col-md-8 col-sm-8">													
+												<combobox width="99%" model="@load(donViHanhChinhs1.listToDanPho)"
+													readonly="true" id="cbbToDanPho"
+													value="@load(vm.diaChiThuongTruToDanPho eq null ? '' : vm.diaChiThuongTruToDanPho.ten)"
+													selectedItem="@load(vm.diaChiThuongTruToDanPho) 
+														@save(vm.diaChiThuongTruToDanPho, before='saveDoiTuongMoi')"
+													placeholder="Chọn tổ/thôn" >
+													<template name="model">
+														<comboitem label="@load(each.ten)" />
+													</template>
+												</combobox>
+											</div>
+										</div>
+	    							</div>
+	    							<div class="col-md-12">
+	    								<div class="form-group form-doi-tuong">
+											<x:label class="col-md-2 col-sm-4">Số nhà, tên đường</x:label>
+											<div class="col-md-10 col-sm-8">													
+												<textbox class="form-control" maxlength="255" placeholder="Số nhà, tên đường" width="99.5%"
+													value="@load(vm.diaChiThuongTru) @save(vm.diaChiThuongTru, before='saveDoiTuongMoi')"/>
+											</div>
+										</div>
+	    							</div>
+	    						</div>
+	    					</div>
+	    				</n:div>
+	    			</n:div>
+	    			
+	    			<n:div class="box-body2 box-body">
+	    				<n:div class="row">
+	    					<div class="col-md-2 col-sm-3" style="text-align:center;">
+	    						<n:span class="semi-title">NƠI Ở HIỆN TẠI</n:span>
+	    					</div>
+	    					<div class="col-md-10 col-sm-9">
+	    						<div class="row">
+	    							<div class="col-md-6">
+	    								<div class="form-group form-doi-tuong">
+											<x:label class="col-md-4 col-sm-4">Thành phố/Tỉnh</x:label>
+											<div class="col-md-8 col-sm-8">	
+												<combobox width="99%" model="@load(donViHanhChinhs2.listTinhThanh)"
+													readonly="true" 
+													value="@load(vm.diaChiHienNayTinh eq null ? '' : vm.diaChiHienNayTinh.ten)"
+													selectedItem="@load(vm.diaChiHienNayTinh) @save(vm.diaChiHienNayTinh, before='saveDoiTuongMoi')
+														@bind(donViHanhChinhs2.selectedDVHCTinhThanh)"
+													placeholder="Chọn thành phố/tỉnh" >
+													<template name="model">
+														<comboitem label="@load(each.ten)" />
+													</template>
+													<attribute name="onCreate">
+														if (vm.diaChiHienNayTinh != null) {
+															donViHanhChinhs2.setSelectedDVHCTinhThanh(vm.diaChiHienNayTinh);
+														}
+													</attribute>
+													<attribute name="onSelect">
+														cbbQuanHuyen2.setRawValue(null);
+														cbbPhuongXa2.setRawValue(null);
+														cbbToDanPho2.setRawValue(null);
+													</attribute>
+												</combobox>
+											</div>												
+										</div>
+	    							</div>
+	    							<div class="col-md-6">
+	    								<div class="form-group form-doi-tuong">
+											<x:label class="col-md-4 col-sm-4">Quận/Huyện</x:label>
+											<div class="col-md-8 col-sm-8">													
+												<combobox width="99%" model="@load(donViHanhChinhs2.listQuanHuyen)"
+													readonly="true" id="cbbQuanHuyen2"
+													value="@load(vm.diaChiHienNayHuyen eq null ? '' : vm.diaChiHienNayHuyen.ten)"
+													selectedItem="@load(vm.diaChiHienNayHuyen) @save(vm.diaChiHienNayHuyen, before='saveDoiTuongMoi')
+														@bind(donViHanhChinhs2.selectedDVHCQuanHuyen)"
+													placeholder="Chọn quận/huyện" >
+													<template name="model">
+														<comboitem label="@load(each.ten)" />
+													</template>
+													<attribute name="onCreate">
+														if (vm.diaChiHienNayHuyen != null) {
+															donViHanhChinhs2.setSelectedDVHCQuanHuyen(vm.diaChiHienNayHuyen);
+														}
+													</attribute>
+													<attribute name="onSelect">
+														cbbPhuongXa2.setRawValue(null);
+														cbbToDanPho2.setRawValue(null);
+													</attribute>
+												</combobox>
+											</div>
+										</div>
+	    							</div>
+	    							<div class="col-md-6">
+	    								<div class="form-group form-doi-tuong">
+											<x:label class="col-md-4 col-sm-4">Phường/Xã</x:label>
+											<div class="col-md-8 col-sm-8">													
+												<combobox width="99%" model="@load(donViHanhChinhs2.listPhuongXaDaNang)"
+													readonly="true" id="cbbPhuongXa2"
+													value="@load(vm.diaChiHienNayXa eq null ? '' : vm.diaChiHienNayXa.ten)"
+													selectedItem="@load(vm.diaChiHienNayXa) @save(vm.diaChiHienNayXa, before='saveDoiTuongMoi')
+														@bind(donViHanhChinhs2.selectedDVHCPhuongXa)"
+													placeholder="Chọn phường/xã" >
+													<template name="model">
+														<comboitem label="@load(each.ten)" />
+													</template>
+													<attribute name="onCreate">
+														if (vm.diaChiHienNayXa != null) {
+															donViHanhChinhs2.setSelectedDVHCPhuongXa(vm.diaChiHienNayXa);
+														}
+													</attribute>
+													<attribute name="onSelect">
+														cbbToDanPho2.setRawValue(null);
+													</attribute>
+												</combobox>
+											</div>
+										</div>
+	    							</div>
+	    							<div class="col-md-6">
+	    								<div class="form-group form-doi-tuong">
+											<x:label class="col-md-4 col-sm-4">Tổ/Thôn</x:label>
+											<div class="col-md-8 col-sm-8">													
+												<combobox width="99%" model="@load(donViHanhChinhs2.listToDanPho)"
+													readonly="true" id="cbbToDanPho2"
+													value="@load(vm.diaChiHienNayToDanPho eq null ? '' : vm.diaChiHienNayToDanPho.ten)"
+													selectedItem="@load(vm.diaChiHienNayToDanPho) 
+														@save(vm.diaChiHienNayToDanPho, before='saveDoiTuongMoi')"
+													placeholder="Chọn tổ/thôn" >
+													<template name="model">
+														<comboitem label="@load(each.ten)" />
+													</template>
+												</combobox>
+											</div>
+										</div>
+	    							</div>
+	    							<div class="col-md-12">
+	    								<div class="form-group form-doi-tuong">
+											<x:label class="col-md-2 col-sm-4">Số nhà, tên đường</x:label>
+											<div class="col-md-10 col-sm-8">													
+												<textbox class="form-control" width="99.5%" maxlength="255" placeholder="Số nhà, tên đường"
+													value="@load(vm.diaChiHienNay) @save(vm.diaChiHienNay, before='saveDoiTuongMoi')"/>
+											</div>
+										</div>
+	    							</div>
+	    						</div>
+	    					</div>
+	    				</n:div>
+	    			</n:div>
+	    			
+	    			<n:div class="box-body2 box-body">
+	    				<n:div class="row">
+	    					<div class="col-md-2 col-sm-3" style="text-align:center;">
+	    						<n:span class="semi-title">CHI TIẾT</n:span>
+	    					</div>
+	    					<div class="col-md-10 col-sm-9">
+	    						<div class="row">
+	    							<div class="col-md-6">
+	    								<div class="form-group form-doi-tuong">
+											<x:label class="col-md-4 col-sm-4">Đối tượng nghiện</x:label>
+											<div class="col-md-8 col-sm-8">													
+												<combobox width="99%" model="@load(entry.listDoiTuongNghien)"
+													readonly="true" 
+													value="@load(vm.doiTuongNghien eq null ? '' : vm.doiTuongNghien.text)"
+													selectedItem="@load(vm.doiTuongNghien) @save(vm.doiTuongNghien, before='saveDoiTuongMoi')"
+													placeholder="Chọn đối tượng nghiện" >
+													<template name="model">
+														<comboitem label="@load(each.text)" />
+													</template>
+												</combobox>
+											</div>
+										</div>
+										<div class="form-group form-doi-tuong">
+											<x:label class="col-md-4 col-sm-4"></x:label>
+											<div class="col-md-8 col-sm-8">													
+												<checkbox label="Có quyết định truy nã" checked="@bind(vm.coQuyetDinhTruyNa)" />
+											</div>
+										</div>
+										<div class="form-group form-doi-tuong" visible="@load(vm.coQuyetDinhTruyNa)">
+											<x:label class="col-md-4 col-sm-4">Phạm tội</x:label>
+											<div class="col-md-8 col-sm-8">													
+												<textbox class="form-control" maxlength="255" width="99%"
+													value="@load(vm.toiPhamTruyNa) @save(vm.toiPhamTruyNa, before='saveDoiTuongMoi')"/>
+											</div>
+										</div>
+										<div class="form-group form-doi-tuong" visible="@load(vm.coQuyetDinhTruyNa)">
+											<x:label class="col-md-4 col-sm-4">Đơn vị ra quyết định</x:label>
+											<div class="col-md-8 col-sm-8">													
+												<textbox class="form-control" maxlength="255" width="99%"
+													value="@load(vm.donViTruyNa) @save(vm.donViTruyNa, before='saveDoiTuongMoi')"/>
+											</div>
+										</div>
+										<div class="form-group form-doi-tuong">
+											<x:label class="col-md-4 col-sm-4"></x:label>
+											<div class="col-md-8 col-sm-8">													
+												<checkbox label="Có quyết định truy tìm" checked="@bind(vm.coQuyetDinhTruyTim)" />
+											</div>
+										</div>
+	    							</div>
+	    							<div class="col-md-6">
+	    								
+										<div class="form-group form-doi-tuong">
+											<x:label class="col-md-4 col-sm-4">Dấu hiệu nghi vấn VPPL</x:label>
+											<div class="col-md-8 col-sm-8">													
+												<textbox class="form-control" maxlength="255" width="99%"
+													value="@load(vm.dauHieuNghiVanVPPL) @save(vm.dauHieuNghiVanVPPL, before='saveDoiTuongMoi')"/>
+											</div>
+										</div>
+										<div class="form-group form-doi-tuong">
+											<x:label class="col-md-4 col-sm-4">Biểu hiện loạn thần kinh</x:label>
+											<div class="col-md-8 col-sm-8">													
+												<textbox class="form-control" maxlength="255" width="99%"
+													value="@load(vm.bieuHienLoanThanKinh) @save(vm.bieuHienLoanThanKinh, before='saveDoiTuongMoi')"/>
+											</div>
+										</div>
+	    							</div>
+	    						</div>
+	    					</div>
+	    				</n:div>
+	    			</n:div>
+	    			
+	    			<n:div class="box-body2 box-body">
+		    				<n:div class="row">
+		    					<div class="col-md-2 col-sm-3" style="text-align:center;">
+		    						<n:span class="semi-title">CÁN BỘ QUẢN LÝ</n:span>
+		    					</div>
+		    					<div class="col-md-10 col-sm-9">
+		    						<div class="row">
+		    							<div class="col-md-6">
+		    								<div class="form-group form-doi-tuong">
+												<x:label class="col-md-4 col-sm-4">Họ và tên</x:label>
+												<div class="col-md-8 col-sm-8">													
+													<textbox class="form-control" maxlength="255" width="99%"
+														value="@load(vm.canBoQuanLy) @save(vm.canBoQuanLy, before='saveDoiTuongMoi')"/>
+												</div>
+											</div>
+											<div class="form-group form-doi-tuong">
+												<x:label class="col-md-4 col-sm-4">Số điện thoại</x:label>
+												<div class="col-md-8 col-sm-8">													
+													<textbox class="form-control" maxlength="15" width="99%"
+														value="@load(vm.soDTCanBoQuanLy) @save(vm.soDTCanBoQuanLy, before='saveDoiTuongMoi')"/>
+												</div>
+											</div>											
+		    							</div>
+		    							<div class="col-md-6">   							
+											<div class="form-group form-doi-tuong">
+												<x:label class="col-md-4 col-sm-4">Đơn vị công tác</x:label>
+												<div class="col-md-8 col-sm-8">													
+													<combobox width="99%" model="@load(entry.toChucDoanTheGiamSats.listAllTCDT)"
+														readonly="true" 
+														value="@load(vm.donViCanBoQuanLy eq null ? '' : vm.donViCanBoQuanLy.ten)"
+														selectedItem="@load(vm.donViCanBoQuanLy) @save(vm.donViCanBoQuanLy, before='saveDoiTuongMoi')"
+														placeholder="Chọn đơn vị công tác" >
+														<template name="model">
+															<comboitem label="@load(each.childName)" />
+														</template>
+													</combobox>
+												</div>
+											</div>	
+		    							</div>
+		    						</div>
+		    					</div>
+		    				</n:div>
+		    			</n:div>
+	    			
+	    			<n:div class="box-header box-top2" style="margin-bottom: 15px;">
+	    				<n:h3 class="box-title">THÔNG TIN THÂN NHÂN</n:h3>
+	    			</n:div>
+	    			
+	    			<n:div class="box-body">
+	    				<n:div class="row">
+	    					<div class="col-md-12">
+	    						<div children="@load(vm.listThongTinThanNhan)">
+	    							<template name="children" var="child">
+	    								<div class="than-nhan-item row ${childStatus.index eq 0 ? 'first' : ''}">
+			    							<div class="col-md-4">
+			    								<div class="form-group form-doi-tuong">
+													<x:label class="col-md-4 col-sm-4">Họ và tên<n:small class="required"> *</n:small></x:label>
+													<div class="col-md-8 col-sm-8">													
+														<textbox class="form-control" maxlength="255" width="99%" placeholder="Họ và tên"
+															value="@bind(child.hoVaTen) @save(child.hoVaTen, before='saveDoiTuongMoi')
+																@validator('vn.toancauxanh.vm.BaseValid', constraint='no empty')"/>
+														<label class="error" value="@load(vmsgs[self.previousSibling])" />
+													</div>
+												</div>
+			    							</div>
+			    							<div class="col-md-3">
+			    								<div class="form-group form-doi-tuong">
+													<x:label class="col-md-4 col-sm-4">Quan hệ<n:small class="required"> *</n:small></x:label>
+													<div class="col-md-8 col-sm-8">													
+														<combobox width="99%" model="@load(entry.quanHeGiaDinhs.listQuanHeGiaDinh)"
+															readonly="true"
+															value="@load(child.quanHeGiaDinh eq null ? '' : child.quanHeGiaDinh.ten)"
+															selectedItem="@bind(child.quanHeGiaDinh) 
+																@save(child.quanHeGiaDinh, before='saveDoiTuongMoi')
+																@validator('vn.toancauxanh.vm.BaseValid', constraint='no empty')"
+															placeholder="Chọn quan hệ" >
+															<template name="model">
+																<comboitem label="@load(each.ten)" />
+															</template>
+														</combobox>
+														<label class="error" value="@load(vmsgs[self.previousSibling])" />
+													</div>
+												</div>
+			    							</div>
+			    							<div class="col-md-4">
+			    								<div class="form-group form-doi-tuong">
+													<x:label class="col-md-4 col-sm-4">Nghề nghiệp</x:label>
+													<div class="col-md-8 col-sm-8">													
+														<combobox width="99%" model="@load(entry.nganhNghes.listNganhNghe)"
+															readonly="true" 
+															value="@load(child.ngheNghiep eq null ? '' : child.ngheNghiep.ten)"
+															selectedItem="@bind(child.ngheNghiep) @save(child.ngheNghiep, before='saveDoiTuongMoi')"
+															placeholder="Chọn nghề nghiệp" >
+															<template name="model">
+																<comboitem label="@load(each.ten)" />
+															</template>
+														</combobox>
+													</div>
+												</div>
+			    							</div>
+			    							<div class="col-md-4">
+			    								<div class="form-group form-doi-tuong">
+													<x:label class="col-md-4 col-sm-4">Năm sinh</x:label>
+													<div class="col-md-8 col-sm-8">													
+														<textbox class="form-control" maxlength="4" placeholder="Năm sinh" width="99%"
+															value="@bind(child.namSinh) @save(child.namSinh, before='saveDoiTuongMoi') 
+																@validator('vn.toancauxanh.vm.BaseValid', namSinh=self.value)">
+															<attribute w:name="doKeyPress_">
+																<![CDATA[
+																	function(evt) {if (!this._shallIgnore(evt, "0123456789")) this.$doKeyPress_(evt);}
+																]]>
+															</attribute>
+														</textbox>
+														<label class="error" value="@load(vmsgs[self.previousSibling])" />
+													</div>
+												</div>
+			    							</div>
+			    							<div class="col-md-7">
+			    								<div class="form-group form-doi-tuong">
+													<x:label class="col-md-2 col-sm-4">Địa chỉ thường trú</x:label>
+													<div class="col-md-10 col-sm-8">													
+														<textbox class="form-control" maxlength="255" width="99.5%" placeholder="Địa chỉ thường trú"
+															value="@bind(child.diaChiThuongTru) @save(child.diaChiThuongTru, before='saveDoiTuongMoi') "/>
+													</div>
+												</div>
+			    							</div>
+			    							<div class="col-md-1">
+			    								<x:a class="xoa-than-nhan" 
+													onClick="@command('deleteThongTinThanNhan', item=child)">
+													<n:i class="fa fa-trash"> Xoá</n:i>
+												</x:a>
+			    							</div>			    							
+			    							<div class="than-nhan-line"></div>
+			    						</div>
+	    							</template>
+	    						</div>		    						
+	    						<x:a class="btn-trong-suot btn-than-nhan" onClick="@command('themThongTinThanNhan')">
+	    							<n:i class="fa fa-plus"></n:i>&#160;&#160;Thêm thân nhân
+	    						</x:a>
+	    					</div>		    												
+	    				</n:div>
+	    			</n:div>
+	    			
+<!-- 	    			<n:div class="box-header box-top2"> -->
+<!-- 	    				<n:h3 class="box-title">ĐỐI TƯỢNG LIÊN QUAN</n:h3> -->
+<!-- 	    			</n:div> -->
+	    			
+<!-- 	    			<n:div class="box-body"> -->
+<!-- 	    				<n:div class="row"> -->
+<!-- 	    					<div class="col-md-12"> -->
+<!-- 	    						<div children="@load(vm.listDoiTuongLienQuan)"> -->
+<!-- 	    							<template name="children" var="child"> -->
+<!-- 	    								<div class="than-nhan-item row ${childStatus.index eq 0 ? 'first' : ''}"> -->
+<!-- 			    							<div class="col-md-4"> -->
+<!-- 			    								<div class="form-group form-doi-tuong"> -->
+<!-- 													<x:label class="col-md-4">Họ và tên<n:small class="required"> *</n:small></x:label> -->
+<!-- 													<div class="col-md-8">													 -->
+<!-- 														<textbox class="form-control" maxlength="255" placeholder="Họ và tên" -->
+<!-- 															value="@bind(child.hoVaTen) @save(child.hoVaTen, before='saveDoiTuongMoi') -->
+<!-- 																@validator('vn.toancauxanh.vm.BaseValid', constraint='no empty')"/> -->
+<!-- 														<label class="error" value="@load(vmsgs[self.previousSibling])" /> -->
+<!-- 													</div> -->
+<!-- 												</div> -->
+<!-- 			    							</div> -->
+<!-- 			    							<div class="col-md-4"> -->
+<!-- 			    								<div class="form-group form-doi-tuong"> -->
+<!-- 													<x:label class="col-md-4">Quan hệ<n:small class="required"> *</n:small></x:label> -->
+<!-- 													<div class="col-md-8">													 -->
+<!-- 														<combobox width="100%" model="@load(entry.quanHeDoiTuongLienQuans.listQuanHeDoiTuongLienQuan)" -->
+<!-- 															readonly="true" -->
+<!-- 															value="@load(child.quanHeDoiTuongLienQuan eq null ? '' : child.quanHeDoiTuongLienQuan.ten)" -->
+<!-- 															selectedItem="@bind(child.quanHeDoiTuongLienQuan)  -->
+<!-- 																@save(child.quanHeDoiTuongLienQuan, before='saveDoiTuongMoi') -->
+<!-- 																@validator('vn.toancauxanh.vm.BaseValid', constraint='no empty')" -->
+<!-- 															placeholder="Quan hệ" > -->
+<!-- 															<template name="model"> -->
+<!-- 																<comboitem label="@load(each.ten)" /> -->
+<!-- 															</template> -->
+<!-- 														</combobox> -->
+<!-- 														<label class="error" value="@load(vmsgs[self.previousSibling])" /> -->
+<!-- 													</div> -->
+<!-- 												</div> -->
+<!-- 			    							</div> -->
+<!-- 			    							<div class="col-md-4"> -->
+<!-- 			    								<div class="form-group form-doi-tuong"> -->
+<!-- 													<x:label class="col-md-4">Nghề nghiệp</x:label> -->
+<!-- 													<div class="col-md-8">													 -->
+<!-- 														<combobox width="100%" model="@load(entry.nganhNghes.listNganhNghe)" -->
+<!-- 															readonly="true"  -->
+<!-- 															value="@load(child.ngheNghiep eq null ? '' : child.ngheNghiep.ten)" -->
+<!-- 															selectedItem="@bind(child.ngheNghiep) @save(child.ngheNghiep, before='saveDoiTuongMoi')" -->
+<!-- 															placeholder="Nghề nghiệp" > -->
+<!-- 															<template name="model"> -->
+<!-- 																<comboitem label="@load(each.ten)" /> -->
+<!-- 															</template> -->
+<!-- 														</combobox> -->
+<!-- 													</div> -->
+<!-- 												</div> -->
+<!-- 			    							</div> -->
+<!-- 			    							<div class="col-md-4"> -->
+<!-- 			    								<div class="form-group form-doi-tuong"> -->
+<!-- 													<x:label class="col-md-4">Năm sinh</x:label> -->
+<!-- 													<div class="col-md-8">													 -->
+<!-- 														<textbox class="form-control" maxlength="4" placeholder="Năm sinh" -->
+<!-- 															value="@bind(child.namSinh) @save(child.namSinh, before='saveDoiTuongMoi') "> -->
+<!-- 															<attribute w:name="doKeyPress_"> -->
+<!-- 																<![CDATA[ -->
+<!-- 																	function(evt) {if (!this._shallIgnore(evt, "0123456789")) this.$doKeyPress_(evt);} -->
+<!-- 																]]> -->
+<!-- 															</attribute> -->
+<!-- 														</textbox> -->
+<!-- 													</div> -->
+<!-- 												</div> -->
+<!-- 			    							</div> -->
+<!-- 			    							<div class="col-md-8"> -->
+<!-- 			    								<div class="form-group form-doi-tuong"> -->
+<!-- 													<x:label class="col-md-2">Địa chỉ thường trú</x:label> -->
+<!-- 													<div class="col-md-10">													 -->
+<!-- 														<textbox class="form-control" maxlength="255" placeholder="Địa chỉ thường trú" -->
+<!-- 															value="@bind(child.diaChiThuongTru) @save(child.diaChiThuongTru, before='saveDoiTuongMoi') "/> -->
+<!-- 													</div> -->
+<!-- 												</div> -->
+<!-- 			    							</div> -->
+<!-- 			    							<x:a class="xoa-than-nhan"  -->
+<!-- 												onClick="@command('deleteDoiTuongLienQuan', item=child)"> -->
+<!-- 												<n:i class="fa fa-trash"> Xoá</n:i> -->
+<!-- 											</x:a> -->
+<!-- 			    							<div class="than-nhan-line"></div> -->
+<!-- 			    						</div> -->
+<!-- 	    							</template> -->
+<!-- 	    						</div>		    						 -->
+<!-- 	    						<x:a class="btn-trong-suot" onClick="@command('themDoiTuongLienQuan')"> -->
+<!-- 	    							<n:i class="fa fa-plus"></n:i>&#160;&#160;Thêm đối tượng -->
+<!-- 	    						</x:a> -->
+<!-- 	    					</div>		    												 -->
+<!-- 	    				</n:div> -->
+<!-- 	    			</n:div> -->
+	    			
+	    			<n:div class="box-header box-top2" style="margin-bottom: 15px;">
+	    				<n:h3 class="box-title">HÌNH THỨC QUẢN LÝ, XỬ LÝ ĐANG ÁP DỤNG</n:h3>
+	    			</n:div>
+	    			
+	    			<n:div class="box-body">
+	    				<n:div class="row">
+	    					<div class="col-md-6">
+   								<div class="form-group form-doi-tuong">
+									<x:label class="col-md-4 col-sm-4">Ma túy sử dụng<n:small class="required"> *</n:small></x:label>
+									<div class="col-md-8 col-sm-8">													
+										<combobox width="99%" model="@load(entry.maTuySuDungs.listMaTuySuDung)"
+											readonly="true" 
+											value="@load(vm.newThongTinViPham.maTuySuDung ne null ? vm.newThongTinViPham.maTuySuDung.ten : 'Chọn ma túy sử dụng')"
+											selectedItem="@bind(vm.newThongTinViPham.maTuySuDung) @save(vm.newThongTinViPham.maTuySuDung, before='saveDoiTuongMoi')
+												@validator('vn.toancauxanh.vm.BaseValid', constraint='no empty')"
+											placeholder="Chọn ma túy sử dụng" >
+											<template name="model">
+												<comboitem label="@load(empty each? 'Chọn ma túy sử dụng' :  each.ten)" />
+											</template>
+										</combobox>
+										<label class="error" value="@load(vmsgs[self.previousSibling])" />
+									</div>
+								</div>
+   							</div>
+   							
+	    					<div class="col-md-6">
+   								<div class="form-group form-doi-tuong">
+									<x:label class="col-md-4 col-sm-4">Thời điểm bắt đầu<n:small class="required"> *</n:small></x:label>
+									<div class="col-md-8 col-sm-8">													
+										<datebox width="99%" placeholder="dd/MM/yyyy" disabled="@load(vm.newThongTinViPham.maTuySuDung eq null)"
+											format="dd/MM/yyyy" value="@bind(vm.newThongTinViPham.ngayViPham) @save(vm.newThongTinViPham.ngayViPham, before='saveDoiTuongMoi') 
+												@validator('vn.toancauxanh.vm.BaseValid', constraint='no empty, no future')" readonly="false"
+											class="mis-datebox-inner" />
+										<label class="error" value="@load(vmsgs[self.previousSibling])" />
+									</div>
+								</div>
+   							</div>
+   							
+   							<div class="col-md-6">
+   								<div class="form-group form-doi-tuong">
+									<x:label class="col-md-4 col-sm-4">Hành vi vi phạm</x:label>
+									<div class="col-md-8 col-sm-8">													
+										<combobox width="99%" model="@load(entry.hanhViViPhams.listHanhViViPham)"
+											readonly="true" disabled="@load(vm.newThongTinViPham.maTuySuDung eq null)"
+											value="@load(vm.newThongTinViPham.hanhViViPham ne null ? vm.newThongTinViPham.hanhViViPham.ten : 'Chọn hành vi vi phạm')"
+											selectedItem="@bind(vm.newThongTinViPham.hanhViViPham) @save(vm.newThongTinViPham.hanhViViPham, before='saveDoiTuongMoi')"
+											placeholder="Chọn hành vi vi phạm" >
+											<template name="model">
+												<comboitem label="@load(empty each? 'Chọn hành vi vi phạm' :  each.ten)" />
+											</template>
+										</combobox>
+									</div>
+								</div>
+   							</div>
+   							
+   							<div class="col-md-6">
+   								<div class="form-group form-doi-tuong">
+									<x:label class="col-md-4 col-sm-4">Đơn vị xử lý<n:small class="required"> *</n:small></x:label>
+									<div class="col-md-8 col-sm-8">	
+										<div class="row">
+											<div class="col-md-6 col-sm-6">
+												<combobox width="99%" model="@load(donVis.listDonViChaAndNull)"
+													readonly="true" disabled="@load(vm.newThongTinViPham.maTuySuDung eq null)"
+													value="@load(vm.newThongTinViPham.donViCha ne null ? vm.newThongTinViPham.donViCha.ten : 'Chọn đơn vị xử lý')"
+													selectedItem="@bind(vm.newThongTinViPham.donViCha) @save(vm.newThongTinViPham.donViCha, before='saveDoiTuongMoi') 
+														@bind(donVis.selectedDonVi)
+														@validator('vn.toancauxanh.vm.BaseValid', constraint='no empty')"
+													placeholder="Chọn đơn vị xử lý" >
+													<template name="model">
+														<comboitem label="@load(empty each? 'Chọn đơn vị' :  each.ten)" />
+													</template>
+													<attribute name="onCreate">
+														if (vm.newThongTinViPham.donViCha != null) {
+															donVis.setSelectedDonVi(vm.newThongTinViPham.donViCha);
+														}
+													</attribute>
+												</combobox>
+												<label class="error" value="@load(vmsgs[self.previousSibling])" />
+											</div>
+											<div class="col-md-6 col-sm-6">
+												<combobox width="99%" model="@load(donVis.listDonViConAndNull)"
+													readonly="true" disabled="@load(vm.newThongTinViPham.maTuySuDung eq null)"
+													value="@load(vm.newThongTinViPham.donViCon ne null ? vm.newThongTinViPham.donViCon.ten : 'Chọn đơn vị xử lý')"
+													selectedItem="@bind(vm.newThongTinViPham.donViCon) @save(vm.newThongTinViPham.donViCon, before='saveDoiTuongMoi')"
+													placeholder="Chọn đơn vị xử lý" >
+													<template name="model">
+														<comboitem label="@load(empty each? 'Chọn đơn vị xử lý' :  each.ten)" />
+													</template>
+												</combobox>
+											</div>
+										</div>		
+									</div>
+								</div>
+   							</div>
+   							
+   							<div class="col-md-6">
+   								<div class="form-group form-doi-tuong">
+									<x:label class="col-md-4 col-sm-4">Hình thức xử lý<n:small class="required"> *</n:small></x:label>
+									<div class="col-md-8 col-sm-8">													
+										<combobox width="99%" model="@load(entry.hinhThucXuLys.listHinhThucXuLy)"
+											readonly="true"  disabled="@load(vm.newThongTinViPham.maTuySuDung eq null)"
+											value="@load(vm.newThongTinViPham.hinhThucXuLy ne null ? vm.newThongTinViPham.hinhThucXuLy.ten : 'Chọn hình thức xử lý')"
+											selectedItem="@bind(vm.newThongTinViPham.hinhThucXuLy) @save(vm.newThongTinViPham.hinhThucXuLy, before='saveDoiTuongMoi')
+												@validator('vn.toancauxanh.vm.BaseValid', constraint='no empty')"
+											placeholder="Chọn hình thức xử lý" >
+											<template name="model">
+												<comboitem label="@load(empty each? 'Chọn hình thức xử lý' :  each.ten)" />
+											</template>
+										</combobox>
+										<label class="error" value="@load(vmsgs[self.previousSibling])" />
+									</div>
+								</div>
+   							</div>
+   							
+   							<div class="col-md-6">
+   								<div class="form-group form-doi-tuong">
+									<x:label class="col-md-4 col-sm-4">Mô tả hình thức xử lý</x:label>
+									<div class="col-md-8 col-sm-8">													
+										<textbox class="form-control" maxlength="255" width="99%" disabled="@load(vm.newThongTinViPham.maTuySuDung eq null)"
+											value="@load(vm.newThongTinViPham.moTaHinhThucXuLy) @save(vm.newThongTinViPham.moTaHinhThucXuLy, before='saveDoiTuongMoi')"/>
+									</div>
+								</div>
+   							</div>
+   							
+   							<div class="col-md-6" visible="@load(vm.newThongTinViPham.hinhThucXuLy ne null 
+   								and vm.newThongTinViPham.hinhThucXuLy.loaiHinhThucXuLy eq tienAnTienSu)">
+   								<div class="form-group form-doi-tuong">
+									<x:label class="col-md-4 col-sm-4">Loại xử lý<n:small class="required"> *</n:small></x:label>
+									<div class="col-md-8 col-sm-8">													
+										<combobox readonly="true" disabled="@load(vm.newThongTinViPham.maTuySuDung eq null)"
+											model="@load(entry.listLoaiXuLyAndNull)" placeholder="Chọn loại xử lý"
+											value="@load(vm.newThongTinViPham.loaiXuLy eq null ? 'Chọn loại xử lý' : vm.newThongTinViPham.loaiXuLy.text)"
+											selectedItem="@bind(vm.newThongTinViPham.loaiXuLy) @save(vm.newThongTinViPham.loaiXuLy, before={'saveDoiTuongMoi'})
+												 @validator('vn.toancauxanh.vm.BaseValid', constraint=vm.newThongTinViPham.hinhThucXuLy ne null 
+   													and vm.newThongTinViPham.hinhThucXuLy.loaiHinhThucXuLy eq tienAnTienSu? 'no empty' : '')"
+											width="99%">
+											<template name="model">
+												<comboitem value="@load(each)" label="@load(each eq null ? 'Chọn loại xử lý' : each.text)"/>
+											</template>
+										</combobox>
+										<label class="error" value="@load(vmsgs[self.previousSibling])" />
+									</div>
+								</div>
+   							</div>
+	    				</n:div>
+	    			</n:div>
+	    			
+	    			<div class="box-footer">
+	    				<x:button class="btn btn-success" visible="@load(entry.quyen.doituong_them)"
+							onClick="@command('saveDoiTuongMoi', res=resource)">
+							<n:i class="fa fa-save"></n:i>&#160;&#160;Lưu 
+						</x:button>
+						<x:button class="btn btn-default" 
+							onClick="@command('cancel', res=resource)">
+							<n:i ></n:i>Hủy
+						</x:button>						
+					</div>	    			
+	    		</n:div>
+	    	</n:div>
+	    	
+	    </n:div>
+	</n:section>
+</div>

@@ -1,0 +1,150 @@
+<?page title="Biểu đồ thực hiện tour" contentType="text/html;charset=UTF-8"?>
+<div xmlns:zk="zk" xmlns:n="native" xmlns:x="xhtml"
+	apply="org.zkoss.bind.BindComposer"
+	viewModel="@id('vm') @init('vn.toancauxanh.cms.service.BieuDoTourService')">
+	<zscript><![CDATA[
+		self.page.title= "Biểu đồ thực hiện tour";
+	]]></zscript>
+	<n:section class="content-header">
+		<n:h1>Biểu đồ thực hiện tour</n:h1>
+	</n:section>
+	
+	<!-- Create Chart -->
+	<attribute name="onCreate"><![CDATA[
+		vm.showChart(chart1);
+	]]></attribute>
+	
+	<n:section class="content">
+	    <n:div class="row">
+			<n:div class="col-md-12">
+	    		<n:div class="box box-info">
+	    			<n:div class="box-header">
+	    				<n:h3 class="box-title">Tìm kiếm</n:h3>
+	    				<n:div class="box-tools pull-right">
+	    					<n:button type="button" class="btn btn-box-tool" data-widget="collapse"><n:i class="fa fa-minus"></n:i></n:button>
+	    				</n:div>
+	    			</n:div>
+	    			<n:div class="box-body">
+	    						<n:div class="row">
+		    						<n:div class="col-md-3">
+		    							<n:div class="form-group">
+											<x:label class="control-label">Từ ngày thực hiện tour:</x:label>
+											<datebox width="100%" placeholder="dd/MM/yyyy" class="mis-datebox-inner"
+												format="dd/MM/yyyy" value="@bind(vm.tuNgayThucHienTour)" readonly="false" />
+										</n:div>
+		    						</n:div>
+		    						<n:div class="col-md-3">
+		    								<n:div class="form-group">
+												<x:label class="control-label">Đến ngày thực hiện tour:</x:label>
+												<datebox width="100%" placeholder="dd/MM/yyyy" class="mis-datebox-inner"
+												format="dd/MM/yyyy" value="@bind(vm.denNgayThucHienTour)" readonly="false" />
+												<label class="error" value="@load(vmsgs['lblErrDenNgayTK'])" />
+											</n:div>
+		    						</n:div>
+		    						<n:div class="col-md-2">
+	    								<x:label class="control-label">&#160;</x:label>
+			    						<n:div class="form-group">
+			    							<button zclass="btn btn-warning" type="button" iconSclass="fa fa-search" label="Tìm kiếm">
+												<attribute name="onClick"><![CDATA[
+													vm.showChart(chart1);
+												]]></attribute>
+											</button>
+			    						</n:div>
+	    							</n:div>
+	    						</n:div>
+	    			</n:div>
+	    		</n:div>
+	    	</n:div>
+	    	<n:div class="col-md-12">
+	    		<n:div class="box box-success">
+	    			<n:div class="box-body">
+    					<n:div class="row">
+<!--     						<n:div class="col-md-12"> -->
+<!-- 	    						<n:h3 style="margin: 5px 0;">Biểu đồ tổng quan các nhóm<label style="font-family:'Source Sans Pro', sans-serif;font-size:24px;"/></n:h3> -->
+<!-- 	    					</n:div> -->
+					        <n:form role="form">
+			              		<div class="box-body">
+			              			<div zclass="row">		              					
+			              				<div zclass="col-lg-12 col-md-12">
+			            					<div id="chart1"></div>
+			              				</div>	              					
+			              			</div>
+			              		</div>
+			              	</n:form> 
+			              	 
+<!--     						<n:div class="col-md-12"> -->
+<!-- 	    						<n:h3 style="margin: 5px 0;">Biểu đồ<label style="font-family:'Source Sans Pro', sans-serif;font-size:24px;" value="@load(vm.tongSoKhachHuyDatTour)"/></n:h3> -->
+<!-- 	    					</n:div> -->
+<!--     						<n:div class="col-md-12"> -->
+<!--     							<tabbox width="100%" height="auto" mold="accordion" class="tab-phongbanvele"> -->
+<!-- 									<tabs> -->
+<!-- 								    	<tab label="Thống kê khách hủy đặt tour" /> -->
+<!-- 									</tabs> -->
+<!-- 								    <tabpanels> -->	
+<!-- 								    	<tabpanel> -->
+<!-- 								    		<grid model="@load(vm.nhomCuaHoiHuyDatTour)" width="100%" emptyMessage="Không có danh sách"> -->
+<!-- 												<columns> -->
+<!-- 													<column label="STT" hflex="min" style="text-align:center"/> -->
+<!-- 													<column label="Tên nhóm" width="20%" /> -->
+<!-- 													<column label="Tổng số lượng khách" hflex="min" style="text-align:center"/>  -->
+<!-- 													<column label="Số lượng khách đặt" hflex="min" style="text-align:center" /> -->
+<!-- 													<column label="Số lượng khách hủy" hflex="min" style="text-align:center" /> -->
+<!-- 												</columns> -->
+<!-- 												<template name="model"> -->
+<!-- 													<row apply="org.zkoss.bind.BindComposer" viewModel="@id('item') @init(each)"> -->
+<!-- 														<label value="@bind(forEachStatus.index + 1)" style="text-align:center;display:block"/> -->
+<!-- 														<label value="@load(forEachStatus.index eq 0 ? item.nhom : item.nhom.ten)" style="text-align:center"/> -->
+<!-- 														<label value="@load(item.tongSo)" style="text-align:center;display:block"/> -->
+<!-- 														<label value="@load(item.soLuongKhachDatTour)" style="text-align:center;display:block"/> -->
+<!-- 														<label value="@load(item.soLuongKhachHuyDatTour)" style="text-align:center;display:block"/> -->
+<!-- 													</row> -->
+<!-- 												</template> -->
+<!-- 											</grid> -->
+<!-- 								    	</tabpanel> -->
+<!-- 								    </tabpanels> -->
+<!-- 								</tabbox> -->
+<!--                             </n:div> -->
+<!--     						<n:div class="col-md-12"> -->
+<!--     							<tabbox width="100%" height="auto" mold="accordion"> -->
+<!-- 									<tabs children="@load(vm.nhomCuaHoiHuyDatTour)"> -->
+<!-- 										<template name="children" var="nhomCuaHoi"> -->
+<!-- 									    	<tab style="@load(nhomCuaHoiStatus.index eq 0 ? 'display:none' : '')" label="@load(nhomCuaHoiStatus.index eq 0 ? '' : nhomCuaHoi.nhom.ten)" /> -->
+<!-- 									    </template> -->
+<!-- 									</tabs> -->
+<!-- 									<tabpanels children="@load(vm.nhomCuaHoiHuyDatTour)"> -->
+<!-- 								    	<template name="children" var="nhomCuaHoi"> -->
+<!-- 									    	<tabpanel> -->
+<!-- 									    		<grid style="@load(nhomCuaHoiStatus.index eq 0 ? 'display:none' : '')" model="@load(nhomCuaHoiStatus.index eq 0 ? vm.getCongTyKinhDoanhCuaNhomThongKeHuy(null) : vm.getCongTyKinhDoanhCuaNhomThongKeHuy(nhomCuaHoi.nhom))" width="100%" emptyMessage="Không có danh sách"> -->
+<!-- 									    			<columns> -->
+<!-- 									    				<column label="STT" hflex="min" style="text-align:center"/> -->
+<!-- 														<column label="Tên công ty" width="20%" /> -->
+<!-- 														<column label="Tổng số lượng khách" hflex="min" style="text-align:center"/> -->
+<!-- 														<column label="Số lượng khách đặt" hflex="min" style="text-align:center" /> -->
+<!-- 														<column label="Số lượng khách hủy" hflex="min" style="text-align:center" /> -->
+<!-- 									    			</columns> -->
+<!-- 									    			<template name="model"> -->
+<!-- 									    				<row apply="org.zkoss.bind.BindComposer" viewModel="@id('item') @init(each)"> -->
+<!-- 									    					<label value="@bind(forEachStatus.index + 1)" style="text-align:center;display:block"/> -->
+<!-- 									    					<label value="@load(item.congty.ten)"/> -->
+<!-- 									    					<label value="@load(item.tongSo)" style="text-align:center;display:block"/> -->
+<!-- 									    					<label value="@load(item.soLuongKhachDatTour)" style="text-align:center;display:block"/> -->
+<!-- 									    					<label value="@load(item.soLuongKhachHuyDatTour)" style="text-align:center;display:block"/> -->
+<!-- 									    				</row> -->
+<!-- 									    			</template> -->
+<!-- 									    		</grid> -->
+<!-- 									    	</tabpanel> -->
+<!-- 									    </template> -->
+<!-- 								    </tabpanels> -->
+<!-- 								</tabbox> -->
+<!--                             </n:div> -->
+                        </n:div>
+	                </n:div>
+	                <!-- /.box-body -->
+	            </n:div>
+	            <!-- /.box -->
+	        </n:div>
+	        <!-- /.col -->
+	    </n:div>
+	    <!-- /.row -->
+	</n:section>
+</div>

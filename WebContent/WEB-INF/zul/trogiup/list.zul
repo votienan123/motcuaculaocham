@@ -1,0 +1,12 @@
+<idspace xmlns:n="native" xmlns:x="xhtml" xmlns:zk="zk">
+	<window title="Trợ giúp" id="wdn" border="normal"
+		mode="modal" contentStyle="overflow:auto;" closable="true" width="90%" height="90%">
+			<div>
+				<n:h4>Thông tin hỗ trợ</n:h4>
+				<div>
+					Mọi thắc mắc xin liên hệ qua email thanhhx@greenglobal.vn hoặc điện thoại (+84) 916 440 450
+					
+				</div>			
+			</div>
+	</window>
+</idspace>

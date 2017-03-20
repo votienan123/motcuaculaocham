@@ -1,0 +1,194 @@
+<?page title="Thống kê vé" contentType="text/html;charset=UTF-8"?>
+<div xmlns:zk="zk" xmlns:n="native" xmlns:x="xhtml"
+	apply="org.zkoss.bind.BindComposer"
+	viewModel="@id('vm') @init('vn.toancauxanh.cms.service.DatVeService')">
+	<zscript><![CDATA[
+		self.page.title= "Thống kê vé";
+	]]></zscript>
+	<n:section class="content-header">
+		<n:h1>Thống kê vé</n:h1>
+	</n:section>
+	<n:section class="content">
+	    <n:div class="row">
+			<n:div class="col-md-12">
+	    		<n:div class="box box-info">
+	    			<n:div class="box-header">
+	    				<n:h3 class="box-title">Tìm kiếm</n:h3>
+	    				<n:div class="box-tools pull-right">
+	    					<n:button type="button" class="btn btn-box-tool" data-widget="collapse"><n:i class="fa fa-minus"></n:i></n:button>
+	    				</n:div>
+	    			</n:div>
+	    			<n:div class="box-body">
+	    				<n:div class="row">
+	    					<n:div class="col-md-3">	    			
+	    						<n:div class="form-group">
+									<radiogroup id="sv1" onCheck="radioCheck();">
+										<vlayout>
+											<radio id="ra1" label="Tìm kiếm theo ngày thực hiện tour" value="true" radiogroup="sv1" />
+                							<radio id="ra2" label="Tìm kiếm theo ngày đặt vé" value="false" radiogroup="sv1" />
+										</vlayout>
+										<attribute name="onCreate">
+											ra1.setChecked(true);
+										</attribute>
+										<zscript>
+											radioCheck () {
+												if(ra1.isChecked()) {
+													vm.setSelectedNgayThucHien(true);
+												} else {
+													vm.setSelectedNgayThucHien(false);
+												}
+												BindUtils.postNotifyChange(null, null, vm, "selectedNgayThucHien");
+											}
+										</zscript>
+                					</radiogroup>
+								</n:div>
+	    					</n:div>
+	    					<n:div class="col-md-3">	    			
+	    						<n:div class="form-group">
+									<label class="control-label" value="@load(vm.selectedNgayThucHien ? 'Từ ngày thực hiện tour: ': 'Từ ngày đặt vé: ')"/>
+									<datebox width="100%" placeholder="dd/MM/yyyy" class="mis-datebox-inner"
+										format="dd/MM/yyyy" value="@bind(vm.tuNgay)" readonly="true" />
+								</n:div>
+	    					</n:div>
+	    					<n:div class="col-md-3">
+	    						<n:div class="form-group">
+									<label class="control-label" value="@load(vm.selectedNgayThucHien ? 'Đến ngày thực hiện tour: ': 'Đến ngày đặt vé: ')"/>
+									<datebox width="100%" placeholder="dd/MM/yyyy" class="mis-datebox-inner"
+										format="dd/MM/yyyy" value="@bind(vm.denNgay)" readonly="false" />
+								</n:div>
+	    					</n:div>
+	    					<n:div class="col-md-2">
+	    						<x:label class="control-label">&#160;</x:label>
+	    						<n:div class="form-group">
+	    							<button zclass="btn btn-warning" type="button" onClick="@command('thongKeVe')" iconSclass="fa fa-search" label="Tìm kiếm">
+									</button>
+	    						</n:div>
+	    					</n:div>
+	    				</n:div>
+	    			</n:div>
+	    		</n:div>
+	    	</n:div>
+	    	<n:div class="col-md-12">
+	    		<n:div class="box box-success">
+	    			<n:div class="box-body">
+    					<n:div class="row">
+    						<n:div class="col-md-12">
+	    						<n:h3 style="margin: 5px 0;display: inline-block;">Tổng số lượng khách của hiệp hội: <label style="font-family:'Source Sans Pro', sans-serif;font-size:24px;" value="@load(vm.tongSoLuongVeCuaHiepHoi)" /></n:h3>
+	    						<n:div class="box-tools pull-right">
+			    					<x:button class="btn btn-success" onClick="@command('xuatExcel')">
+			    						<n:i class="fa fa-file-excel-o"></n:i>
+			    						Xuất excel
+			    					</x:button>
+			    				</n:div>
+	    					</n:div>
+    						<n:div class="col-md-12">
+    							<tabbox width="100%" height="auto" mold="accordion" class="tab-phongbanvele">
+									<tabs>
+								    	<tab label="Thống kê vé của hiệp hội" />
+									</tabs>
+								    <tabpanels>
+								    	<tabpanel>
+								    		<grid model="@load(vm.nhomCuaHoiVaPhongBanVeLes)" width="100%" emptyMessage="Không có danh sách">
+												<columns>
+													<column label="STT" hflex="min" style="text-align:center"/>
+													<column label="Tên nhóm" width="20%" />
+													<column label="Tổng số lượng khách" hflex="min" style="text-align:center" />
+													<column label="Lớn" hflex="min" style="text-align:center" />
+													<column label="Nhỏ (5 - 9)" hflex="min" style="text-align:center" />
+													<column label="Bé (1 - 4)" hflex="min" style="text-align:center" />
+													<column label="Số lượng khách ban đầu" hflex="min" style="text-align:center" />
+													<column label="Vé duyệt" hflex="min" style="text-align:center" />
+													<column label="Tổng tiền (VNĐ)" hflex="min" style="text-align:center" />
+												</columns>
+												<template name="model">
+													<row apply="org.zkoss.bind.BindComposer" viewModel="@id('item') @init(each)">
+														<zscript>
+							    							<![CDATA[
+							    							    vm.setNhomCuaHoi(each.get(1));
+							    							    BindUtils.postNotifyChange(null, null, vm, "nhomCuaHoi");
+							    							]]>
+								    					</zscript>
+														<label value="@bind(forEachStatus.index + 1)" style="text-align:center;display:block"/>
+														<label value="@load(item.get(0))" style="text-align:center"/>
+														<label value="@load((vm.getSoLuongTotalNhom(item.get(1)).size() > 0 ? vm.getSoLuongTotalNhom(item.get(1)).get(0) : 0)
+															+ (vm.getSoLuongTotalNhom(item.get(1)).size() > 0 ? vm.getSoLuongTotalNhom(item.get(1)).get(1) : 0)
+															+ (vm.getSoLuongTotalNhom(item.get(1)).size() > 0 ? vm.getSoLuongTotalNhom(item.get(1)).get(2) : 0))" style="text-align:center;display:block"/>
+														<label value="@load(vm.getSoLuongTotalNhom(item.get(1)).size() > 0 ? vm.getSoLuongTotalNhom(item.get(1)).get(0) : 0)" style="text-align:center;display:block"/>
+														<label value="@load(vm.getSoLuongTotalNhom(item.get(1)).size() > 0 ? vm.getSoLuongTotalNhom(item.get(1)).get(1) : 0)" style="text-align:center;display:block"/>
+														<label value="@load(vm.getSoLuongTotalNhom(item.get(1)).size() > 0 ? vm.getSoLuongTotalNhom(item.get(1)).get(2) : 0)" style="text-align:center;display:block"/>
+														<label value="@load(vm.tongSoLuongVeDatBanDauCuaNhom > 0 ? vm.tongSoLuongVeDatBanDauCuaNhom : 0)" style="text-align:center;display:block"/>
+														<label value="@load(vm.tongSoLuongVeDuyettCuaNhom > 0 ? vm.tongSoLuongVeDuyettCuaNhom : 0)" style="text-align:center;display:block"/>
+														<label value="@load(forEachStatus.index eq 0 ? vm.tongGiaTienPhongVeBanLe : 0) @converter('formatedNumber',format='#,##0')" style="text-align:center;display:block"></label>
+<!-- 														<label value="@load(each.soLuongNguoiLonNhat + each.soLuongTreEm1Den3Tuoi + each.soLuongTreEm4Den9Tuoi)" style="text-align:center;display:block"/> -->
+<!-- 														<label value="@load(each.soLuongNguoiLonNhat > 0 ? each.soLuongNguoiLonNhat : 0)" style="text-align:center;display:block"/> -->
+<!-- 														<label value="@load(each.soLuongTreEm4Den9Tuoi > 0 ? each.soLuongNguoiLonNhat : 0)" style="text-align:center;display:block"/> -->
+<!-- 														<label value="@load(each.soLuongTreEm1Den3Tuoi > 0 ? each.soLuongNguoiLonNhat : 0)" style="text-align:center;display:block"/> -->
+													</row>
+												</template>
+											</grid>
+								    	</tabpanel>
+								    </tabpanels>
+								</tabbox>
+                            </n:div>
+    						<n:div class="col-md-12">
+    							<tabbox width="100%" height="auto" mold="accordion">
+									<tabs children="@load(vm.nhomCuaHoiThongKes)">
+										<template name="children" var="nhom">
+									    	<tab label="@load(nhom.ten)" />
+									    </template>
+									</tabs>
+								    <tabpanels children="@load(vm.nhomCuaHoiThongKes)">
+								    	<template name="children" var="nhom">
+									    	<tabpanel>
+									    		<grid model="@load(vm.getCongTyKinhDoanhThongKes(nhom).fetch())" width="100%" emptyMessage="Không có danh sách">
+													<columns>
+														<column label="STT" hflex="min" style="text-align:center"/>
+														<column label="Tên nhóm" width="20%" />
+														<column label="Tên công ty" width="20%" />
+														<column label="Tổng số lượng khách" hflex="min" style="text-align:center" />
+														<column label="Lớn" hflex="min" style="text-align:center" />
+														<column label="Nhỏ (5 - 9)" hflex="min" style="text-align:center" />
+														<column label="Bé (1 - 4)" hflex="min" style="text-align:center" />
+														<column label="Số lượng khách ban đầu" hflex="min" style="text-align:center" />
+														<column label="Vé duyệt" hflex="min" style="text-align:center" />
+														<column label="Vé sau 7h30" hflex="min" style="text-align:center" />
+													</columns>
+													<template name="model">
+														<row apply="org.zkoss.bind.BindComposer" viewModel="@id('item') @init(each)">
+															<zscript>
+								    							<![CDATA[
+																	each.setTuNgay(vm.tuNgay);
+																	each.setDenNgay(vm.denNgay);
+																	BindUtils.postNotifyChange(null, null, each, "tuNgay");
+																	BindUtils.postNotifyChange(null, null, each, "denNgay");
+								    							]]>
+									    					</zscript>
+															<label value="@bind(forEachStatus.index + 1)" style="text-align:center;display:block"/>
+															<label value="@load(each.nhomCuaHoi.ten)" style="text-align:center"/>
+															<label value="@load(vm.getTenCuaCongTy(each))" style="text-align:center"/>
+															<label value="@load(each.soLuongNguoiLonNhat + each.soLuongTreEm1Den3Tuoi + each.soLuongTreEm4Den9Tuoi)" style="text-align:center;display:block"/>
+															<label value="@load(each.soLuongNguoiLonNhat > 0 ? each.soLuongNguoiLonNhat : 0)" style="text-align:center;display:block"/>
+															<label value="@load(each.soLuongTreEm4Den9Tuoi > 0 ? each.soLuongTreEm4Den9Tuoi : 0)" style="text-align:center;display:block"/>
+															<label value="@load(each.soLuongTreEm1Den3Tuoi > 0 ? each.soLuongTreEm1Den3Tuoi : 0)" style="text-align:center;display:block"/>
+															<label value="@load(vm.getTongSoLuongVeDatBanDauCuaCongTy(each) > 0 ? vm.getTongSoLuongVeDatBanDauCuaCongTy(each) : 0)" style="text-align:center;display:block"/>
+															<label value="@load(vm.getTongSoLuongVeDuyettCuaCongTy(each) > 0 ? vm.getTongSoLuongVeDuyettCuaCongTy(each) : 0)" style="text-align:center;display:block"/>
+															<label value="@load(vm.getTongVeSau7h30(each))" style="text-align:center;display:block"/>
+														</row>
+													</template>
+												</grid>
+									    	</tabpanel>
+									    </template>
+								    </tabpanels>
+								</tabbox>
+                            </n:div>
+                        </n:div>
+	                </n:div>
+	                <!-- /.box-body -->
+	            </n:div>
+	            <!-- /.box -->
+	        </n:div>
+	        <!-- /.col -->
+	    </n:div>
+	    <!-- /.row -->
+	</n:section>
+</div>

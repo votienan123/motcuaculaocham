@@ -1,0 +1,2 @@
+<?component name="add-datve-view" inline="true" macroURI="add-datve-view.zul"?>
+<add-datve-view model="${arg.vm}" vmArgs="${arg.vmArgs}" save="Thông tin vé hủy" viewOnly="true"/>

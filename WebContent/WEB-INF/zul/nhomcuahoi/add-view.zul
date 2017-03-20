@@ -1,0 +1,91 @@
+<window xmlns:n="native" xmlns:x="xhtml" xmlns:zk="zk" xmlns:w="client"
+	apply="org.zkoss.bind.BindComposer" id="wdn" border="normal"
+	mode="modal" action="show: slideIn" contentStyle="overflow:auto;"
+	closable="true" title="${arg.save}"
+	onClose="@command('invokeGG', notify=vmArgs, detach=wdn, attr='targetQuery')"
+	whatever="@load(false, after='saveNhomCuaHoi') @converter('vn.toancauxanh.service.DetachConverter')"
+	viewModel="@id('vm') @init(arg.model)"
+	validationMessages="@id('vmsgs')"
+	form="@id('fx') @load(vm) @save(vm, before={'saveNhomCuaHoi'}) @validator(vm.validator)"
+	width="50%">
+	<zscript><![CDATA[
+		import org.apache.commons.lang3.StringUtils;
+		vmArgs = arg.get("vmArgs");
+		isViewCongTyKinhDoanh = arg.get("isViewCongTyKinhDoanh");
+		boolean isView = false;
+		if (StringUtils.equals(isViewCongTyKinhDoanh.toString(),"1")) {
+			isView = true;
+		}
+	]]></zscript>
+	
+	<div class="row box-body">
+		<div class="col-md-12">
+			<div class="form-group">
+				<x:label>Tên nhóm của hội<n:small class="required"> *</n:small></x:label>
+				<textbox class="form-control" width="100%" maxlength="255"
+					value="@bind(vm.ten) @save(vm.ten, before={'saveNhomCuaHoi'}) @validator('vn.toancauxanh.vm.BaseValid', constraint='no empty')" />
+				<label class="error" value="@load(vmsgs[self.previousSibling])" />
+				<label class="error" value="@load(vmsgs['lblErrTenNhom'])" />
+			</div>
+		</div>
+		<div class="col-md-12">
+			<div class="form-group">
+				<x:label>Trưởng nhóm<n:small class="required"> *</n:small></x:label>
+				<textbox class="form-control" width="100%" maxlength="255"
+					value="@bind(vm.truongNhom) @save(vm.truongNhom, before={'saveNhomCuaHoi'}) @validator('vn.toancauxanh.vm.BaseValid', constraint='no empty')" />
+				<label class="error" value="@load(vmsgs[self.previousSibling])" />
+				<label class="error" value="@load(vmsgs['lblErrTenNhom'])" />
+			</div>
+		</div>
+		<div class="col-md-12">
+			<div class="form-group">
+				<x:label>Phó nhóm<n:small class="required"> *</n:small></x:label>
+				<textbox class="form-control" width="100%" maxlength="255"
+					value="@bind(vm.phoNhom) @save(vm.phoNhom, before={'saveNhomCuaHoi'}) @validator('vn.toancauxanh.vm.BaseValid', constraint='no empty')" />
+				<label class="error" value="@load(vmsgs[self.previousSibling])" />
+				<label class="error" value="@load(vmsgs['lblErrTenNhom'])" />
+			</div>
+		</div>
+		
+		<div zk:if="${isView}">
+			<div class="col-md-6 col-sm-12">
+				<div class="form-group">
+					<x:label>Số lượng tàu: </x:label>
+					<textbox class="form-control" width="100%" maxlength="15" readonly="true" value="@load(vm.soLuongTau)">
+					</textbox>
+				</div>
+			</div>
+			
+			<div class="col-md-6 col-sm-12">
+				<div class="form-group">
+					<x:label>Số khách tối đa: </x:label>
+					<textbox class="form-control" width="100%" maxlength="15" readonly="true" value="@load(vm.tongSoGhe)">
+					</textbox>
+				</div>
+			</div>
+		</div>
+		
+		<div class="col-md-12">
+			<div class="form-group">
+				<x:label>Mô tả</x:label>
+				<textbox class="form-control" rows="5" value="@bind(vm.moTa)" />
+			</div>
+		</div>	
+		<div class="col-md-12">
+			<div class="form-group">
+				<checkbox label="Áp dụng" checked="@bind(vm.checkApDung)" />
+			</div>
+		</div>
+	</div>
+	
+	<div class="row box-footer">  
+		<x:button class="btn btn-default pull-right" onClick="@command('invokeGG', notify=vmArgs, detach=wdn, attr='targetQuery')">
+			Hủy
+		</x:button>
+		<x:button style="margin-right: 10px;" class="btn btn-primary pull-right" 
+		 	zk:if="${(vm.noId() and entry.quyen.nhomcuahoi_them) or (!vm.noId() and entry.quyen.nhomcuahoi_sua)}"
+			onClick="@command('saveNhomCuaHoi', list=vmArgs, attr='targetQuery', wdn=wdn)">
+			<n:i class="fa fa-save"></n:i>&#160;&#160;Lưu
+		</x:button>
+	</div>
+</window>

@@ -1,0 +1,56 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<window xmlns:n="native" xmlns:x="xhtml" xmlns:zk="zk" xmlns:w="client" apply="org.zkoss.bind.BindComposer"
+	id="wdn1" border="normal" mode="modal" action="show: slideIn" title="Lịch sử đặt vé"
+	contentStyle="overflow:auto;" closable="true" width="80%"
+	viewModel="@id('vm') @init(arg.vm)">
+	<zscript><![CDATA[
+		import vn.toancauxanh.gg.model.DatVe;
+		DatVe dv = new DatVe();
+		dv = vm.core().em().find(DatVe.class, vm.getId());
+	]]></zscript>
+	<n:section class="content">	
+		<n:div class="row">
+	    	<n:div class="col-md-12">
+	    		<div class="lich-su-type-item">
+	    			<div class="ls-content first">   
+	    				<div children="@load(dv.listLichSuDatVe)">
+	    					<template name="children" var="thongTin">
+	    						<div class="doi-tuong-item">
+									<div class="doi-tuong-index">
+										<label value="@load(thongTinStatus.index + 1)"/>
+									</div>
+									<div class="doi-tuong-content">
+										<div class="row">
+											<div class="col-md-4">												
+												<n:span class="bold">Nội dung cập nhật: </n:span> ${thongTin.noiDung}
+											</div>
+											<div class="col-md-4">												
+												<n:span class="bold">Nhóm của hội: </n:span> ${thongTin.nguoiTao.nhomCuaHoi != null ? thongTin.nguoiTao.nhomCuaHoi.ten : ''} 
+											</div>
+											<div class="col-md-4">												
+												<n:span class="bold">Ngày giờ cập nhật: </n:span> <label value="@load(thongTin.ngaySua) @converter('formatedDate',format='dd/MM/yyyy hh:mm')" /> 
+											</div>
+											<div class="col-md-4">												
+												<n:span class="bold">Người cập nhật: </n:span> ${thongTin.nguoiTao.hoVaTen}
+											</div>
+											<div class="col-md-4">												
+												<n:span class="bold">Công ty kinh doanh: </n:span> ${thongTin.nguoiTao.congTyKinhDoanh != null ? thongTin.nguoiTao.congTyKinhDoanh.ten : ''} 
+											</div>
+											<div class="col-md-4">
+												<div class="hanh-vi-action">
+													<x:a zk:onClick="@command('redirectPageChiTietLichSu', zul='khachdatve/chitietlichsudatve.zul', vmArgs=vmArgs, vm=vm, lichSu=thongTin)">
+														<n:i class="fa fa-eye"> Chi tiết</n:i>
+													</x:a>
+												</div>	
+											</div>
+										</div>
+									</div>
+								</div>
+	    					</template>
+	    				</div>
+	    			</div>
+	    		</div>		    			
+	    	</n:div>
+	    </n:div>
+	</n:section>
+</window>

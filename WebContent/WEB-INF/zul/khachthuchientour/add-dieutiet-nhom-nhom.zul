@@ -1,0 +1,2 @@
+<?component name="add-dieutiet-nhom-nhom-view" inline="true" macroURI="add-dieutiet-nhom-nhom-view.zul"?>
+<add-dieutiet-nhom-nhom-view model="${arg.vm}" vmArgs="${arg.vmArgs}" save="Điều tiết số lượng vé từ nhóm sang nhóm công ty" />

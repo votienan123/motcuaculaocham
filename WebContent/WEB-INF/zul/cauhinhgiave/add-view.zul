@@ -1,0 +1,87 @@
+<window xmlns:n="native" xmlns:x="xhtml" xmlns:zk="zk" xmlns:w="client" apply="org.zkoss.bind.BindComposer"
+	id="wdn" border="normal" mode="modal" action="show: slideIn"
+	contentStyle="overflow:auto;" closable="true" title="${arg.save}"
+	onClose="@command('invokeGG', notify=vmArgs, detach=wdn, attr='settings')"
+	whatever="@load(false, after='saveCauHinh') @converter('vn.toancauxanh.service.DetachConverter')"
+	viewModel="@id('vm') @init(arg.model)" validationMessages="@id('vmsgs')" 
+	form="@id('fx') @load(vm) @save(vm, before={'saveCauHinh'}) @validator(vm.validator)" width="50%">
+	<zscript>
+		vmArgs = arg.get("vmArgs");
+	</zscript>
+	
+	<n:script>
+		<![CDATA[
+			function validateRemoveClass(className) {
+			    $('.' +className).hide();
+			}
+			
+			function validateAddClass(className, text) {
+			    $('.' +className).text(text).show();
+			}
+		]]>
+	</n:script>
+	
+	<div class="row box-body">
+		<div class="col-md-12">
+			<div class="form-group">
+				<x:label>Lớn<n:small class="required"> *</n:small></x:label>
+				<textbox class="form-control" width="100%" maxlength="15" onChange="@command('validateGiaVe', className='redGiaVe1TextColor', giaVe=vm.giaVeNguoiLon)"
+					value="@bind(vm.giaVeNguoiLon) @save(vm.giaVeNguoiLon, before={'saveCauHinh'}) @validator('vn.toancauxanh.vm.BaseValid', constraint='no empty')">
+					<attribute w:name="doKeyPress_">
+						function(evt) {
+							if (!this._shallIgnore(evt,"0123456789"))
+							this.$doKeyPress_(evt);
+						}
+					</attribute>	
+				</textbox>
+				<label class="error" value="@load(vmsgs[self.previousSibling])" />
+				<label class="error redGiaVe1TextColor" value="@load(vmsgs['lblErrGiaVe1'])" />
+			</div>
+		</div>
+		
+		<div class="col-md-12">
+			<div class="form-group">
+				<x:label>Nhỏ (5 - 9)<n:small class="required"> *</n:small></x:label>
+				<textbox class="form-control" width="100%" maxlength="15" onChange="@command('validateGiaVe', className='redGiaVe3TextColor', giaVe=vm.giaVeTreEmDuoi5Tuoi)"
+					value="@bind(vm.giaVeTreEmDuoi10Tuoi) @save(vm.giaVeTreEmDuoi10Tuoi, before={'saveCauHinh'}) @validator('vn.toancauxanh.vm.BaseValid', constraint='no empty')">
+					<attribute w:name="doKeyPress_">
+						function(evt) {
+							if (!this._shallIgnore(evt,"0123456789"))
+							this.$doKeyPress_(evt);
+						}
+					</attribute>
+				</textbox>
+				<label class="error" value="@load(vmsgs[self.previousSibling])" />
+				<label class="error redGiaVe3TextColor" value="@load(vmsgs['lblErrGiaVe3'])" />
+			</div>
+		</div>
+		
+		<div class="col-md-12">
+			<div class="form-group">
+				<x:label>Bé (1 - 4)<n:small class="required"> *</n:small></x:label>
+				<textbox class="form-control" width="100%" maxlength="15" onChange="@command('validateGiaVe', className='redGiaVe2TextColor', giaVe=vm.giaVeTreEmDuoi5Tuoi)"
+					value="@bind(vm.giaVeTreEmDuoi5Tuoi) @save(vm.giaVeTreEmDuoi5Tuoi, before={'saveCauHinh'}) @validator('vn.toancauxanh.vm.BaseValid', constraint='no empty')">
+					<attribute w:name="doKeyPress_">
+						function(evt) {
+							if (!this._shallIgnore(evt,"0123456789"))
+							this.$doKeyPress_(evt);
+						}
+					</attribute>	
+				</textbox>
+				<label class="error" value="@load(vmsgs[self.previousSibling])" />
+				<label class="error redGiaVe2TextColor" value="@load(vmsgs['lblErrGiaVe2'])" />
+			</div>
+		</div>
+	</div>
+	
+	<div class="row box-footer">  
+		<x:button class="btn btn-default pull-right" onClick="@command('invokeGG', notify=vmArgs, detach=wdn, attr='settings')">
+			Hủy
+		</x:button>
+		<x:button style="margin-right: 10px;" class="btn btn-primary pull-right" 
+		 	visible="@load(entry.quyen.cauhinhgiave_sua)"
+			onClick="@command('saveCauHinh', list=vmArgs, attr='settings', wdn=wdn)">
+			<n:i class="fa fa-save"></n:i>&#160;&#160;Lưu
+		</x:button>
+	</div>
+</window>

@@ -1,0 +1,2 @@
+<?component name="add-dieutiet-nhom-view" inline="true" macroURI="add-dieutiet-nhom-view.zul"?>
+<add-dieutiet-nhom-view model="${entry.nhomCuaHois.type().newInstance()}" vmArgs="${arg.vmArgs}" save="Điều tiết số lượng vé lẻ sang nhóm công ty" />

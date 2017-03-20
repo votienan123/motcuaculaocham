@@ -1,0 +1,58 @@
+<?page title="Quản lý thông báo" contentType="text/html;charset=UTF-8"?>
+<div xmlns:zk="zk" xmlns:n="native" xmlns:x="xhtml" apply="org.zkoss.bind.BindComposer"
+	viewModel="@id('vm') @init('vn.toancauxanh.gg.model.DoiTuong')"
+	validationMessages="@id('vmsgs')">
+	<zscript><![CDATA[
+		self.page.title= "Chi tiết Lịch sử cập nhật hồ sơ";
+		import vn.toancauxanh.gg.model.DoiTuong;
+		import vn.toancauxanh.gg.model.LichSuThayDoi;
+		String idStr = execution.getParameter("id");
+		String idHStr = execution.getParameter("idH");
+		Long id = Long.parseLong(idStr);
+		Long idH = Long.parseLong(idHStr);
+		DoiTuong dt = new DoiTuong();
+		dt = vm.core().em().find(DoiTuong.class, id);
+		LichSuThayDoi lichSu = vm.core().em().find(LichSuThayDoi.class, idH);
+	]]></zscript>
+	<n:section class="content-header">
+		<div class="bread-div">			
+			<a href="/${resource}/lichsucapnhat/${dt.id}">&lt; Lịch sử cập nhật của hồ sơ ${dt.hoVaTen}</a>
+		</div>
+		<n:span class="header-title">Chi tiết lịch sử cập nhật "${lichSu.noiDung}" của hồ sơ ${dt.hoVaTen}</n:span>
+	</n:section>
+	<n:section class="content">	
+		<n:div class="row">
+	    	<n:div class="col-md-12">
+	    		<div class="lich-su-type-item">
+	    			<div class="ls-heading open">
+	    				CHI TIÊT LỊCH SỬ CẬP NHẬT HỒ SƠ
+	    			</div>
+	    			<div class="ls-content first">   
+	    				<div children="@load(lichSu.listLichSuThayDoi)">
+	    					<template name="children" var="thongTin">
+	    						<div class="doi-tuong-item">
+									<div class="doi-tuong-index" style="padding-top:0px">
+										<label value="@load(thongTinStatus.index + 1)"/>
+									</div>
+									<div class="doi-tuong-content">
+										<div class="row">
+											<div class="col-md-4">												
+												<n:span class="bold">Thông tin: </n:span> ${thongTin.propertyName}
+											</div>
+											<div class="col-md-4">												
+												<n:span class="bold">Giá trị cũ: </n:span> ${thongTin.oldValue}
+											</div>		
+											<div class="col-md-4">												
+												<n:span class="bold">Giá trị mới: </n:span> ${thongTin.newValue}
+											</div>	
+										</div>
+									</div>
+								</div>
+	    					</template>
+	    				</div>
+	    			</div>
+	    		</div>		    			
+	    	</n:div>
+	    </n:div>
+	</n:section>
+</div>

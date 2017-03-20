@@ -1,0 +1,2 @@
+<?component name="add-dieutiet-congty-view" inline="true" macroURI="add-dieutiet-congty-view.zul"?>
+<add-dieutiet-congty-view model="${arg.vm}" vmArgs="${arg.vmArgs}" save="Điều tiết số lượng vé từ công ty sang công ty" />

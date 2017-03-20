@@ -1,0 +1,172 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<window xmlns:n="native" xmlns:x="xhtml" xmlns:zk="zk" xmlns:w="client" apply="org.zkoss.bind.BindComposer"
+	id="wdn" border="normal" mode="modal" action="show: slideIn"
+	contentStyle="overflow:auto;" closable="true" title="${arg.save}"
+	onClose="@command('invokeGG', notify=vmArgs, detach=wdn, attr='targetQuery')"
+	whatever="@load(false, after='xacNhanMaBaoTon') @converter('vn.toancauxanh.service.DetachConverter')"
+	viewModel="@id('vm') @init(arg.model)" validationMessages="@id('vmsgs')" 
+	form="@id('fx') @load(vm) @save(vm, before={'xacNhanMaBaoTon'}) @validator(vm.validatorMBT)" width="80%">
+	<zscript>
+		vmArgs = arg.get("vmArgs");
+		vm = arg.get("vm");
+		System.out.println("vmArgs " +vmArgs);
+		System.out.println("vm " +vm);
+		vm.napFormMacDinh();
+		vm.setCoTau(true);
+		vm.filterTours();
+	</zscript>
+	
+	<n:script><![CDATA[
+		function validateRemoveClass(className) {
+		    $('.' +className).hide();
+		}
+		
+		function validateAddClass(className, text) {
+		    $('.' +className).text(text).show();
+		}
+	]]></n:script>
+	
+	<div class="row box-body">
+		<div class="col-md-12" style="padding: 0px !important;">
+			<div>
+				<div class="col-md-6">
+					<div class="form-group">
+						<x:label>Ngày thực hiện tour:</x:label>
+						<datebox placeholder="dd/MM/yyyy" width="100%" disabled="true"
+							format="dd/MM/yyyy" value="@bind(vm.ngayThucHienTour) @save(vm.ngayThucHienTour, before={'xacNhanMaBaoTon'}) @validator('vn.toancauxanh.vm.BaseValid', constraint='no empty')" 
+							readonly="false" class="mis-datebox-inner" />
+						<label class="error" value="@load(vmsgs[self.previousSibling])" />
+					</div>
+					
+					<div class="form-group">
+						<x:label>Mã bảo tồn:<n:small class="required"> *</n:small></x:label>
+						<textbox class="form-control" width="100%" maxlength="15" 
+							value="@bind(vm.maBaoTon) @save(vm.maBaoTon, before={'xacNhanMaBaoTon'}) @validator('vn.toancauxanh.vm.BaseValid', constraint='no empty')">
+						</textbox>
+						<label class="error" value="@load(vmsgs[self.previousSibling])" />
+					</div>
+
+					<div class="form-group">
+						<x:label>Mã tàu:<n:small class="required"> *</n:small></x:label>
+						<combobox width="100%" model="@load(vm.tauListAndNull)" onSelect="@command('selectedTau')"
+							readonly="true" placeholder="Mã tàu"
+							selectedItem="@bind(vm.tau) @save(vm.tau, before={'xacNhanMaBaoTon'})
+								@validator('vn.toancauxanh.vm.BaseValid', constraint='no empty')" >
+							<template name="model">
+								<comboitem label="@load(empty each? '--- Chọn mã tàu ---' :  each.ten)" />
+							</template>
+						</combobox>
+						
+						<label class="error" value="@load(vmsgs[self.previousSibling])" />
+						<label value="@load(String.format('%s %d %s', '(Số ghế tối đa trên tàu ', vm.soGhe eq null ? 0 : vm.soGhe, ')'))" />
+					</div>
+
+					<div class="form-group">
+						<n:div class="box-tools">
+		   					<x:button class="btn btn-info"
+		   						onClick="@command('xacNhanMaBaoTon')">
+		   						<n:i class="fa fa-check"></n:i>
+		   						Xác nhận
+		   					</x:button>
+		   				</n:div>
+		   				<label class="error" value="@load(vmsgs['lblErrSoLuongGhe'])" />
+					</div>
+				</div>
+				
+				<div class="col-md-6">
+					<div class="form-group">
+						<x:label>Lớn:<n:small class="required"> *</n:small></x:label>
+						<textbox class="form-control" width="100%" maxlength="3" onChange="@command('validateSoLuongMBT')"
+							value="@bind(vm.soLuongNguoiLon) @save(vm.soLuongNguoiLon, before={'xacNhanMaBaoTon'}) @validator('vn.toancauxanh.vm.BaseValid', constraint='no empty')">
+							<attribute w:name="doKeyPress_">
+								function(evt) { 
+									if (!this._shallIgnore(evt,"0123456789"))
+										this.$doKeyPress_(evt);
+								}
+							</attribute>
+						</textbox>
+						<label class="error" value="@load(vmsgs['lblErrSoLuongNguoiLon'])" />
+					</div>
+					
+					<div class="form-group">
+						<x:label>Bé (1 - 4):</x:label>
+						<textbox class="form-control" width="100%" maxlength="3" onChange="@command('validateSoLuongMBT')"
+							value="@bind(vm.soLuongTreEm1Den3) @save(vm.soLuongTreEm1Den3)">
+							<attribute w:name="doKeyPress_">
+								function(evt) { 
+									if (!this._shallIgnore(evt,"0123456789"))
+										this.$doKeyPress_(evt);
+								}
+							</attribute>
+						</textbox>
+						<label class="error" value="@load(vmsgs['lblErrSoLuongTreEm1D3'])" />
+						<label value="" />
+					</div>
+					
+					<div class="form-group">
+						<x:label>Nhỏ (5 - 9):</x:label>
+						<textbox class="form-control" width="100%" maxlength="3" onChange="@command('validateSoLuongMBT')"
+							value="@bind(vm.soLuongTrEm4Den9) @save(vm.soLuongTrEm4Den9)">
+							<attribute w:name="doKeyPress_">
+								function(evt) { 
+									if (!this._shallIgnore(evt,"0123456789"))
+										this.$doKeyPress_(evt);
+								}
+							</attribute>
+						</textbox>
+						<label class="error" value="@load(vmsgs['lblErrSoLuongTreEm4D9'])" />
+					</div>	
+					
+				</div>
+			</div>
+		</div>
+		
+		<div class="col-md-12" style="padding: 0px !important;">
+			<div>
+				<div class="col-md-12">
+					<div class="form-group">
+						<grid model="@load(vm.tours)" width="100%" emptyMessage="Không có danh sách thực hiện tour">
+							<columns>
+								<column label="STT" hflex="min" style="text-align:center"/>
+								<column label="Mã bảo tồn" width="10%" />
+								<column label="Số hiệu tàu" width="15%" />
+								<column label="Số lượng khách người lớn" width="20%" />
+								<column label="Số lượng khách trẻ em 1 - 4" width="20%" />
+								<column label="Số lượng khách trẻ em 5 - 9" width="20%" />
+								<column label="Thao tác" style="text-align:center" width="110px" />
+							</columns>
+							<template name="model">
+								<row apply="org.zkoss.bind.BindComposer" viewModel="@id('item') @init(each)">
+									<label value="@bind(forEachStatus.index + 1 + vm.arg.page * vm.arg.pagesize)" style="text-align:center;display:block"/>
+									<a label="@load(each.maBaoTon)" style="text-align:center"/>
+									<label value="@load(each.tau.ten)" />
+									<label value="@load(each.soLuongNguoiLon)" style="display:block"/>
+									<label value="@load(each.soLuongTreEm1Den3)" style="display:block"/>
+									<label value="@load(each.soLuongTrEm4Den9)" style="display:block"/>
+									<div class="text-align-center">
+										<x:button class="btn btn-danger btn-xs" title="Xóa"
+											onClick="@command(vm.xoaMaBaoTonTour(each))">
+											<n:i class="fa fa-trash"></n:i> 
+										</x:button>
+									</div>
+								</row>
+							</template>
+						</grid>
+					</div>
+					<label class="error" value="@load(vmsgs['lblErrSoLuongMBT'])" />
+					<label class="error" value="@load(vmsgs['lblErrTau'])" />
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="row box-footer">  
+		<x:button class="btn btn-default pull-right" onClick="@command('invokeGG', notify=vmArgs, detach=wdn, attr='targetQuery')">
+			Hủy
+		</x:button>
+		<x:button style="margin-right: 10px;" class="btn btn-primary pull-right"
+			onClick="@command('saveMaBaoTon', list=vmArgs, attr='targetQuery', wdn=wdn)">
+			<n:i class="fa fa-save"></n:i>&#160;&#160;Lưu
+		</x:button>
+	</div>
+</window>

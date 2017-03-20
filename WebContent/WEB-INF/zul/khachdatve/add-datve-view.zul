@@ -1,0 +1,399 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<window xmlns:n="native" xmlns:x="xhtml" xmlns:zk="zk" xmlns:w="client" apply="org.zkoss.bind.BindComposer"
+	id="wdn" border="normal" mode="modal" action="show: slideIn"
+	contentStyle="overflow:auto;" closable="true" title="${arg.save}"
+	onClose="@command('invokeGG', notify=vmArgs, detach=wdn, attr=nhanVien.phongBanVeLe ? 'phongBanVeLeQuery' : 'listDatVeQuery')"
+	whatever="@load(false, after='saveDatVe') @converter('vn.toancauxanh.service.DetachConverter')"
+	viewModel="@id('vm') @init(arg.model)" validationMessages="@id('vmsgs')" 
+	form="@id('fx') @load(vm) @save(vm, before={'saveDatVe','saveDatVeAndPrint'}) @validator(vm.validator)" width="50%">
+	<zscript><![CDATA[
+		vmArgs = arg.get("vmArgs");
+		vm.napGiaVe();
+
+		import vn.toancauxanh.gg.model.enums.PhanLoaiKhachDiTour;
+		import vn.toancauxanh.gg.model.enums.LoaiPhongVeLeEnum;
+		tourBinhThuong = PhanLoaiKhachDiTour.TOUR_BINH_THUONG;
+		tourDiRieng = PhanLoaiKhachDiTour.TOUR_DI_RIENG;
+		tourThueTauRieng = PhanLoaiKhachDiTour.THUE_TAU_DI_RIENG;
+		tour2Ngay1Dem = PhanLoaiKhachDiTour.HAINGAY_MOTDEM;
+		tourGianTiep = LoaiPhongVeLeEnum.PHONG_VE_LE_GIAN_TIEP;
+
+		viewOnly = arg.get("viewOnly");
+		
+		boolean isView = false;
+		if (viewOnly != null) {
+			isView = true;
+		}
+		if (nhanVien.isPhongBanVeLe()) {
+			vm.setLoaiPhongBanVeLe(vn.toancauxanh.gg.model.enums.LoaiPhongVeLeEnum.PHONG_VE_LE_TRUC_TIEP);
+		}
+		
+		boolean isEditDataPhongBanVeLe = false;
+		if ((!vm.noId() && vm.getNhomCuaHoi() == null && vm.getCongTyKinhDoanh() == null) || nhanVien.isPhongBanVeLe()) {
+			isEditDataPhongBanVeLe = true;
+		}
+		
+		if (vm.noId()) {
+			if (nhanVien.isPhongBanVeLe()) {
+				wdn.setTitle("Tạo mới đặt vé của phòng bán vé lẻ");
+			} else if (nhanVien.isNhomThanhVien()) {
+				wdn.setTitle("Tạo mới đặt vé của công ty");
+			} else {
+				wdn.setTitle("Tạo mới đặt vé");
+			}
+		} else {
+			if (isEditDataPhongBanVeLe) {
+				wdn.setTitle("Thông tin đặt vé của phòng bán vé lẻ");
+			} else if (nhanVien.isNhomThanhVien()) {
+				wdn.setTitle("Thông tin đặt vé của công ty");
+			} else {
+				wdn.setTitle("Thông tin đặt vé");
+			}
+		}
+
+		vm.setFlagChange(true);
+	]]></zscript>
+	
+	<n:script><![CDATA[
+		function validateRemoveClass(className) {
+		    $('.' +className).hide();
+		}
+		
+		function validateAddClass(className, text) {
+		    $('.' +className).text(text).show();
+		}
+	]]></n:script>
+	
+	<div class="row box-body">
+		<div class="col-md-12" style="padding: 0px !important;">
+			<label class="tieide_khachdatve" value="Thông tin chung"/>
+			<div>
+				<div class="col-md-6">
+					<div class="form-group">
+						<x:label zk:if="${isEditDataPhongBanVeLe}">Họ và tên:<n:small zk:if="${isEditDataPhongBanVeLe}" class="required"> *</n:small></x:label>
+						<x:label zk:if="${!isEditDataPhongBanVeLe}">Khách hàng:<n:small zk:if="${isEditDataPhongBanVeLe}" class="required"> *</n:small></x:label>
+						<textbox class="form-control" width="100%" maxlength="255" readonly="${isView}"
+							value="@load(vm.hoVaTen) @save(vm.hoVaTen, before={'saveDatVe','saveDatVeAndPrint'})
+							@validator('vn.toancauxanh.vm.BaseValid', constraint=isEditDataPhongBanVeLe ? 'no empty' : '')" />
+						<label class="error" value="@load(vmsgs[self.previousSibling])" />
+					</div>
+					
+					<div class="form-group">
+						<x:label>Ngày sinh:</x:label>
+						<datebox placeholder="dd/MM/yyyy" width="100%" format="dd/MM/yyyy" disabled="${isView}"
+							value="@bind(vm.ngaySinh) @save(vm.ngaySinh, before={'saveDatVe','saveDatVeAndPrint'})"
+							readonly="false" class="mis-datebox-inner" />
+						<label class="error redNgaySinhTextColor" value="@load(vmsgs['lblErrNgaySinh'])" />
+					</div>
+					
+					<div class="form-group">
+						<x:label>Số điện thoại:<n:small class="required"> *</n:small></x:label>
+						<textbox class="form-control" width="100%" maxlength="11"
+							value="@bind(vm.soDienThoai) @save(vm.soDienThoai, before={'saveDatVe','saveDatVeAndPrint'})
+							@validator('vn.toancauxanh.vm.BaseValid', constraint='no empty')">
+							<attribute w:name="doKeyPress_">
+								function(evt){ if
+								(!this._shallIgnore(evt,"0123456789"))
+								this.$doKeyPress_(evt);
+								}
+							</attribute>
+						</textbox>
+						<label class="error" value="@load(vmsgs[self.previousSibling])" />
+						<label class="error" value="@load(vmsgs['lblSoDienThoai'])" />
+					</div>
+					
+					<div class="form-group">
+						<x:label>CMND:</x:label>
+						<textbox class="form-control" width="100%" maxlength="9" value="@bind(vm.soCMND)" readonly="${isView}">
+							<attribute w:name="doKeyPress_">
+								function(evt) {
+									if (!this._shallIgnore(evt,"0123456789"))
+									this.$doKeyPress_(evt);
+								}
+							</attribute>
+						</textbox>
+						<label class="error" value="@load(vmsgs['lblSoCMND'])" />
+					</div>
+					
+					<div class="form-group">
+						<x:label>Số hộ chiếu (Nếu có):</x:label>
+						<textbox class="form-control" width="100%" maxlength="9" value="@load(vm.passport) @save(vm.passport)" readonly="${isView}"/>
+					</div>
+					
+					<div class="form-group">
+						<x:label>Địa chỉ:</x:label>
+						<textbox class="form-control" width="100%" maxlength="255" value="@load(vm.diaChi) @save(vm.diaChi)" readonly="${isView}"/>
+					</div>
+					
+					<div class="form-group">
+						<x:label>Quốc tịch:<n:small class="required"> *</n:small></x:label>
+						<combobox width="100%" model="@load(entry.datVes.quocTichListAndNull)" readonly="true" placeholder="Tên quốc tịch" disabled="${isView}"
+							selectedItem="@load(vm.quocTich) @save(vm.quocTich, before={'saveDatVe','saveDatVeAndPrint'}) @validator('vn.toancauxanh.vm.BaseValid', constraint='no empty')">
+							<template name="model">
+								<comboitem label="@load(empty each? '--- Chọn tên quốc tịch ---' :  each.text)" />
+							</template>
+						</combobox>
+						<label class="error" value="@load(vmsgs[self.previousSibling])" />
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="form-group" visible="@load(isEditDataPhongBanVeLe)">
+						<x:label>Loại phòng vé lẻ:<n:small class="required"> *</n:small></x:label>
+						<combobox width="100%" model="@load(vmArgs.phongVeLeListAndNull)" onSelect="@command('napGiaVe')" readonly="true" placeholder="Tên phòng vé lẻ"
+							selectedItem="@bind(vm.loaiPhongBanVeLe) @save(vm.loaiPhongBanVeLe, before='saveDatVe')
+								@validator('vn.toancauxanh.vm.BaseValid', constraint=isEditDataPhongBanVeLe ? 'no empty' : '')">
+							<template name="model">
+								<comboitem label="@load(empty each? '--- Chọn tên phòng vé lẻ ---' :  each.text)" />
+							</template>
+						</combobox>
+						<label class="error" value="@load(vmsgs[self.previousSibling])" />
+					</div>
+					
+					<div class="form-group">
+						<x:label>Loại khách đi tour<n:small class="required"> *</n:small></x:label>
+						<combobox readonly="true" onSelect="@command('napGiaVe')" disabled="${isView}"
+							model="@load(entry.listPhanLoaiKhachDiTour)" placeholder="Tên loại khách đi tour"
+							selectedItem="@bind(vm.phanLoaiKhachDiTour) @save(vm.phanLoaiKhachDiTour)"
+							width="100%">
+							<template name="model">
+								<comboitem value="@load(each)" label="@load(each.text)"/>
+							</template>
+						</combobox>
+					</div>
+					
+					<div class="form-group" visible="@load(vm.phanLoaiKhachDiTour eq tourDiRieng or vm.phanLoaiKhachDiTour eq tourThueTauRieng)">
+						<x:label>Số lượng khách<n:small class="required"> *</n:small></x:label>
+						<doublebox class="form-control" maxlength="3" onChange="@command('napGiaVe')" disabled="${isView}"
+							value="@bind(vm.soLuongNguoiLon) @save(vm.soLuongNguoiLon, before={'saveDatVe','saveDatVeAndPrint'})">
+							<attribute w:name="doKeyPress_">
+								function(evt) { 
+									if (!this._shallIgnore(evt,"0123456789"))
+										this.$doKeyPress_(evt);
+								}
+							</attribute>
+						</doublebox>
+						<label class="error" value="@load(vmsgs['lblErrSoLuongKhach2'])" />
+					</div>
+					
+					<div class="form-group" visible="@load(vm.phanLoaiKhachDiTour eq tourBinhThuong)">
+						<x:label>Phân loại tour<n:small class="required"> *</n:small></x:label>
+						<combobox onSelect="@command('napGiaVe')" width="100%" model="@load(vmArgs.phanLoaiTourListAndNull)" readonly="true" disabled="${isView}"
+							selectedItem="@bind(vm.phanLoaiTour) @save(vm.phanLoaiTour, before={'saveDatVe','saveDatVeAndPrint'}) 
+								@validator('vn.toancauxanh.vm.BaseValid', constraint=vm.phanLoaiKhachDiTour eq tourBinhThuong ? 'no empty' : '')"
+							placeholder="Tên loại tour" >
+							<template name="model">
+								<comboitem label="@load(empty each ? '--- Chọn loại tour ---' :  each.ten)" />
+							</template>
+						</combobox>
+						<label class="error" value="@load(vmsgs[self.previousSibling])" />
+					</div>
+					
+					<div class="form-group" visible="@load(vm.phanLoaiKhachDiTour eq tour2Ngay1Dem)">
+						<x:label>Phân loại tour<n:small class="required"> *</n:small></x:label>
+						<combobox onSelect="@command('napGiaVe')" width="100%" model="@load(entry.giaVe2Ngay1Dems.listGiaVe2Ngay1Dem)" readonly="true" disabled="${isView}"
+							selectedItem="@bind(vm.giaVe2Ngay1Dem) @save(vm.giaVe2Ngay1Dem, before={'saveDatVe','saveDatVeAndPrint'}) 
+								@validator('vn.toancauxanh.vm.BaseValid', constraint=vm.phanLoaiKhachDiTour eq tour2Ngay1Dem ? 'no empty' : '')"
+							placeholder="Tên loại tour" >
+							<template name="model">
+								<comboitem label="@load(empty each ? '--- Chọn loại tour ---' :  each.ten)" />
+							</template>
+						</combobox>
+						<label class="error" value="@load(vmsgs[self.previousSibling])" />
+					</div>
+					
+					<div class="form-group" visible="@load(vm.loaiPhongBanVeLe eq tourGianTiep)">
+						<x:label>Tuyến đưa đón<n:small class="required"> *</n:small></x:label>
+						<combobox width="100%" model="@load(entry.tuyenXes.listTuyenXe)" readonly="true" onSelect="@command('napGiaVe')"
+							selectedItem="@bind(vm.tuyenXe) @save(vm.tuyenXe, before={'saveDatVe','saveDatVeAndPrint'}) 
+								@validator('vn.toancauxanh.vm.BaseValid', constraint=vm.loaiPhongBanVeLe eq tourGianTiep ? 'no empty' : '')"
+							placeholder="Tên tuyến đưa đón" >
+							<template name="model">
+								<comboitem label="@load(empty each ? '--- Chọn tuyến đưa đón ---' :  each.ten)" />
+							</template>
+						</combobox>
+						<label class="error" value="@load(vmsgs[self.previousSibling])" />
+					</div>
+					
+					<div class="form-group" visible="@load(vm.phanLoaiKhachDiTour eq tourBinhThuong || vm.phanLoaiKhachDiTour eq tour2Ngay1Dem)">
+						<x:label>Số lượng khách:<n:small class="required"> *</n:small></x:label>
+						<div style="width: 100%; overflow: hidden; ">
+							<div class="form_sl_nguoilon" style="float: left; margin-right : 10px;">
+								<doublebox class="form-control" width="50px" maxlength="3" style="float: left; margin-right: 7px;" onChange="@command('napGiaVe')" disabled="${isView}"
+									value="@bind(vm.soLuongNguoiLon) @save(vm.soLuongNguoiLon, before={'saveDatVe','saveDatVeAndPrint'}) ">
+									<attribute w:name="doKeyPress_">
+										function(evt) { 
+											if (!this._shallIgnore(evt,"0123456789"))
+												this.$doKeyPress_(evt);
+										}
+									</attribute>
+								</doublebox>
+								<span class="span_chung">Lớn</span>
+							</div>
+							
+							<div class="form_sl_treem" style="float: left;">
+								<doublebox class="form-control" width="50px" maxlength="3" style="float: left; margin-right: 7px;" onChange="@command('napGiaVe')" disabled="${isView}"
+									value="@bind(vm.soLuongTreEmDuoi10Tuoi) @save(vm.soLuongTreEmDuoi10Tuoi, before={'saveDatVe','saveDatVeAndPrint'})">
+									<attribute w:name="doKeyPress_">
+										function(evt) {
+											if (!this._shallIgnore(evt,"0123456789"))
+											this.$doKeyPress_(evt);
+										}
+									</attribute>
+								</doublebox>
+								<span class="span_chung">Nhỏ (5 - 9) </span>
+							</div>
+							
+							<div class="form_sl_treem" style="float: left; margin-left: 5px;">
+								<doublebox class="form-control" width="50px" maxlength="3" style="float: left; margin-right: 7px;" onChange="@command('napGiaVe')" disabled="${isView}"
+									value="@bind(vm.soLuongTreEmDuoi5Tuoi) @save(vm.soLuongTreEmDuoi5Tuoi, before={'saveDatVe','saveDatVeAndPrint'})">
+									<attribute w:name="doKeyPress_">
+										function(evt) {
+											if (!this._shallIgnore(evt,"0123456789"))
+											this.$doKeyPress_(evt);
+										}
+									</attribute>
+								</doublebox>
+								<span class="span_chung">Bé (1 - 4)</span>
+							</div>
+						</div>
+						<label class="error redTextColor" value="@load(vmsgs['lblErrSoLuongKhach'])" />
+					</div>	
+					
+					<div class="form-group" visible="@load(!nhanVien.nhomThanhVien)">
+						<x:label>Giá dịch vụ:</x:label>						
+						<doublebox class="form-control" width="100%" format="#,##0" locale="it" disabled="@load(!nhanVien.nhomThanhVien)"
+							value="@bind(vm.giaDichVu)">
+							<attribute w:name="doKeyPress_">
+								<![CDATA[
+									function(evt) {if (!this._shallIgnore(evt, "0123456789")) this.$doKeyPress_(evt);}
+								]]>
+							</attribute>
+						</doublebox>
+					</div>
+					
+					<div class="form-group">
+						<x:label>Ghi chú:</x:label>
+						<textbox disabled="${isView}" class="form-control" width="100%" maxlength="255" rows="4"
+							value="@load(vm.ghiChu) @save(vm.ghiChu, before={'saveDatVe','saveDatVeAndPrint'})" />
+					</div>
+					
+					<div class="form-group" zk:if="${!vm.noId()}">
+						<x:button style="margin-right: 10px;" class="btn btn-info"
+							zk:if="${entry.quyen.khachdatve_lichsucapnhat}"
+							onClick="@command('redirectPage', zul='khachdatve/lichsudatve.zul', vmArgs=vmArgs, vm=vm)">
+							<n:i class="fa fa-history"></n:i>&#160;&#160;Xem lịch sử đặt vé
+						</x:button>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="col-md-12" style="padding: 0px !important;">
+			<label class="tieide_khachdatve" value="Thông tin đặt vé" />
+			<div visible="@load(!isEditDataPhongBanVeLe)">
+				<div class="col-md-6">
+					<div class="form-group">
+						<x:label>Nhóm:<n:small class="required"> *</n:small></x:label>
+						<combobox width="100%" model="@load(entry.datVes.nhomCuaHoiListAndNull)" disabled="@load(!(vm.noId() and (nhanVien.quanTriVien or nhanVien.banDieuHanh)))"
+							readonly="true" placeholder="Tên nhóm"
+							selectedItem="@bind(vm.nhomCuaHoi) @save(vm.nhomCuaHoi, before='saveDatVe')
+								@validator('vn.toancauxanh.vm.BaseValid', constraint=!isEditDataPhongBanVeLe ? 'no empty' : '')" >
+							<template name="model">
+								<comboitem label="@load(empty each? '--- Chọn tên nhóm ---' :  each.ten)" />
+							</template>
+							<attribute name="onChange">
+								cbbCongTy.setRawValue(null);
+							</attribute>
+						</combobox>
+						<label class="error" value="@load(vmsgs[self.previousSibling])" />
+					</div>
+					
+					<div class="form-group">
+						<x:label>Tên công ty:<n:small class="required"> *</n:small></x:label>
+						<combobox width="100%" model="@load(vm.congTyKinhDoanhListAndNull)" disabled="@load(!(vm.noId() and (nhanVien.quanTriVien or nhanVien.banDieuHanh)))"
+							readonly="true" id="cbbCongTy" placeholder="Tên công ty kinh doanh"
+							selectedItem="@load(vm.congTyKinhDoanh) @save(vm.congTyKinhDoanh, before='saveDatVe')
+								@validator('vn.toancauxanh.vm.BaseValid', constraint=!isEditDataPhongBanVeLe ? 'no empty' : '')" >
+							<template name="model">
+								<comboitem label="@load(empty each? '--- Chọn tên công ty kinh doanh ---' :  each.ten)" />
+							</template>
+						</combobox>
+						<label class="error" value="@load(vmsgs[self.previousSibling])" />
+					</div>
+				</div>
+				
+				<div class="col-md-6">
+					<div class="form-group">
+						<x:label>Ngày khách đặt vé:<n:small class="required"> *</n:small></x:label>
+						<datebox placeholder="dd/MM/yyyy" width="100%" disabled="true"
+							format="dd/MM/yyyy" value="@bind(vm.ngayKhachDat) @save(vm.ngayKhachDat, before={'saveDatVe','saveDatVeAndPrint'})
+								@validator('vn.toancauxanh.vm.BaseValid', constraint='no empty')"
+							readonly="false" class="mis-datebox-inner"/>
+						<label class="error" value="@load(vmsgs[self.previousSibling])" />
+						<label class="error" value="@load(vmsgs['lblErrNgayKhachDat'])" />
+					</div>
+					<div class="form-group">
+						<x:label>Ngày thực hiện tour:<n:small class="required"> *</n:small></x:label>
+						<datebox placeholder="dd/MM/yyyy" width="100%" disabled="@load(!vm.noId())"
+							format="dd/MM/yyyy" value="@bind(vm.ngayThucHienTour) @save(vm.ngayThucHienTour, before={'saveDatVe','saveDatVeAndPrint'}) @validator('vn.toancauxanh.vm.BaseValid', constraint='no empty')"
+							readonly="false" class="mis-datebox-inner"/>
+						<label class="error" value="@load(vmsgs[self.previousSibling])" />
+						<label class="error" value="@load(vmsgs['lblErrNgayThucHienTour'])" />
+					</div>
+				</div>
+			</div>
+			<div visible="@load(isEditDataPhongBanVeLe)">
+				<div class="col-md-6">
+					<div class="form-group">
+						<x:label>Ngày khách đặt vé:<n:small class="required"> *</n:small></x:label>
+						<datebox placeholder="dd/MM/yyyy" width="100%" disabled="true"
+							format="dd/MM/yyyy" value="@bind(vm.ngayKhachDat) @save(vm.ngayKhachDat, before={'saveDatVe','saveDatVeAndPrint'})
+								@validator('vn.toancauxanh.vm.BaseValid', constraint='no empty')"
+							readonly="false" class="mis-datebox-inner"/>
+						<label class="error" value="@load(vmsgs[self.previousSibling])" />
+						<!-- <label class="error" value="@load(vmsgs['lblErrNgayKhachDat'])" /> -->
+					</div>
+				</div>
+				
+				<div class="col-md-6">
+					<div class="form-group">
+						<x:label>Ngày thực hiện tour:<n:small class="required"> *</n:small></x:label>
+						<datebox placeholder="dd/MM/yyyy" width="100%" disabled="@load(!vm.noId())"
+							format="dd/MM/yyyy" value="@bind(vm.ngayThucHienTour) @save(vm.ngayThucHienTour, before={'saveDatVe','saveDatVeAndPrint'}) @validator('vn.toancauxanh.vm.BaseValid', constraint='no empty')"
+							readonly="false" class="mis-datebox-inner"/>
+						<label class="error" value="@load(vmsgs[self.previousSibling])" />
+						<label class="error" value="@load(vmsgs['lblErrNgayThucHienTour'])" />
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="row box-footer">  
+		<x:button class="btn btn-default pull-right" onClick="@command('invokeGG', notify=vmArgs, detach=wdn, attr=nhanVien.phongBanVeLe ? 'phongBanVeLeQuery' : 'listDatVeQuery')">
+			Hủy
+		</x:button>
+		<x:button zk:if="${!isView and ((vm.noId() and entry.quyen.khachdatve_them) or (!vm.noId() and entry.quyen.khachdatve_sua))}" 
+			style="margin-right: 10px;" class="btn btn-primary pull-right"
+			onClick="@command('saveDatVeAndPrint', list=vmArgs, attr=nhanVien.phongBanVeLe ? 'phongBanVeLeQuery' : 'listDatVeQuery', wdn=wdn)">
+			<n:i class="fa fa-save"></n:i>&#160;&#160;Lưu và in
+		</x:button>
+		<x:button zk:if="${!isView and ((vm.noId() and entry.quyen.khachdatve_them) or (!vm.noId() and entry.quyen.khachdatve_sua))}" 
+			style="margin-right: 10px;" class="btn btn-primary pull-right"
+			onClick="@command('saveDatVe', list=vmArgs, attr=nhanVien.phongBanVeLe ? 'phongBanVeLeQuery' : 'listDatVeQuery', wdn=wdn)">
+			<n:i class="fa fa-save"></n:i>&#160;&#160;Lưu
+		</x:button>
+	</div>
+	<script>
+		function openPrint(id) {			
+			var document_focus = false; 
+			var printWindow =  window.open('print/print.zul?id=' + id, "pop", "width=700,height=600");
+			if (printWindow === null) {
+				alert("Vui lòng tắt chức năng chặn popup trên trình duyệt!");
+			} else {
+				printWindow.print();
+		   		setTimeout(function(){printWindow.close();}, 600);
+			}
+		};
+	</script>
+</window>

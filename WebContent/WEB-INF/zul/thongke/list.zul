@@ -1,0 +1,207 @@
+<?page title="Quản lý thông báo" contentType="text/html;charset=UTF-8"?>
+<div xmlns:zk="zk" xmlns:n="native" xmlns:x="xhtml" apply="org.zkoss.bind.BindComposer"
+	viewModel="@id('vm') @init('vn.toancauxanh.gg.model.DoiTuong')"
+	validationMessages="@id('vmsgs')">
+	<zscript><![CDATA[
+		self.page.title= "Thống kê";
+		System.out.println("thongke: " + entry.quyen.get("thongke_thong-ke-ket-qua-phat-hien-xu-ly-dang-ky-thuong-tru"));
+	]]></zscript>
+	<n:section class="content-header">
+		
+		<n:span class="header-title">Thống kê</n:span>
+	</n:section>
+	<n:section class="content">	
+		<n:div class="row">
+	    	<n:div class="col-md-4 " zk:if="${entry.quyen.get('thongke_thong-ke-ket-qua-phat-hien-xu-ly-dang-ky-thuong-tru')}">
+	    		<div class="thong-ke-item">
+	    			<div class="thong-ke-item-info">
+	    				<a href="/thongke/thong-ke-ket-qua-phat-hien-xu-ly-dang-ky-thuong-tru">
+	    				<n:span class="bold">Kết quả phát hiện, xử lý</n:span>
+	    				<n:span> người nghiện, người sử dụng trái phép chất ma túy </n:span>
+	    				<n:span class="bold">theo nơi đăng ký thường trú</n:span>
+	    				</a>
+	    			</div>
+	    			<div class="thong-ke-item-link">
+	    				<a href="/thongke/thong-ke-ket-qua-phat-hien-xu-ly-dang-ky-thuong-tru">
+	    					>
+	    				</a>
+	    			</div>
+	    		</div>	    		   		
+	    	</n:div>
+	    	<n:div class="col-md-4" zk:if="${entry.quyen.get('thongke_thong-ke-ket-qua-phat-hien-xu-ly-don-vi-xu-ly')}">
+	    		<div class="thong-ke-item">
+	    			<div class="thong-ke-item-info">
+	    				<a href="/thongke/thong-ke-ket-qua-phat-hien-xu-ly-don-vi-xu-ly">
+	    				<n:span class="bold">Kết quả phát hiện, xử lý</n:span>
+	    				<n:span> người nghiện, người sử dụng trái phép chất ma túy</n:span>
+	    				<n:span class="bold"> theo đơn vị</n:span>
+	    				</a>
+	    			</div>
+	    			<div class="thong-ke-item-link">
+	    				<a href="/thongke/thong-ke-ket-qua-phat-hien-xu-ly-don-vi-xu-ly">
+	    					>
+	    				</a>
+	    			</div>
+	    		</div>	    		   		
+	    	</n:div>
+	    	<n:div class="col-md-4" zk:if="${entry.quyen.get('thongke_thong-ke-phan-tich-nguoi-nghien-theo-noi-thuong-tru')}">
+	    		<div class="thong-ke-item">
+	    			<div class="thong-ke-item-info">
+	    				<a href="/thongke/thong-ke-phan-tich">
+	    				<n:span class="bold">Người nghiện ma túy theo thành phần</n:span><n:span>, độ tuổi, giới tính,
+						nơi thường trú theo tổ/thôn, phường/xã, quận/huyện, nghề nghiện, loại ma túy sử dụng, có tiền án, tiền sự</n:span>
+						</a>
+	    			</div>
+	    			<div class="thong-ke-item-link">
+	    				<a href="/thongke/thong-ke-phan-tich">
+	    					>
+	    				</a>
+	    			</div>
+	    		</div>	    		   		
+	    	</n:div>
+	    	<n:div class="col-md-4" zk:if="${entry.quyen.get('thongke_thong-ke-nguoi-su-dung-trai-phep')}">
+	    		<div class="thong-ke-item">
+	    			<div class="thong-ke-item-info">
+	    				<a href="/thongke/thong-ke-nguoi-su-dung-trai-phep">
+	    					<n:span class="bold">Người sử dụng trái phép chất ma túy</n:span> 
+		    				<n:span> (Đã bị xử phạt hành chính theo Nghị định 167/CP)
+		    				trên toàn địa bàn thành phố thời điểm hiện tại và theo
+		    				khoảng thời gian bất kỳ</n:span>
+	    				</a>
+	    			</div>
+	    			<div class="thong-ke-item-link">
+	    				<a href="/thongke/thong-ke-nguoi-su-dung-trai-phep">
+	    					>
+	    				</a>
+	    			</div>
+	    		</div>	    		   		
+	    	</n:div>
+	    	<n:div class="col-md-4" zk:if="${entry.quyen.get('thongke_thong-ke-nguoi-dang-cai-nghien-tai-gia-dinh-cong-dong')}">
+	    		<div class="thong-ke-item">
+	    			<div class="thong-ke-item-info">
+	    				<a href="/thongke/thong-ke-nguoi-dang-cai-nghien-gia-dinh-cong-dong">
+	    				<n:span class="bold">Người nghiện ma túy đang cai nghiện tại gia đình, 
+	    				cộng đồng</n:span><n:span> (theo Nghị định 94/2010/CP) trên toàn địa bàn thành phố thời 
+	    				điểm hiện tại và theo khoảng thời gian bất kỳ</n:span>
+	    				</a>
+	    			</div>
+	    			<div class="thong-ke-item-link">
+	    				<a href="/thongke/thong-ke-nguoi-dang-cai-nghien-gia-dinh-cong-dong">
+	    					>
+	    				</a>
+	    			</div>
+	    		</div>	    		   		
+	    	</n:div>
+	    	<n:div class="col-md-4" zk:if="${entry.quyen.get('thongke_thong-ke-nguoi-nghien-dang-giao-duc-tai-xa-phuong')}">
+	    		<div class="thong-ke-item">
+	    			<div class="thong-ke-item-info">
+	    				<a href="/thongke/thong-ke-nguoi-nghien-dang-giao-duc-tai-xa-phuong">
+	    				<n:span class="bold">Người nghiện ma túy đang giáo dục tại xã, phường</n:span><n:span> (Theo Nghị định 111/CP)
+	    				trên toàn thành phố thời điểm hiện tại và theo khoảng thời gian bất kỳ</n:span>
+	    				</a>
+	    			</div>
+	    			<div class="thong-ke-item-link">
+	    				<a href="/thongke/thong-ke-nguoi-nghien-dang-giao-duc-tai-xa-phuong">
+	    					>
+	    				</a>
+	    			</div>
+	    		</div>	    		   		
+	    	</n:div>
+	    	<n:div class="col-md-4" zk:if="${entry.quyen.get('thongke_thong-ke-nguoi-dang-cai-nghien-tap-trung')}">
+	    		<div class="thong-ke-item">
+	    			<div class="thong-ke-item-info">
+	    				<a href="/thongke/thong-ke-nguoi-dang-cai-nghien-tap-trung">
+	    				<n:span class="bold">Người nghiện ma túy đang cai nghiện tập trung</n:span><n:span> (Theo Nghị định 221/CP)
+	    				trên toàn thành phố thời điểm hiện tại và theo khoảng thời gian bất kỳ</n:span>
+	    				</a>
+	    			</div>
+	    			<div class="thong-ke-item-link">
+	    				<a href="/thongke/thong-ke-nguoi-dang-cai-nghien-tap-trung">
+	    					>
+	    				</a>
+	    			</div>
+	    		</div>	    		   		
+	    	</n:div>
+	    	
+	    	<n:div class="col-md-4" zk:if="${entry.quyen.get('thongke_thong-ke-nguoi-dang-bi-giam-giu')}">
+	    		<div class="thong-ke-item">
+	    			<div class="thong-ke-item-info">
+	    				<a href="/thongke/thong-ke-nguoi-dang-bi-giam-giu">
+	    				<n:span class="bold">Người nghiện, người sử dụng trái phép ma túy ở trong Trại tạm giam, Nhà tạm giữ</n:span>
+	    				<n:span> thời điểm hiện tại và theo khoảng thời gian bất kỳ</n:span>
+	    				</a>
+	    			</div>
+	    			<div class="thong-ke-item-link">
+	    				<a href="/thongke/thong-ke-nguoi-dang-bi-giam-giu">
+	    					>
+	    				</a>
+	    			</div>
+	    		</div>	    		   		
+	    	</n:div>
+	    	<n:div class="col-md-4" zk:if="${entry.quyen.get('thongke_thong-ke-nguoi-dang-o-co-so-giao-duc')}">
+	    		<div class="thong-ke-item">
+	    			<div class="thong-ke-item-info">
+	    				<a href="/thongke/thong-ke-nguoi-dang-o-co-so-giao-duc">
+	    				<n:span class="bold">Người nghiện, người sử dụng trái phép ma túy ở trong 
+						cơ sở giáo dục, trường giáo dưỡng</n:span><n:span>
+	    				thời điểm hiện tại và theo khoảng thời gian bất kỳ</n:span>
+	    				</a>
+	    			</div>
+	    			<div class="thong-ke-item-link">
+	    				<a href="/thongke/thong-ke-nguoi-dang-o-co-so-giao-duc">
+	    					>
+	    				</a>
+	    			</div>
+	    		</div>	    		   		
+	    	</n:div>
+	    	<n:div class="col-md-4" zk:if="${entry.quyen.get('thongke_thong-ke-nguoi-dang-tai-ngoai')}">
+	    		<div class="thong-ke-item">
+	    			<div class="thong-ke-item-info">
+	    				<a href="/thongke/thong-ke-nguoi-dang-tai-ngoai">
+	    				<n:span class="bold">Người nghiện, người sử dụng trái phép ma túy 
+	    				bị xử lý hình sự đang ở tại ngoại</n:span><n:span>
+	    				thời điểm hiện tại và theo khoảng thời gian bất kỳ</n:span>
+	    				</a>
+	    			</div>
+	    			<div class="thong-ke-item-link">
+	    				<a href="/thongke/thong-ke-nguoi-dang-tai-ngoai">
+	    					>
+	    				</a>
+	    			</div>
+	    		</div>	    		   		
+	    	</n:div>
+	    	<n:div class="col-md-4" zk:if="${entry.quyen.get('thongke_thong-ke-nguoi-dang-dieu-tri-methadone')}">
+	    		<div class="thong-ke-item">
+	    			<div class="thong-ke-item-info">
+	    				<a href="/thongke/thong-ke-nguoi-dang-dieu-tri-methadone">
+	    				<n:span class="bold">Người nghiện, người sử dụng trái phép ma túy 
+	    				đang điều trị bằng Methadone</n:span><n:span>
+	    				thời điểm hiện tại và theo khoảng thời gian bất kỳ</n:span>
+	    				</a>
+	    			</div>
+	    			<div class="thong-ke-item-link">
+	    				<a href="/thongke/thong-ke-nguoi-dang-dieu-tri-methadone">
+	    					>
+	    				</a>
+	    			</div>
+	    		</div>	    		   		
+	    	</n:div>
+	    	<n:div class="col-md-4" zk:if="${entry.quyen.get('thongke_thong-ke-nguoi-dang-quan-ly-sau-cai')}">
+	    		<div class="thong-ke-item">
+	    			<div class="thong-ke-item-info">
+	    				<a href="/thongke/thong-ke-nguoi-dang-quan-ly-sau-cai">
+	    				<n:span class="bold">Người nghiện, người sử dụng trái phép ma túy 
+	    				đang quản lý sau cai</n:span><n:span>
+	    				thời điểm hiện tại và theo khoảng thời gian bất kỳ</n:span>
+	    				</a>
+	    			</div>
+	    			<div class="thong-ke-item-link">
+	    				<a href="/thongke/thong-ke-nguoi-dang-quan-ly-sau-cai">
+	    					>
+	    				</a>
+	    			</div>
+	    		</div>	    		   		
+	    	</n:div> 
+	    </n:div>
+	</n:section>
+</div>

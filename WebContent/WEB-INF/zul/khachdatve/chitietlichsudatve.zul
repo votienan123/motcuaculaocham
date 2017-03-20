@@ -1,0 +1,42 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<window xmlns:n="native" xmlns:x="xhtml" xmlns:zk="zk" xmlns:w="client" apply="org.zkoss.bind.BindComposer"
+	id="wdn2" border="normal" mode="modal" action="show: slideIn" title="Chi tiết Lịch sử"
+	contentStyle="overflow:auto;" closable="true" width="80%" height="auto"
+	viewModel="@id('vm') @init(arg.vm)">
+	<zscript><![CDATA[
+		lichSu = arg.get("lichSu");
+		vn.toancauxanh.gg.model.LichSuDatVe lichSu = vm.core().em().find(vn.toancauxanh.gg.model.LichSuDatVe.class, lichSu.getId());
+	]]></zscript>
+	<n:section class="content" style="min-height: 10px !important;">	
+		<n:div class="row">
+	    	<n:div class="col-md-12">
+	    		<div class="lich-su-type-item">
+	    			<div class="ls-content first">   
+	    				<div children="@load(lichSu.listLichSuDatVe)">
+	    					<template name="children" var="thongTin">
+	    						<div class="doi-tuong-item">
+									<div class="doi-tuong-index">
+										<label value="@load(thongTinStatus.index + 1)"/>
+									</div>
+									<div class="doi-tuong-content">
+										<div class="row">
+											<div class="col-md-4">												
+												<n:span class="bold">Thông tin: </n:span> ${thongTin.propertyName}
+											</div>
+											<div class="col-md-4">												
+												<n:span class="bold">Giá trị cũ: </n:span> ${thongTin.oldValue}
+											</div>		
+											<div class="col-md-4">												
+												<n:span class="bold">Giá trị mới: </n:span> ${thongTin.newValue}
+											</div>	
+										</div>
+									</div>
+								</div>
+	    					</template>
+	    				</div>
+	    			</div>
+	    		</div>		    			
+	    	</n:div>
+	    </n:div>
+	</n:section>
+</window>

@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://activiti.org/bpmn20" id="definitions">
+  <process id="xuLyBai" name="Xử lý bài" isExecutable="true">
+    <startEvent id="submit"></startEvent>
+    <sequenceFlow id="flow1" sourceRef="submit" targetRef="handleSubmit"></sequenceFlow>
+    <userTask id="handleSubmit" name="Biên tập và duyệt bài" activiti:candidateGroups="bientapvien,tongbientap"></userTask>
+    <sequenceFlow id="flow2" sourceRef="handleSubmit" targetRef="submitApprovedDecision"></sequenceFlow>
+    <exclusiveGateway id="submitApprovedDecision" name="Duyệt bài ?"></exclusiveGateway>
+    <sequenceFlow id="approve" name="Duyệt" sourceRef="submitApprovedDecision" targetRef="beforePublishSubmit">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${flow ==
+				'approve'}]]></conditionExpression>
+    </sequenceFlow>
+    <serviceTask id="beforePublishSubmit" name="Xuất bản bài" activiti:expression="#{entry.congViecs.updateBusinessObject(execution.processInstanceId, 'da_duyet')}"></serviceTask>
+    <sequenceFlow id="approve2" name="Duyệt" sourceRef="beforePublishSubmit" targetRef="publishSubmit"></sequenceFlow>
+    <userTask id="publishSubmit" name="Xuất bản bài" activiti:candidateGroups="tongbientap"></userTask>
+    <sequenceFlow id="publish" name="Xuất bản" sourceRef="publishSubmit" targetRef="doPublish"></sequenceFlow>
+    <serviceTask id="doPublish" name="Kết thúc" activiti:expression="#{entry.congViecs.publish(execution.processInstanceId)}"></serviceTask>
+    <sequenceFlow id="publish2" name="Xuất bản" sourceRef="doPublish" targetRef="theEnd"></sequenceFlow>
+    <endEvent id="theEnd" name="Kết thúc"></endEvent>
+    <sequenceFlow id="reject" name="Không duyệt" sourceRef="submitApprovedDecision" targetRef="beforeEditSubmit">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${flow ==
+				'reject'}]]></conditionExpression>
+    </sequenceFlow>
+    <serviceTask id="beforeEditSubmit" name="Chỉnh sửa bài" activiti:expression="#{entry.congViecs.updateBusinessObject(execution.processInstanceId, 'tu_choi')}"></serviceTask>
+    <sequenceFlow id="reject2" name="Không duyệt" sourceRef="beforeEditSubmit" targetRef="editSubmit"></sequenceFlow>
+    <userTask id="editSubmit" name="Chỉnh sửa bài" activiti:assignee="${user.toString()}" activiti:candidateGroups="bientapvien"></userTask>
+    <sequenceFlow id="resubmit" name="Gửi lại" sourceRef="editSubmit" targetRef="handleSubmit2"></sequenceFlow>
+    <userTask id="handleSubmit2" name="Biên tập và Duyệt bài" activiti:assignee="${lastassignee.toString()}" activiti:candidateGroups="bientapvien,tongbientap"></userTask>
+    <sequenceFlow id="flow3" sourceRef="handleSubmit2" targetRef="submitApprovedDecision"></sequenceFlow>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_xuLyBai">
+    <bpmndi:BPMNPlane bpmnElement="xuLyBai" id="BPMNPlane_xuLyBai">
+      <bpmndi:BPMNShape bpmnElement="submit" id="BPMNShape_submit">
+        <omgdc:Bounds height="35.0" width="35.0" x="10.0" y="166.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="handleSubmit" id="BPMNShape_handleSubmit">
+        <omgdc:Bounds height="60.0" width="100.0" x="80.0" y="154.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="submitApprovedDecision" id="BPMNShape_submitApprovedDecision">
+        <omgdc:Bounds height="40.0" width="40.0" x="240.0" y="163.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="beforePublishSubmit" id="BPMNShape_beforePublishSubmit">
+        <omgdc:Bounds height="60.0" width="100.0" x="320.0" y="0.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="publishSubmit" id="BPMNShape_publishSubmit">
+        <omgdc:Bounds height="60.0" width="100.0" x="470.0" y="0.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="doPublish" id="BPMNShape_doPublish">
+        <omgdc:Bounds height="60.0" width="100.0" x="629.0" y="0.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="theEnd" id="BPMNShape_theEnd">
+        <omgdc:Bounds height="35.0" width="35.0" x="793.0" y="12.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="beforeEditSubmit" id="BPMNShape_beforeEditSubmit">
+        <omgdc:Bounds height="60.0" width="100.0" x="410.0" y="154.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="editSubmit" id="BPMNShape_editSubmit">
+        <omgdc:Bounds height="60.0" width="100.0" x="610.0" y="154.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="handleSubmit2" id="BPMNShape_handleSubmit2">
+        <omgdc:Bounds height="60.0" width="100.0" x="610.0" y="290.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="flow1" id="BPMNEdge_flow1">
+        <omgdi:waypoint x="45.0" y="183.0"></omgdi:waypoint>
+        <omgdi:waypoint x="80.0" y="184.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow2" id="BPMNEdge_flow2">
+        <omgdi:waypoint x="180.0" y="184.0"></omgdi:waypoint>
+        <omgdi:waypoint x="240.0" y="183.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="approve" id="BPMNEdge_approve">
+        <omgdi:waypoint x="260.0" y="163.0"></omgdi:waypoint>
+        <omgdi:waypoint x="260.0" y="92.0"></omgdi:waypoint>
+        <omgdi:waypoint x="260.0" y="30.0"></omgdi:waypoint>
+        <omgdi:waypoint x="320.0" y="30.0"></omgdi:waypoint>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="14.0" width="100.0" x="279.0" y="117.0"></omgdc:Bounds>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="approve2" id="BPMNEdge_approve2">
+        <omgdi:waypoint x="420.0" y="30.0"></omgdi:waypoint>
+        <omgdi:waypoint x="470.0" y="30.0"></omgdi:waypoint>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="14.0" width="100.0" x="429.0" y="40.0"></omgdc:Bounds>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="publish" id="BPMNEdge_publish">
+        <omgdi:waypoint x="570.0" y="30.0"></omgdi:waypoint>
+        <omgdi:waypoint x="629.0" y="30.0"></omgdi:waypoint>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="14.0" width="100.0" x="579.0" y="44.0"></omgdc:Bounds>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="publish2" id="BPMNEdge_publish2">
+        <omgdi:waypoint x="729.0" y="30.0"></omgdi:waypoint>
+        <omgdi:waypoint x="793.0" y="29.0"></omgdi:waypoint>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="14.0" width="100.0" x="739.0" y="45.0"></omgdc:Bounds>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="reject" id="BPMNEdge_reject">
+        <omgdi:waypoint x="280.0" y="183.0"></omgdi:waypoint>
+        <omgdi:waypoint x="410.0" y="184.0"></omgdi:waypoint>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="14.0" width="100.0" x="319.0" y="196.0"></omgdc:Bounds>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="reject2" id="BPMNEdge_reject2">
+        <omgdi:waypoint x="510.0" y="184.0"></omgdi:waypoint>
+        <omgdi:waypoint x="610.0" y="184.0"></omgdi:waypoint>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="14.0" width="100.0" x="529.0" y="196.0"></omgdc:Bounds>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="resubmit" id="BPMNEdge_resubmit">
+        <omgdi:waypoint x="660.0" y="214.0"></omgdi:waypoint>
+        <omgdi:waypoint x="660.0" y="290.0"></omgdi:waypoint>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="14.0" width="100.0" x="670.0" y="219.0"></omgdc:Bounds>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow3" id="BPMNEdge_flow3">
+        <omgdi:waypoint x="610.0" y="320.0"></omgdi:waypoint>
+        <omgdi:waypoint x="259.0" y="319.0"></omgdi:waypoint>
+        <omgdi:waypoint x="260.0" y="203.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>
